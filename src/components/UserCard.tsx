@@ -25,7 +25,7 @@ export const UserCard: React.FC<UserCardProps> = ({ user }) => {
         <div className="user-identity">
           <h2 className="user-nickname">@{user.nickname}</h2>
           {/* Insignia de Admin si corresponde */}
-          {user.admin && <span className="admin-badge">ADMIN</span>}
+          {user.role === 'ADMIN' && <span className="admin-badge">ADMIN</span>}
         </div>
       </div>
 

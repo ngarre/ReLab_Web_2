@@ -1,23 +1,32 @@
-import { useState } from "react"; 
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { Navbar } from "./Navbar";
 import { DarkModeToggle } from "./DarkModeToggle";
-import { PersonIcon, HeartIcon, MenuIcon, CloseIcon } from "./Icons"; 
+import { PersonIcon, HeartIcon, MenuIcon, CloseIcon } from "./Icons";
+import { useAuth } from "../hooks/useAuth";
 import logo from "../assets/images/Logo1.png";
 import "./Header.css";
 
 export function Header() {
   // Estado para controlar el menú móvil: false es menú cerrado y true menú visible
-  const [isMenuOpen, setIsMenuOpen] = useState(false); // Al cargar web por primera vez estará cerrado
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const navigate = useNavigate();
+  const { isAuthenticated, logout } = useAuth();
 
-  // Abre y cierra el menú, se utiliza en el botón hamburguesa de movil 
+  // Abre y cierra el menú, se utiliza en el botón hamburguesa de movil
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
-  
+
   // Definición de la función closeMenu
   const closeMenu = () => {
     setIsMenuOpen(false);
+  };
+
+  const handleLogout = () => {
+    logout();
+    closeMenu();
+    navigate("/");
   };
 
   return (
@@ -26,15 +35,14 @@ export function Header() {
         
         {/* IZQUIERDA: LOGO */}
         <div className="header-left">
-          <Link to="/" onClick={closeMenu}> {/* Se llama a la función que cierra el menú al clicar en el Logo */}
+          <Link to="/" onClick={closeMenu}>
             <img src={logo} alt="ReLab logo" className="app-logo" />
           </Link>
         </div>
 
         {/* CENTRO: NAVBAR (Menú desplegable en móvil) */}
         <div className={`header-center ${isMenuOpen ? 'open' : ''}`}>
-          {/* Aquí se pasa la prop onLinkClick */}
-          <Navbar onLinkClick={closeMenu} /> {/* Se llama a la función que cierra el menú al clicar en cualquier enlace del NavBar */}
+          <Navbar onLinkClick={closeMenu} />
         </div>
 
         {/* DERECHA: ICONOS DE ACCIÓN */}
@@ -45,10 +53,25 @@ export function Header() {
             <HeartIcon size={20} />
           </Link>
 
-          {/* Icono Perfil (Oculto en móvil) */}
-          <Link to="/profile" className="icon-action hide-on-mobile" aria-label="Ir al Perfil">
-            <PersonIcon size={22} />
-          </Link>
+          {isAuthenticated ? (
+            <>
+              <Link to="/profile" className="icon-action hide-on-mobile" aria-label="Ir al Perfil">
+                <PersonIcon size={22} />
+              </Link>
+
+              <button
+                type="button"
+                className="logout-btn hide-on-mobile"
+                onClick={handleLogout}
+              >
+                Cerrar sesión
+              </button>
+            </>
+          ) : (
+            <Link to="/login" className="icon-action hide-on-mobile" aria-label="Ir al Login">
+              <PersonIcon size={22} />
+            </Link>
+          )}
 
           <div className="action-divider hide-on-mobile"></div>
 
