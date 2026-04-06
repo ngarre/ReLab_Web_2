@@ -1,0 +1,84 @@
+.search-bar-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;            
+  justify-content: center; 
+  align-items: center;    
+  width: 100%;
+  padding: 0.5rem 0;
+}
+
+.control-group {
+  display: flex;
+  flex-direction: row;    
+  align-items: center;
+  gap: 0.6rem;
+}
+
+/* ETIQUETAS */
+.control-label {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+.dark .control-label {
+  color: var(--text-light);
+}
+
+/* INPUTS Y SELECTS */
+.search-input {
+  width: 280px;           
+  padding: 0.5rem 0.8rem;
+  border: 1px solid var(--border-light);
+  border-radius: 20px;    
+  outline: none;
+}
+
+.select-control {
+  width: 180px;           
+  padding: 0.4rem 0.6rem;
+  border: 1px solid var(--border-light);
+  border-radius: 20px;   
+  cursor: pointer;
+  outline: none;
+}
+
+.dark .search-input, 
+.dark .select-control {
+  background-color: var(--surface-dark);
+  color: var(--text-light);
+  border-color: var(--border-dark);
+}
+
+/* BOTÓN DE ORDENACIÓN */
+.sort-toggle-button {
+  padding: 0.5rem 1rem;
+  background-color: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 20px;  
+  font-weight: 500;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.sort-toggle-button:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+/* RESPONSIVIDAD */
+@media (max-width: 600px) {
+  .control-group {
+    flex-direction: column; /* Label ARRIBA, Input ABAJO */
+    align-items: flex-start; /* Alineado a la izquierda */
+    width: 100%;
+  }
+
+  .search-input, .select-control {
+    width: 100%; /* Que ocupen todo el ancho disponible */
+    max-width: none;
+  }
+}

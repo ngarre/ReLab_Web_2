@@ -1,0 +1,153 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&family=Roboto:wght@400;500;700&display=swap');
+
+/* RESET Y CONFIGURACIÓN DE CONTENEDORES */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+#root {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* VARIABLES GLOBALES */
+:root {
+  --primary: #26c6da;
+  --primary-dark: #0097a7;
+
+  --surface-light: #ffffff;
+  --surface-dark: #1f2937;
+
+  --text-dark: #111827;
+  --text-light: #f9fafb;
+
+  --border-light: #e5e7eb;
+  --border-dark: #374151;
+}
+
+/* MODO CLARO */
+body {
+  margin: 0;
+  font-family: 'Roboto', sans-serif;
+  background-color: var(--surface-light);
+  color: var(--text-dark);
+  line-height: 1.5;
+  min-height: 100vh;
+}
+
+/* MODO OSCURO */
+body.dark {
+  background-color: var(--surface-dark);
+  color: var(--text-light);
+}
+
+.main-content-area {
+  max-width: 1350px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+  min-height: 70vh; 
+}
+
+/* Títulos principales de cada vista */
+.page-title {
+  font-size: 2.2rem;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 300;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  text-align: center;
+  margin-bottom: 0.5rem;
+  color: var(--text-dark);
+}
+.dark .page-title { color: var(--text-light); }
+
+/* Subtítulos */
+.page-subtitle {
+  color: var(--text-dark);
+  margin-bottom: 1rem;
+  text-align: center;
+  font-size: 1rem;
+}
+.dark .page-subtitle { 
+  color: var(--text-light); 
+}
+
+/* El separador de color primario bajo el título */
+.page-title-separator {
+  width: 80px;
+  height: 4px;
+  background-color: var(--primary);
+  margin: 0 auto 3rem auto;
+  border-radius: 2px;
+  opacity: 0.8;
+}
+
+/* Mensajes cuando no hay datos */
+.empty-message {
+  color: var(--text-dark);
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  text-align: center;
+}
+.dark .empty-message { color: var(--text-light); }
+
+/* Contador de resultados (ej: "Mostrando 12 de 12 productos") */
+.results-count {
+  font-size: 0.9rem;
+  color: #777; 
+  margin-bottom: 1rem;
+  text-align: right;
+}
+
+/* Contenedor gris para buscador y filtros */
+.search-filter-area {
+  margin-bottom: 2rem;
+  padding: 1rem;
+  border-radius: 8px;
+  background-color: #f0f0f0;
+  display: flex;
+  justify-content: center;
+}
+.dark .search-filter-area {
+  background-color: #333; 
+}
+
+a {
+  color: var(--primary);
+  text-decoration: none;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.app-layout {
+  width: 100%;
+  /* Obliga a la aplicación a medir, como mínimo, el 100% de la altura de la pantalla (viewport height) */
+  min-height: 100vh;
+  background-color: var(--surface-light); 
+}
+
+.dark .app-layout {
+  background-color: var(--surface-dark); 
+}
+
+/* --- REJILLA RESPONSIVA GLOBAL --- */
+.cards-grid {
+  display: grid;
+  gap: 2rem; /* Espacio uniforme para toda la web */
+  /* Diseño fluido: mínimo 280px, máximo estirarse (1fr) */
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  width: 100%;
+}
+
+/* RESPONSIVE DINÁMICO:
+     1. auto-fill: Rellena la fila con tantas columnas como quepan.
+     2. minmax(280px, 1fr): Cada columna mide al menos 280px. Si sobra espacio, 
+        se expanden proporcionalmente (1fr). Si el espacio es menor a 280px, 
+        pasa automáticamente a la siguiente fila. */

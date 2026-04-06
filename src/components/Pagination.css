@@ -1,0 +1,48 @@
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1.5rem;
+    margin-top: 2rem;
+    padding: 1rem;
+}
+
+.pagination-info {
+    font-size: 0.95rem;
+    color: var(--text-dark);
+}
+
+.dark .pagination-info {
+    color: var(--text-light);
+}
+
+.pagination-btn {
+    background-color: var(--surface-light);
+    border: 1px solid var(--border-light);
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-weight: 500;
+    color: var(--text-dark);
+    transition: all 0.2s ease;
+}
+
+.dark .pagination-btn {
+    background-color: var(--surface-dark-lighter);
+    border: 1px solid var(--border-dark);
+    color: var(--text-light);
+}
+
+/* Cambiar el color de fondo solo cuando el usuario pase el ratón
+ * por encima de un botón que Sí se pueda pulsar.
+ * Si estoy en primera página y no hay Anterior, el efecto Hover 
+ * no se activa */
+.pagination-btn:hover:not(:disabled) {
+    border-color: var(--primary);
+    color: var(--primary);
+    background-color: rgba(38, 198, 218, 0.1); /* Sutil fondo azulado */
+}
+
+.pagination-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}

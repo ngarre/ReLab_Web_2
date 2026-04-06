@@ -1,0 +1,177 @@
+.app-footer {
+  background-color: var(--surface-light); /* Fondo claro por defecto */
+  border-top: 1px solid var(--border-light);
+  color: var(--text-dark);
+  padding: 3rem 1.5rem 1.5rem; /* Más padding arriba para dar aire */
+  font-size: 0.9rem;
+  margin-top: auto; /* Para el Sticky Footer */
+}
+
+.dark .app-footer {
+  background-color: var(--surface-dark);
+  border-top: 1px solid var(--border-dark);
+  color: var(--text-light);
+}
+
+.app-footer-inner {
+  max-width: 1350px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 3rem; /* Espacio entre la parte de arriba y la de abajo */
+}
+
+/* --- PARTE SUPERIOR (Flex para separar Logo de Enlaces) --- */
+.footer-top {
+  display: flex;
+  flex-wrap: wrap; /* Para móviles */
+  gap: 4rem;
+  justify-content: space-between;
+}
+
+/* Columna del Logo */
+.footer-brand-col {
+  flex: 0 0 200px; /* Ancho fijo para la columna del logo */
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.footer-logo {
+  height: 40px; /* Tamaño del logo ajustado */
+  width: auto;
+  object-fit: contain;
+  object-position: left; /* Alineado a la izquierda */
+
+   transform: scale(2); /* Escalar el logo al 300% de su tamaño */
+  transform-origin: left center; /* Aseguramos que escale desde la izquierda */
+}
+
+.footer-copyright-text {
+  font-size: 0.8rem;
+  color: var(--text-muted, #888); /* Usa un color grisáceo si tienes la variable, sino #888 */
+  line-height: 1.5;
+}
+
+/* GRID DE ENLACES */
+.footer-links-grid {
+  flex: 1; /* Ocupa el resto del espacio */
+  display: grid;
+  /* Crea 4 columnas iguales automáticamente */
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); 
+  gap: 2rem;
+}
+
+.footer-column {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.footer-column h4 {
+  font-weight: 700;
+  margin: 0 0 0.5rem 0;
+  color: var(--text-dark);
+  font-size: 0.95rem;
+}
+
+.dark .footer-column h4 {
+  color: var(--text-light);
+}
+
+.footer-column a {
+  text-decoration: none;
+  color: var(--text-muted, #666); /* Color de texto suave para enlaces */
+  font-size: 0.9rem;
+  transition: color 0.2s ease;
+}
+
+/* Hover y Dark Mode para enlaces */
+.footer-column a:hover {
+  color: var(--primary); /* Tu color principal */
+  text-decoration: underline;
+}
+
+.dark .footer-column a {
+  color: #aaa; /* Color suave en modo oscuro */
+}
+.dark .footer-column a:hover {
+  color: var(--primary);
+}
+
+/* --- PARTE INFERIOR (Separador y Small) --- */
+.footer-bottom {
+  border-top: 1px solid var(--border-light); /* Línea separadora small y resto del footer */
+  padding-top: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.dark .footer-bottom {
+  border-top: 1px solid var(--border-dark);
+}
+
+.footer-bottom small {
+  color: var(--text-muted, #888);
+  font-size: 0.8rem;
+}
+
+.footer-social {
+  display: flex;
+  gap: 1.5rem;
+  font-weight: 600;
+  font-size: 0.85rem;
+  align-items: center; 
+}
+
+.footer-social a {
+  display: flex;       
+  align-items: center; 
+
+  text-decoration: none;
+  color: var(--text-dark);
+  opacity: 0.8;
+  transition: opacity 0.2s, color 0.2s ease; 
+}
+
+.dark .footer-social a {
+  color: var(--text-light);
+}
+
+.footer-social a:hover {
+  opacity: 1;
+  color: var(--primary); 
+}
+
+.footer-store-icon {
+  margin-right: 0.5rem; /* 8px */
+  display: inline-flex;
+  align-items: center;
+}
+
+
+/* --- RESPONSIVE --- */
+@media (max-width: 768px) {
+  .footer-top {
+    flex-direction: column;
+    gap: 2rem;
+  }
+  
+  .footer-links-grid {
+    grid-template-columns: 1fr 1fr; /* 2 columnas en tablets/móviles grandes */
+  }
+}
+
+@media (max-width: 480px) {
+  .footer-links-grid {
+    grid-template-columns: 1fr; /* 1 columna en móviles pequeños */
+  }
+  
+  .footer-bottom {
+    flex-direction: column;
+    text-align: center;
+  }
+}

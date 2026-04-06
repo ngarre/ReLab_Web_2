@@ -1,0 +1,109 @@
+.product-card {
+  background-color: var(--surface-light-card, #fff); 
+  border: 1px solid var(--border-light, #ddd);
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  cursor: pointer;
+  
+  /* Transición suave para el hover */
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Efecto Hover */
+.product-card:hover {
+  transform: translateY(-4px); 
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15); 
+}
+
+.dark .product-card {
+  background-color: var(--surface-dark-card, #252525);
+  border-color: var(--border-dark, #444);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4); 
+}
+
+.card-image-container {
+  height: 200px;
+  overflow: hidden;
+  position: relative;
+}
+
+.product-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.product-card:hover .product-image {
+  transform: scale(1.05); /* Zoom sutil en el hover */
+}
+
+.card-details {
+  padding: 1rem;
+}
+
+.card-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+  color: var(--text-dark, #111);
+}
+.dark .card-title {
+  color: var(--text-light, #fff);
+}
+
+.card-metadata {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px dashed var(--border-light, #ccc);
+}
+
+.dark .card-metadata {
+  border-bottom: 1px dashed var(--border-dark, #444);
+}
+
+.card-price strong {
+  font-size: 1.25rem;
+  color: var(--primary, #007bff); 
+}
+
+.category-tag {
+  background-color: var(--surface-secondary, #eee);
+  color: var(--text-dark, #333);
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 0.8rem;
+}
+.dark .category-tag {
+  background-color: var(--surface-darker, #444);
+  color: var(--text-light, #eee);
+}
+
+.card-seller {
+  font-size: 0.85rem;
+  color: var(--text-muted, #777);
+}
+
+.inactive-badge {
+  position: absolute; /* Para que flote sobre la imagen */
+  top: 10px;
+  right: 10px;
+  background-color: rgba(255, 0, 0, 0.8); /* Rojo */
+  color: white;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-weight: bold;
+  z-index: 10;
+}
+
+/* Producto Inactivo */
+.product-card.inactive {
+  opacity: 0.6; /* Vuelvo la tarjeta semitransparente */
+  pointer-events: none; /* Deshabilita el click en productos inactivos */
+}
+

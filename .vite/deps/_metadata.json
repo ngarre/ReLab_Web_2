@@ -1,0 +1,46 @@
+{
+  "hash": "5f4ed6b5",
+  "configHash": "6adefafa",
+  "lockfileHash": "47989f8f",
+  "browserHash": "72ce1067",
+  "optimized": {
+    "react/jsx-dev-runtime": {
+      "src": "../../node_modules/react/jsx-dev-runtime.js",
+      "file": "react_jsx-dev-runtime.js",
+      "fileHash": "40864941",
+      "needsInterop": true
+    },
+    "react": {
+      "src": "../../node_modules/react/index.js",
+      "file": "react.js",
+      "fileHash": "deb5cd32",
+      "needsInterop": true
+    },
+    "react-dom/client": {
+      "src": "../../node_modules/react-dom/client.js",
+      "file": "react-dom_client.js",
+      "fileHash": "22ba3d6f",
+      "needsInterop": true
+    },
+    "react-router-dom": {
+      "src": "../../node_modules/react-router-dom/dist/index.mjs",
+      "file": "react-router-dom.js",
+      "fileHash": "3ada725e",
+      "needsInterop": false
+    },
+    "react-hook-form": {
+      "src": "../../node_modules/react-hook-form/dist/index.esm.mjs",
+      "file": "react-hook-form.js",
+      "fileHash": "6f35296a",
+      "needsInterop": false
+    }
+  },
+  "chunks": {
+    "chunk-SA72QV4G": {
+      "file": "chunk-SA72QV4G.js"
+    },
+    "chunk-C7CLCYJX": {
+      "file": "chunk-C7CLCYJX.js"
+    }
+  }
+}

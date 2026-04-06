@@ -1,0 +1,231 @@
+/* --- CONTENEDOR EXTERNO --- */
+.app-header {
+  background-color: var(--surface-light);
+  border-bottom: 1px solid var(--border-light);
+  color: var(--text-dark);
+
+  padding: 0.75rem 1.5rem;
+  display: flex;
+  justify-content: center;
+
+  transition: background-color 0.2s ease, color 0.2s ease;
+  /* Aseguramos que esté por encima de otros elementos */
+  position: relative; 
+  z-index: 100; 
+}
+
+.dark .app-header {
+  background-color: var(--surface-dark);
+  border-bottom: 1px solid var(--border-dark);
+  color: var(--text-light);
+}
+
+/* --- CONTENEDOR INTERNO --- */
+.app-header-inner {
+  width: 100%;
+  max-width: 1350px; 
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* --- LOGO --- */
+.app-logo {
+  height: 40px;
+  width: auto;
+  cursor: pointer;
+
+  transform: scale(3); 
+  transform-origin: left center; 
+  margin-right: 2rem; 
+}
+
+/* --- SECCIONES DE LAYOUT --- */
+.header-left,
+.header-center,
+.header-right {
+  display: flex;
+  align-items: center;
+}
+
+/* NAVBAR CENTRADO */
+.header-center {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+/* --- DERECHA (CONTENEDOR DE ACCIONES) --- */
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem; /* Espacio general entre elementos */
+}
+
+/* =========================================
+    ACCIONES DE USUARIO (ICONOS DE ESCRITORIO)
+   ========================================= */
+
+.icon-action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-dark);
+  padding: 6px; 
+  border-radius: 50%; 
+  transition: all 0.2s ease;
+}
+
+.icon-action:hover {
+  color: var(--primary);
+  background-color: rgba(0, 0, 0, 0.05);
+  transform: translateY(-2px); 
+}
+
+/* Iconos en Modo Oscuro */
+.dark .icon-action {
+  color: var(--text-light);
+}
+
+.dark .icon-action:hover {
+  color: var(--primary);
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Separador Vertical */
+.action-divider {
+  width: 1px;
+  height: 20px;
+  background-color: var(--border-light);
+  margin: 0 0.5rem;
+}
+
+.dark .action-divider {
+  background-color: var(--border-dark);
+}
+
+/* =========================================
+    DARK MODE TOGGLE 
+   ========================================= */
+.dark-mode-toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px; 
+  color: var(--text-dark);
+  
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  transition: color 0.2s ease, background-color 0.2s ease;
+  border-radius: 50%; 
+}
+
+.dark-mode-toggle:hover {
+  color: var(--primary);
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+/* Modo oscuro */
+.dark .dark-mode-toggle {
+  color: var(--text-light);
+}
+
+.dark .dark-mode-toggle:hover {
+  color: var(--primary);
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Tamaño estándar para todos los SVGs dentro de botones/links del header */
+.header-right svg {
+  display: block; 
+}
+
+/* Estilo base del botón hamburguesa (oculto en escritorio) */
+.mobile-menu-btn {
+  display: none; 
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-dark);
+  padding: 5px;
+}
+.dark .mobile-menu-btn {
+  color: var(--text-light);
+}
+
+/* =========================================
+   MEDIA QUERIES (RESPONSIVE)
+   ========================================= */
+
+@media (max-width: 768px) {
+  
+  .app-header {
+    padding: 0.5rem 1rem; 
+  }
+
+  /* 1. Ajustar el LOGO en móvil */
+  .app-logo {
+    transform: scale(1.5); 
+    margin-right: 0.5rem;
+    height: 30px; 
+  }
+
+  /* 2. Mostrar el botón hamburguesa */
+  .mobile-menu-btn {
+    display: flex;
+    margin-left: 1rem;
+  }
+
+  /* 3. Ocultar iconos secundarios (Favoritos/Perfil) y el separador en móvil */
+  .hide-on-mobile {
+    display: none; 
+  }
+
+  /* 4. Transformar el NAVBAR en un menú desplegable */
+  .header-center {
+    position: absolute;
+    top: 100%; 
+    left: 0;
+    width: 100%;
+    background-color: var(--surface-light);
+    border-bottom: 1px solid var(--border-light);
+    
+    flex-direction: column;
+    padding: 0;
+    
+    /* Animación de apertura */
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-in-out;
+    
+    /* Sombra para que flote sobre el contenido */
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  }
+
+  .dark .header-center {
+    background-color: var(--surface-dark);
+    border-bottom: 1px solid var(--border-dark);
+  }
+
+  /* Cuando el estado es 'open', desplegamos el menú */
+  .header-center.open {
+    max-height: 300px; 
+    padding: 1rem 0;
+  }
+
+  /* Ajustar los links dentro del menú móvil */
+  .header-center .nav-links {
+    flex-direction: column;
+    width: 100%;
+    gap: 0; 
+  }
+  
+  .header-center a {
+    width: 100%;
+    text-align: center;
+    padding: 0.75rem 0; /* Más padding para que sean áreas de clic grandes */
+    display: block;
+  }
+}

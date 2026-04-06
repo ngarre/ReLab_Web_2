@@ -1,0 +1,90 @@
+.nav-links {
+  display: flex;
+  gap: 2.2rem;
+  min-width: 420px;
+  justify-content: center;
+}
+
+.nav-links a {
+  font-weight: 500;
+  font-size: 0.95rem;
+  color: var(--text-dark);
+  padding-bottom: 3px;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+/* Modo oscuro */
+.dark .nav-links a {
+  color: var(--text-light);
+}
+
+.nav-links a:hover {
+  color: var(--primary);
+}
+
+/* Este estilo solo se aplica al enlace de la página donde estás parado */
+.nav-links a.active {
+  border-bottom: 2px solid var(--primary);
+  color: var(--primary);
+}
+
+
+/* ====================================================
+   REGLAS PARA MÓVIL (OCULTAR EN ESCRITORIO)
+   ==================================================== */
+
+/* Ocultar los enlaces de Perfil/Favoritos en escritorio */
+.nav-links .mobile-only-link {
+    display: none; 
+}
+
+/* Estilo para el icono dentro del enlace */
+.nav-links .link-icon {
+    margin-right: 0.5rem;
+    vertical-align: middle;
+    /* Aseguramos que el color del icono sea el mismo que el texto */
+    color: currentColor; /* Iconos podrán heredar automáticamente color de los enlaces */
+}
+
+/* ==================================================== */
+
+
+
+
+ /* MEDIA QUERIES*/
+
+@media (max-width: 768px) {
+    /* 1. Ajustar la navegación principal en modo columna */
+    .nav-links {
+        flex-direction: column;
+        width: 100%;
+        gap: 0; /* Quitamos el gap horizontal que ya no se usa en columna */
+        min-width: unset;
+    }
+
+    /* 2. Ajustar los enlaces principales en el desplegable */
+    .nav-links a {
+        width: 100%;
+        text-align: center;
+        padding: 0.75rem 0;
+        display: block;
+        
+        /* Eliminamos el borde de abajo para que no se vea raro en el menú */
+        border-bottom: none !important; 
+    }
+    
+    /* 3. Mostrar y estilizar los enlaces de Perfil/Favoritos */
+    .nav-links .mobile-only-link {
+        display: flex; /* Usamos flex para centrar el icono y texto */
+        align-items: center;
+        justify-content: center;
+        padding: 0.75rem 0;
+        /* Separador visual para diferenciar estas acciones del resto de links */
+        border-top: 1px solid var(--border-light); 
+        font-weight: 600; /* Un poco más de énfasis */
+    }
+
+    .dark .nav-links .mobile-only-link {
+        border-top: 1px solid var(--border-dark);
+    }
+}

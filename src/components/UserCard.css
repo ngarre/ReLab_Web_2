@@ -1,0 +1,169 @@
+.user-card {
+    background-color: var(--surface-light);
+    border: 1px solid var(--border-light);
+    border-radius: 12px; 
+    padding: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.user-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+.dark .user-card {
+    background-color:  #2d3748;
+    border: 1px solid var(--border-dark);
+}
+
+/* --- HEADER: Avatar y Nickname --- */
+.user-card .card-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.dark .user-card .card-header {
+    border-bottom: 1px solid var(--border-dark);
+}
+
+/* Círculo del avatar */
+.avatar-placeholder {
+    width: 48px;
+    height: 48px;
+    background-color: #e0f2f1; 
+    color: var(--primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.dark .avatar-placeholder {
+    background-color: #1a202c;
+}
+
+.user-identity {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.user-nickname {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin: 0;
+    color: var(--primary);
+}
+
+/* Badge de ADMIN */
+.admin-badge {
+    background-color: #4f46e5; 
+    color: white;
+    font-size: 0.65rem;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-top: 2px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+/* --- BODY: Nombre y Email --- */
+.user-card .card-body {
+    margin-bottom: 1.5rem;
+}
+
+.user-fullname {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin: 0 0 0.25rem 0;
+    color: var(--text-dark);
+}
+
+.dark .user-fullname {
+    color: var(--text-light);
+}
+
+.user-email {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin: 0;
+    word-break: break-all; /* Para emails largos */
+}
+
+.dark .user-email {
+    color: var(--text-light);
+}
+
+/* --- DETALLES: Footer --- */
+.user-card .card-details {
+    margin-top: auto; /* Empuja el footer al fondo */
+}
+
+.user-card .detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+}
+
+.user-role {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--text-muted);
+    letter-spacing: 1px;
+}
+
+.dark .user-role{
+    color: var(--text-light);
+}
+
+/* Status Pill: remarco que pertenece a a tarjeta de usuario
+porque también tengo status-pill en Category Card */
+.user-card .status-pill {
+    padding: 0.2rem 0.6rem;
+    border-radius: 99px;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.user-card .status-pill.active {
+    background-color: #d1fae5; color: #065f46;
+}
+.user-card .status-pill.inactive {
+    background-color: #fee2e2; color: #991b1b;
+}
+
+/* Fecha de Registro */
+.user-card .detail-footer {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    padding-top: 0.75rem;
+    border-top: 1px dashed var(--border-light);
+}
+
+.dark .user-card .detail-footer {
+    border-top: 1px dashed var(--border-dark);  /* <--- Línea separación */
+}
+
+.dark .user-card .detail-label{
+    color: var(--text-light);
+}
+
+.user-card .detail-value {
+    color: var(--text-dark);
+    font-weight: 500;
+}
+.dark .user-card .detail-value {
+    color: var(--text-light);
+}
