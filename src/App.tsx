@@ -10,6 +10,7 @@ import Users from "./pages/Users";
 import ProductDetail from "./pages/ProductDetail";
 import Profile from "./pages/Profile";
 import Login from "./pages/Login";
+import { RoleRoute } from "./components/RoleRoute";
 
 function App() {
   return (
@@ -21,7 +22,14 @@ function App() {
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/categories" element={<Categories />} />
-              <Route path="/users" element={<Users />} />
+              <Route
+                path="/users"
+                element={
+                  <RoleRoute allowedRoles={['ADMIN']}>
+                    <Users />
+                  </RoleRoute>
+                }
+              />
               <Route path="/products/:id" element={<ProductDetail />} />
               <Route path="/login" element={<Login />} />
               <Route

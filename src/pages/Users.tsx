@@ -1,16 +1,20 @@
 import { useEffect, useState, useMemo } from 'react';
-import { fetchAPI } from '../utils/api';
 import { UserCard } from '../components/UserCard';
 import { Loading } from '../components/Loading';
 import { ErrorMessage } from '../components/ErrorMessage';
 import { SearchBar } from '../components/SearchBar';
 import { usePagination } from '../hooks/usePagination';
 import { Pagination } from '../components/Pagination';
+import { useAuth } from '../hooks/useAuth';
+import { getUsers } from '../services/userService';
 import type { User } from '../types/User';
 import { normalizeText } from "../utils/text";
 
 
 export default function Users() {
+
+  const { token } = useAuth();
+
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -34,11 +38,18 @@ export default function Users() {
   ];
 
   useEffect(() => {
-    fetchAPI<User[]>('usuarios')
+    if (!token) {
+      return;
+    }
+
+    setLoading(true);
+    setError('');
+
+    getUsers(token)
       .then(data => setUsers(data))
       .catch(() => setError('No se pudo cargar el listado de usuarios.'))
       .finally(() => setLoading(false));
-  }, []);
+  }, [token]);
 
   const filteredUsers = useMemo(() => {
     let result = [...users];
