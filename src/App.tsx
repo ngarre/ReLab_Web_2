@@ -8,6 +8,7 @@ import Categories from "./pages/Categories";
 import Users from "./pages/Users";
 import ProductDetail from "./pages/ProductDetail";
 import Profile from "./pages/Profile";
+import Login from "./pages/Login";
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
               <Route path="/users" element={<Users />} />
               <Route path="/products/:id" element={<ProductDetail />} />
               <Route path="/profile" element={<Profile />} />
+              <Route path="/login" element={<Login />} />
             </Routes>
             <Footer />
           </div>

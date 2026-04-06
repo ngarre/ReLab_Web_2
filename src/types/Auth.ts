@@ -1,7 +1,7 @@
 import type { UserRole } from './User';
 
 export interface LoginRequest {
-  email: string;
+  nickname: string;
   password: string;
 }
 
