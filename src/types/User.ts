@@ -7,7 +7,7 @@ export interface User {
   apellido: string;
   email: string;
   fechaNacimiento: string; // "yyyy-MM-dd"
-  cuentaActiva: boolean;
+  cuentaActiva: boolean | number;
   fechaAlta: string;       // "yyyy-MM-dd"
   tipoUsuario: string;
   role: UserRole;
