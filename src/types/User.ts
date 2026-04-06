@@ -1,3 +1,5 @@
+export type UserRole = 'ADMIN' | 'GESTOR' | 'CLIENTE';
+
 export interface User {
   id: number;
   nickname: string;
@@ -8,7 +10,7 @@ export interface User {
   cuentaActiva: boolean;
   fechaAlta: string;       // "yyyy-MM-dd"
   tipoUsuario: string;
-  admin: boolean;
+  role: UserRole;
   saldo: number | null;
   latitud: number | null;
   longitud: number | null;

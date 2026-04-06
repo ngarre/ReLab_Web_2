@@ -64,7 +64,7 @@ export default function Users() {
     } else if (filterKey === 'inactive') {
       result = result.filter(u => !u.cuentaActiva);
     } else if (filterKey === 'admin') {
-      result = result.filter(u => u.admin);
+      result = result.filter(u => u.role === 'ADMIN');
     }
 
     result.sort((a, b) => {
