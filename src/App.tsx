@@ -12,6 +12,7 @@ import Profile from "./pages/Profile";
 import Login from "./pages/Login";
 import MyProducts from "./pages/MyProducts";
 import Register from "./pages/Register";
+import EditProduct from "./pages/EditProduct";
 import { RoleRoute } from "./components/RoleRoute";
 
 function App() {
@@ -62,6 +63,14 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <MyProducts />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/my-products/:id/edit"
+                element={
+                  <ProtectedRoute>
+                    <EditProduct />
                   </ProtectedRoute>
                 }
               />
