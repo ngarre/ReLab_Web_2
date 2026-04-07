@@ -75,6 +75,16 @@
   opacity: 0.8;
 }
 
+.header-auth-link {
+  text-decoration: none;
+  color: inherit;
+  font: inherit;
+}
+
+.header-auth-link:hover {
+  opacity: 0.8;
+}
+
 /* =========================================
     ACCIONES DE USUARIO (ICONOS DE ESCRITORIO)
    ========================================= */

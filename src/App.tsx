@@ -10,6 +10,8 @@ import Users from "./pages/Users";
 import ProductDetail from "./pages/ProductDetail";
 import Profile from "./pages/Profile";
 import Login from "./pages/Login";
+import MyProducts from "./pages/MyProducts";
+import Register from "./pages/Register";
 import { RoleRoute } from "./components/RoleRoute";
 
 function App() {
@@ -21,22 +23,45 @@ function App() {
             <Header />
             <Routes>
               <Route path="/" element={<Home />} />
-              <Route path="/categories" element={<Categories />} />
+              <Route
+                path="/categories"
+                element={
+                  <ProtectedRoute>
+                    <Categories />
+                  </ProtectedRoute>
+                }
+              />
               <Route
                 path="/users"
                 element={
-                  <RoleRoute allowedRoles={['ADMIN']}>
+                  <RoleRoute allowedRoles={['ADMIN', 'GESTOR']}>
                     <Users />
                   </RoleRoute>
                 }
               />
-              <Route path="/products/:id" element={<ProductDetail />} />
+              <Route
+                path="/products/:id"
+                element={
+                  <ProtectedRoute>
+                    <ProductDetail />
+                  </ProtectedRoute>
+                }
+              />
               <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
               <Route
                 path="/profile"
                 element={
                   <ProtectedRoute>
                     <Profile />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/my-products"
+                element={
+                  <ProtectedRoute>
+                    <MyProducts />
                   </ProtectedRoute>
                 }
               />
