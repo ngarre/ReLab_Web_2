@@ -1,0 +1,44 @@
+.owner-filter-area {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-width: 420px;
+  margin: 0 0 1.5rem 0;
+}
+
+.owner-filter-label {
+  font-weight: 600;
+}
+
+.owner-filter-input {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  border: 1px solid #d8d8d8;
+  border-radius: 10px;
+  font: inherit;
+}
+
+.dashboard-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.dashboard-summary-card {
+  background: #f8f8f8;
+  border: 1px solid #e5e5e5;
+  border-radius: 14px;
+  padding: 1rem 1.25rem;
+}
+
+.dashboard-summary-card h2 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1rem;
+}
+
+.dashboard-summary-card p {
+  margin: 0;
+  font-size: 1.8rem;
+  font-weight: 700;
+}
