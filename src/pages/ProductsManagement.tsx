@@ -48,6 +48,14 @@ export default function ProductsManagement() {
         return [...new Set(nicknames)].sort((a, b) => a.localeCompare(b, 'es'));
     }, [products]);
 
+    const summary = useMemo(() => {
+        const total = products.length;
+        const active = products.filter((product) => product.activo).length;
+        const inactive = total - active;
+
+        return { total, active, inactive };
+    }, [products]);
+
     const filteredProducts = useMemo(() => {
         let result = [...products];
 
@@ -102,6 +110,23 @@ export default function ProductsManagement() {
             <p className="page-subtitle">
                 Vista global de productos para administración y supervisión.
             </p>
+
+            <div className="dashboard-summary-grid">
+                <article className="dashboard-summary-card">
+                    <h2>Total</h2>
+                    <p>{summary.total}</p>
+                </article>
+
+                <article className="dashboard-summary-card">
+                    <h2>Activos</h2>
+                    <p>{summary.active}</p>
+                </article>
+
+                <article className="dashboard-summary-card">
+                    <h2>Inactivos</h2>
+                    <p>{summary.inactive}</p>
+                </article>
+            </div>
 
             <div className="search-filter-area">
                 <SearchBar
