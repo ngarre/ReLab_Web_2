@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from "react";
-import { fetchAPI } from "../utils/api";
+import { getProducts } from "../services/productService";
 import { Loading } from "../components/Loading";
 import { ErrorMessage } from "../components/ErrorMessage";
 import { ProductCard } from "../components/ProductCard";
@@ -39,12 +39,16 @@ export default function Home() {
     { key: 'inactive', label: 'Solo Inactivos' }, // Solo productos con .activo = false
   ];
 
+  
   useEffect(() => {
-    fetchAPI<Product[]>("productos") // Pido al servidor lista de productos
-      .then((data) => setProducts(data)) // Guardo cada uno de los productos en la variable products 
-      .catch(() => setError("No se pudo cargar el catálogo de productos.")) // Si no se pueden recuperar productos, muestro mensaje de error personalizado
-      .finally(() => setLoading(false)); // Finalmente se recuperen los productos o no, se pone este estado a False para que no se muestre mensaje del Loading
-  }, []); // IMPORANTE: Si "[]" no estuviera, React pediría los datos una y otra vez (bucle infinito).  De esta forma, solo se ejecuta al montar el componente.
+    setLoading(true);
+    setError('');
+
+    getProducts()
+      .then((data) => setProducts(data))
+      .catch(() => setError("No se pudo cargar el catálogo de productos."))
+      .finally(() => setLoading(false));
+  }, []);
 
 
   // Con useMemo guardo el resultado del filtrado en caché.
@@ -181,7 +185,7 @@ export default function Home() {
           </>
         )}
         <hr /> {/* Linea de separación decorativa */}
-        <ContactForm /> 
+        <ContactForm />
       </section>
     </main>
   );

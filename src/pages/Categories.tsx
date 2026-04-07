@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from 'react';
-import { fetchAPI } from '../utils/api';
+import { getCategories } from '../services/categoryService';
 import { CategoryCard } from '../components/CategoryCard';
 import { Loading } from '../components/Loading';
 import { ErrorMessage } from '../components/ErrorMessage';
@@ -30,9 +30,13 @@ export default function Categories() {
     { key: 'active', label: 'Solo Activas' },
     { key: 'inactive', label: 'Solo Inactivas' },
   ];
+  
 
   useEffect(() => {
-    fetchAPI<Category[]>('categorias')
+    setLoading(true);
+    setError('');
+
+    getCategories()
       .then(data => setCategories(data))
       .catch(() => setError('No se pudo cargar el listado de categorías.'))
       .finally(() => setLoading(false));
