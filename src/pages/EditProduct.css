@@ -1,0 +1,56 @@
+.edit-product-container {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.edit-product-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.edit-product-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.edit-product-field input,
+.edit-product-field textarea,
+.edit-product-field select {
+  padding: 0.85rem 1rem;
+  border: 1px solid #d8d8d8;
+  border-radius: 10px;
+  font: inherit;
+}
+
+.edit-product-checkbox {
+  display: flex;
+  align-items: center;
+}
+
+.edit-product-checkbox label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.edit-product-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+.edit-product-primary-btn,
+.edit-product-secondary-btn {
+  border: none;
+  border-radius: 10px;
+  padding: 0.8rem 1.2rem;
+  cursor: pointer;
+  font: inherit;
+}
+
+.edit-product-primary-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}

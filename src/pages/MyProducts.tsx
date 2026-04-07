@@ -8,6 +8,7 @@ import { usePagination } from '../hooks/usePagination';
 import { useAuth } from '../hooks/useAuth';
 import { deleteProduct, getProducts } from '../services/productService';
 import type { Product } from '../types/Product';
+import { Link } from 'react-router-dom';
 import './MyProducts.css';
 
 export default function MyProducts() {
@@ -175,6 +176,13 @@ export default function MyProducts() {
                     <ProductCard product={product} />
 
                     <div className="my-product-actions">
+                      <Link
+                        to={`/my-products/${product.id}/edit`}
+                        className="edit-product-btn"
+                      >
+                        Editar
+                      </Link>
+
                       <button
                         type="button"
                         className="delete-product-btn"
