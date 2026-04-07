@@ -1,9 +1,3 @@
-.my-products-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 320px));
-  gap: 1.5rem;
-}
-
 .my-product-card-item {
   display: flex;
   flex-direction: column;
