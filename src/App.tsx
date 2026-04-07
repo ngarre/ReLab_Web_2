@@ -11,6 +11,7 @@ import ProductDetail from "./pages/ProductDetail";
 import Profile from "./pages/Profile";
 import Login from "./pages/Login";
 import MyProducts from "./pages/MyProducts";
+import Register from "./pages/Register";
 import { RoleRoute } from "./components/RoleRoute";
 
 function App() {
@@ -33,6 +34,7 @@ function App() {
               />
               <Route path="/products/:id" element={<ProductDetail />} />
               <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
               <Route
                 path="/profile"
                 element={
