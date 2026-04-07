@@ -25,6 +25,7 @@ export default function EditProduct() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
+  const [selectedImageName, setSelectedImageName] = useState('');
 
   useEffect(() => {
     if (!id) {
@@ -45,6 +46,7 @@ export default function EditProduct() {
           precio: data.precio || 0,
           activo: data.activo,
           categoriaId: data.categoria?.id ?? null,
+          modo: data.modo,
         });
       })
       .catch(() => {
@@ -82,10 +84,31 @@ export default function EditProduct() {
     }));
   };
 
+  const handleImageChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.currentTarget.files?.[0];
+
+    if (!file) {
+      return;
+    }
+
+    setSelectedImageName(file.name);
+
+    try {
+      const base64Image = await convertFileToBase64(file);
+
+      setFormData((current) => ({
+        ...current,
+        imagen: base64Image,
+      }));
+    } catch {
+      setError('No se pudo procesar la imagen seleccionada.');
+    }
+  };
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    if (!id || !token) {
+    if (!id || !token || !product) {
       setError('No se pudo guardar el producto.');
       return;
     }
@@ -94,7 +117,15 @@ export default function EditProduct() {
     setError('');
 
     try {
-      await updateProduct(Number(id), formData, token);
+      await updateProduct(
+        Number(id),
+        {
+          ...formData,
+          modo: product.modo,
+        },
+        token
+      );
+
       navigate('/my-products');
     } catch {
       setError('No se pudo actualizar el producto.');
@@ -178,6 +209,20 @@ export default function EditProduct() {
             </label>
           </div>
 
+          <div className="edit-product-field">
+            <label htmlFor="imagen">Cambiar imagen</label>
+            <input
+              id="imagen"
+              name="imagen"
+              type="file"
+              accept="image/*"
+              onChange={handleImageChange}
+            />
+            {selectedImageName && (
+              <p className="edit-product-file-name">Nueva imagen: {selectedImageName}</p>
+            )}
+          </div>
+
           <div className="edit-product-actions">
             <button
               type="button"
@@ -199,4 +244,31 @@ export default function EditProduct() {
       </div>
     </main>
   );
+}
+
+function convertFileToBase64(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      const result = reader.result;
+
+      if (typeof result !== 'string') {
+        reject(new Error('No se pudo leer el archivo.'));
+        return;
+      }
+
+      const base64 = result.split(',')[1];
+
+      if (!base64) {
+        reject(new Error('No se pudo convertir la imagen a Base64.'));
+        return;
+      }
+
+      resolve(base64);
+    };
+
+    reader.onerror = () => reject(new Error('Error al leer el archivo.'));
+    reader.readAsDataURL(file);
+  });
 }

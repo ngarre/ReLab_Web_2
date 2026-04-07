@@ -4,4 +4,6 @@ export interface ProductUpdate {
   precio: number;
   activo: boolean;
   categoriaId: number | null;
+  modo?: boolean; // Va a estar oculto para el usuario, pero me permite conservarlo al enviar
+  imagen?: string | null;
 }
