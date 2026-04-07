@@ -34,9 +34,8 @@ export default function Home() {
 
   // Lista de opciones para el desplegable de filtrado por estado
   const filterOptions = [
-    { key: 'all', label: 'Todos los productos' }, // No filtra nada
-    { key: 'active', label: 'Solo Activos' }, // Solo productos con .activo = true
-    { key: 'inactive', label: 'Solo Inactivos' }, // Solo productos con .activo = false
+    { key: 'all', label: 'Productos Publicados' } // VER QUÉ HAGO CON ESTO
+    
   ];
 
   
@@ -54,7 +53,7 @@ export default function Home() {
   // Con useMemo guardo el resultado del filtrado en caché.
   // Solo se vuelve a calcular la lista si cambian los productos o los filtros del final []*
   const filteredProducts = useMemo(() => {
-    let result = [...products]; // Creo copia del array products para realizar la ordenación sobre dicha copia
+    let result = products.filter(product => product.activo); // Creo copia del array productos activos para realizar la ordenación sobre dicha copia
 
     // Compruebo si el usuario ha escrito algo en el buscador
     if (searchTerm) {
@@ -157,7 +156,7 @@ export default function Home() {
       {/* Solo muestro contador si no está cargando y no hay error */}
       {!loading && !error && (
         <p className="results-count">
-          Mostrando {filteredProducts.length} de {products.length} productos.
+          Mostrando {filteredProducts.length} productos publicados.
         </p>
       )}
 
