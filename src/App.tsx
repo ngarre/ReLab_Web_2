@@ -10,6 +10,7 @@ import Users from "./pages/Users";
 import ProductDetail from "./pages/ProductDetail";
 import Profile from "./pages/Profile";
 import Login from "./pages/Login";
+import MyProducts from "./pages/MyProducts";
 import { RoleRoute } from "./components/RoleRoute";
 
 function App() {
@@ -37,6 +38,14 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <Profile />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/my-products"
+                element={
+                  <ProtectedRoute>
+                    <MyProducts />
                   </ProtectedRoute>
                 }
               />
