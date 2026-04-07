@@ -13,6 +13,7 @@ import Login from "./pages/Login";
 import MyProducts from "./pages/MyProducts";
 import Register from "./pages/Register";
 import EditProduct from "./pages/EditProduct";
+import ProductsManagement from "./pages/ProductsManagement";
 import { RoleRoute } from "./components/RoleRoute";
 
 function App() {
@@ -72,6 +73,14 @@ function App() {
                   <ProtectedRoute>
                     <EditProduct />
                   </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/management/products"
+                element={
+                  <RoleRoute allowedRoles={['ADMIN', 'GESTOR']}>
+                    <ProductsManagement />
+                  </RoleRoute>
                 }
               />
             </Routes>
