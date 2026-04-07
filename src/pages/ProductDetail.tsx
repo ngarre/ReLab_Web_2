@@ -6,6 +6,7 @@ import { Loading } from '../components/Loading';
 import { ErrorMessage } from '../components/ErrorMessage';
 import { useAuth } from '../hooks/useAuth';
 import PlaceholderImage from '../assets/images/placeholder-default.jpg';
+import { getProductById } from '../services/productService';
 import './ProductDetail.css';
 
 export default function ProductDetail() {
@@ -20,7 +21,7 @@ export default function ProductDetail() {
     setLoading(true);
     setError('');
 
-    fetchAPI<Product>(`productos/${id!}`)
+    getProductById(Number(id))
       .then((data) => {
         setProduct(data);
       })
