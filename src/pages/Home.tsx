@@ -1,5 +1,6 @@
 import { useEffect, useState, useMemo } from "react";
 import { getProducts } from "../services/productService";
+import { getCategories } from "../services/categoryService";
 import { Loading } from "../components/Loading";
 import { ErrorMessage } from "../components/ErrorMessage";
 import { ProductCard } from "../components/ProductCard";
@@ -8,12 +9,15 @@ import { usePagination } from "../hooks/usePagination";
 import { Pagination } from "../components/Pagination";
 import type { Product } from "../types/Product";
 import { ContactForm } from "../components/ContactForm";
+import type { Category } from "../types/Category";
 
 export default function Home() {
   // -- Estados carga PRODUCTOS --
   // El array de productos empieza vacío antes de que lleguen datos de la API,
   // si el valor fuera null, la aplicación petaría.  Un array vacío es seguro.
   const [products, setProducts] = useState<Product[]>([]); // Lista de objetos de tipo Product[] --> siguen el molde Product definido en Product.ts  
+  // Para recuperar lista de objetos categoría
+  const [categories, setCategories] = useState<Category[]>([]);
   // Empiezo cargando el componente loading porque nada más abrir la web todavía no hay datos.
   const [loading, setLoading] = useState(true);
   // Por defecto, dejo vacío el componente de error y no se muestra.  Se muestra si falla la carga de datos.
@@ -32,19 +36,24 @@ export default function Home() {
     { key: 'precio', label: 'Precio' }, // Para ordenar por coste
   ];
 
-  // Lista de opciones para el desplegable de filtrado por estado
-  const filterOptions = [
-    { key: 'all', label: 'Productos Publicados' } // VER QUÉ HAGO CON ESTO
-    
+  //  Para el nuevo filtrado por categoría
+   const filterOptions = [
+    { key: 'all', label: 'Todas las categorías' },
+    ...categories.map((category) => ({
+      key: String(category.id),
+      label: category.nombre,
+    })),
   ];
-
-  
+ 
   useEffect(() => {
     setLoading(true);
     setError('');
 
-    getProducts()
-      .then((data) => setProducts(data))
+    Promise.all([getProducts(), getCategories()])
+      .then(([productsData, categoriesData]) => {
+        setProducts(productsData);
+        setCategories(categoriesData.filter((category) => category.activa));
+      })
       .catch(() => setError("No se pudo cargar el catálogo de productos."))
       .finally(() => setLoading(false));
   }, []);
@@ -68,12 +77,10 @@ export default function Home() {
       );
     }
 
-    // Si el usuario selecciona "Solo Activos" en el desplegable, me quedo solo con los productos donde activo es true
-    if (filterKey === 'active') {
-      result = result.filter(p => p.activo);
-      // Si selecciona "Solo inactivos", me quedo con productos donde activo es false
-    } else if (filterKey === 'inactive') {
-      result = result.filter(p => !p.activo);
+    if (filterKey !== 'all') {
+      result = result.filter(
+        (product) => String(product.categoria?.id) === filterKey
+      );
     }
 
     // Ordeno la lista que ha sido filtrada arriba
