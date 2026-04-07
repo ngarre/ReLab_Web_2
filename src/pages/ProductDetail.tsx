@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { fetchAPI } from '../utils/api';
 import type { Product } from '../types/Product';
 import { Loading } from '../components/Loading';
 import { ErrorMessage } from '../components/ErrorMessage';
