@@ -59,3 +59,9 @@
   margin: 0;
   font-size: 0.95rem;
 }
+
+.form-field-error {
+  margin: 0.35rem 0 0 0;
+  font-size: 0.9rem;
+  color: #c0392b;
+}

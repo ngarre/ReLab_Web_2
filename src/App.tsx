@@ -15,6 +15,8 @@ import Register from "./pages/Register";
 import EditProduct from "./pages/EditProduct";
 import ProductsManagement from "./pages/ProductsManagement";
 import CreateProduct from "./pages/CreateProduct";
+import CreateCategory from "./pages/CreateCategory";
+import EditCategory from "./pages/EditCategory";
 import { RoleRoute } from "./components/RoleRoute";
 
 function App() {
@@ -90,6 +92,22 @@ function App() {
                   <ProtectedRoute>
                     <CreateProduct />
                   </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/categories/new"
+                element={
+                  <RoleRoute allowedRoles={['ADMIN', 'GESTOR']}>
+                    <CreateCategory />
+                  </RoleRoute>
+                }
+              />
+              <Route
+                path="/categories/:id/edit"
+                element={
+                  <RoleRoute allowedRoles={['ADMIN', 'GESTOR']}>
+                    <EditCategory />
+                  </RoleRoute>
                 }
               />
             </Routes>
