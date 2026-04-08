@@ -1,0 +1,218 @@
+.dashboard-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.dashboard-summary-card {
+  border: 1px solid #e5e5e5;
+  border-radius: 12px;
+  padding: 0.7rem 0.9rem;
+}
+
+.dashboard-summary-card h2 {
+  margin: 0 0 0.25rem 0;
+  font-size: 0.9rem;
+}
+
+.dashboard-summary-card p {
+  margin: 0;
+  font-size: 1.35rem;
+  font-weight: 700;
+}
+
+.dashboard-summary-card-total {
+  background: #eefbfd;
+}
+
+.dashboard-summary-card-active {
+  background: #eef8f0;
+}
+
+.dashboard-summary-card-inactive {
+  background: #fdf1f1;
+}
+
+.users-dashboard-intro {
+  margin-bottom: 1rem;
+  color: var(--text-dark);
+  text-align: left;
+}
+
+.dark .users-dashboard-intro {
+  color: var(--text-light);
+}
+
+.users-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid var(--border-light);
+  border-radius: 14px;
+  background-color: var(--surface-light);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.dark .users-table-wrapper {
+  background-color: #2d3748;
+  border-color: var(--border-dark);
+}
+
+.users-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 900px;
+}
+
+.users-table thead {
+  background-color: #f8fafc;
+}
+
+.dark .users-table thead {
+  background-color: #1f2937;
+}
+
+.users-table th {
+  text-align: left;
+  padding: 1rem;
+  font-size: 0.85rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #4b5563;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.dark .users-table th {
+  color: #d1d5db;
+  border-bottom-color: var(--border-dark);
+}
+
+.users-table td {
+  padding: 1rem;
+  vertical-align: middle;
+  border-bottom: 1px solid var(--border-light);
+  color: var(--text-dark);
+}
+
+.dark .users-table td {
+  color: var(--text-light);
+  border-bottom-color: var(--border-dark);
+}
+
+.users-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.users-table tbody tr:hover {
+  background-color: #f9fbfc;
+}
+
+.dark .users-table tbody tr:hover {
+  background-color: #243244;
+}
+
+.users-table-nickname {
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.users-table-user-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.users-table-fullname {
+  font-weight: 600;
+}
+
+.users-table-email {
+  word-break: break-word;
+}
+
+.users-role-badge,
+.users-status-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 92px;
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.users-role-badge-admin {
+  background-color: #ede9fe;
+  color: #5b21b6;
+}
+
+.users-role-badge-gestor {
+  background-color: #e0f2fe;
+  color: #075985;
+}
+
+.users-role-badge-cliente {
+  background-color: #f3f4f6;
+  color: #374151;
+}
+
+.users-status-pill.active {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+.users-status-pill.inactive {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+@media (max-width: 768px) {
+  .users-table {
+    min-width: unset;
+  }
+
+  .users-table thead {
+    display: none;
+  }
+
+  .users-table,
+  .users-table tbody,
+  .users-table tr,
+  .users-table td {
+    display: block;
+    width: 100%;
+  }
+
+  .users-table tr {
+    padding: 0.9rem;
+    border-bottom: 1px solid var(--border-light);
+  }
+
+  .dark .users-table tr {
+    border-bottom-color: var(--border-dark);
+  }
+
+  .users-table tbody tr:last-child {
+    border-bottom: none;
+  }
+
+  .users-table td {
+    border-bottom: none;
+    padding: 0.45rem 0;
+  }
+
+  .users-table td::before {
+    content: attr(data-label);
+    display: block;
+    margin-bottom: 0.2rem;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #6b7280;
+    text-transform: uppercase;
+  }
+
+  .dark .users-table td::before {
+    color: #cbd5e1;
+  }
+}
