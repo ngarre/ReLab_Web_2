@@ -7,6 +7,7 @@ import { usePagination } from '../hooks/usePagination';
 import { Pagination } from '../components/Pagination';
 import { SearchBar } from '../components/SearchBar';
 import type { Category } from '../types/Category';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 
 export default function Categories() {
@@ -107,8 +108,20 @@ export default function Categories() {
       <h1 className="page-title">Categorías Disponibles</h1>
       <div className="page-title-separator"></div>
 
-      <p className="page-subtitle">
-        Explora las distintas categorías de productos, sus características y la tasa de comisión asociada a cada una
+      {canManageCategories && (
+        <div className="my-products-hero-actions">
+          <p className="my-products-hero-text">
+            ¿Quieres añadir una nueva categoría a la plataforma?
+          </p>
+
+          <Link to="/categories/new" className="create-product-btn">
+            Crear categoría
+          </Link>
+        </div>
+      )}
+
+      <p className="my-products-section-intro">
+        Explora las distintas categorías de productos, sus características y la tasa de comisión asociada a cada una:
       </p>
 
       <div className="search-filter-area">
@@ -141,11 +154,20 @@ export default function Categories() {
               <p className="empty-message">No se encontraron categorías.</p>
             ) : (
               currentData.map(category => (
-                <CategoryCard
-                  key={category.id}
-                  category={category}
-                  canManage={canManageCategories}
-                />
+                <div key={category.id} className="category-card-item">
+                  <CategoryCard category={category} />
+
+                  {canManageCategories && (
+                    <div className="category-card-actions">
+                      <button type="button" className="category-manage-btn">
+                        Editar
+                      </button>
+                      <button type="button" className="category-delete-btn">
+                        Eliminar
+                      </button>
+                    </div>
+                  )}
+                </div>
               ))
             )}
           </div>

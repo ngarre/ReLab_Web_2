@@ -17,6 +17,7 @@
     background-color: #2d3748;
     border: 1px solid var(--border-dark);
 }
+
 /* --- Header y Título --- */
 
 .card-header {
@@ -30,13 +31,14 @@
 .title-with-icon {
     display: flex;
     align-items: center;
-    gap: 0.5rem; 
+    gap: 0.5rem;
 }
 
 .category-icon {
     /* Aseguramos que el icono tenga el mismo color que el título */
-    color: var(--primary); 
-    min-width: 1.25rem; /* Que no se comprima */
+    color: var(--primary);
+    min-width: 1.25rem;
+    /* Que no se comprima */
     min-height: 1.25rem;
 }
 
@@ -53,6 +55,7 @@
     margin-bottom: 1.5rem;
     line-height: 1.6;
 }
+
 .dark .category-card .card-description {
     color: var(--text-light);
 }
@@ -60,7 +63,8 @@
 /* --- Detalles (Comisión y Fecha) --- */
 .category-card .card-details {
     padding-top: 1rem;
-    border-top: 1px dashed var(--border-light); /* <--- Línea separación */
+    border-top: 1px dashed var(--border-light);
+    /* <--- Línea separación */
 }
 
 .dark .category-card .card-details {
@@ -81,68 +85,75 @@
 }
 
 .dark .category-card .detail-label {
-    color: #a0aec0; 
+    color: #a0aec0;
 }
 
 .category-card .detail-value {
     font-weight: 600;
     color: var(--text-dark);
 }
+
 .dark .category-card .detail-value {
     color: var(--text-light);
 }
 
 .category-card .commission-value {
-    color: #856020; 
+    color: #856020;
 }
 
 .dark .category-card .commission-value {
-    color: #ebb04b; 
+    color: #ebb04b;
 }
 
 /* --- Pastilla de Estado --- */
 .category-card .status-pill {
-  display: inline-block;
-  padding: 0.25rem 0.6rem;
-  border-radius: 9999px; 
-  font-size: 0.75rem;
-  font-weight: 700;
-  text-align: center;
-  letter-spacing: 0.5px;
+    display: inline-block;
+    padding: 0.25rem 0.6rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-align: center;
+    letter-spacing: 0.5px;
 }
 
 .category-card .status-pill.active {
-  background-color: #d1fae5; 
-  color: #065f46; 
+    background-color: #d1fae5;
+    color: #065f46;
 }
 
 .category-card .status-pill.inactive {
-  background-color: #fee2e2; 
-  color: #991b1b; 
+    background-color: #fee2e2;
+    color: #991b1b;
+}
+
+.category-card-item {
+    display: flex;
+    flex-direction: column;
 }
 
 .category-card-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 0.75rem;
-  margin-top: 1rem;
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    margin-top: 0.75rem;
+    margin-bottom: 1.5rem;
 }
 
 .category-manage-btn,
 .category-delete-btn {
-  border: none;
-  border-radius: 10px;
-  padding: 0.65rem 1rem;
-  font: inherit;
-  cursor: pointer;
+    border: none;
+    border-radius: 10px;
+    padding: 0.65rem 1rem;
+    font: inherit;
+    cursor: pointer;
 }
 
 .category-manage-btn {
-  background-color: #f0f0f0;
-  color: #222;
+    background-color: #f0f0f0;
+    color: #222;
 }
 
 .category-delete-btn {
-  background-color: #fdecec;
-  color: #a33a3a;
+    background-color: #fdecec;
+    color: #a33a3a;
 }

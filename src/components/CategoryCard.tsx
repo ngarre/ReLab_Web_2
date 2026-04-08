@@ -5,10 +5,9 @@ import { TagIcon } from './Icons';
 
 interface CategoryCardProps {
   category: Category;
-  canManage?: boolean;
 }
 
-export const CategoryCard: React.FC<CategoryCardProps> = ({ category, canManage = false }) => {
+export const CategoryCard: React.FC<CategoryCardProps> = ({ category }) => {
   const formattedDate = new Date(category.fechaCreacion).toLocaleDateString('es-ES', {
     year: 'numeric',
     month: 'short',
@@ -41,17 +40,6 @@ export const CategoryCard: React.FC<CategoryCardProps> = ({ category, canManage 
           <span className="detail-value">{formattedDate}</span>
         </div>
       </div>
-
-      {canManage && (
-        <div className="category-card-actions">
-          <button type="button" className="category-manage-btn">
-            Editar
-          </button>
-          <button type="button" className="category-delete-btn">
-            Eliminar
-          </button>
-        </div>
-      )}
     </div>
   );
 };
