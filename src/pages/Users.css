@@ -167,6 +167,67 @@
   color: #991b1b;
 }
 
+.users-role-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.users-role-summary-card {
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  padding: 0.7rem 0.9rem;
+  background: var(--surface-light);
+}
+
+.dark .users-role-summary-card {
+  border-color: var(--border-dark);
+  background: #2d3748;
+}
+
+.users-role-summary-card h2 {
+  margin: 0 0 0.25rem 0;
+  font-size: 0.9rem;
+}
+
+.users-role-summary-card p {
+  margin: 0;
+  font-size: 1.35rem;
+  font-weight: 700;
+}
+
+.users-table-row-self {
+  outline: 2px solid rgba(43, 121, 227, 0.12);
+  outline-offset: -2px;
+}
+
+.users-management-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 110px;
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.users-management-pill.allowed {
+  background-color: #dbeafe;
+  color: #1d4ed8;
+}
+
+.users-management-pill.self {
+  background-color: #ede9fe;
+  color: #6d28d9;
+}
+
+.users-management-pill.blocked {
+  background-color: #f3f4f6;
+  color: #4b5563;
+}
+
 @media (max-width: 768px) {
   .users-table {
     min-width: unset;

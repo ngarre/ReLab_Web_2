@@ -11,7 +11,7 @@ import { normalizeText } from '../utils/text';
 import './Users.css';
 
 export default function Users() {
-  const { token } = useAuth();
+  const { token, role, user: currentUser } = useAuth();
 
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
@@ -52,6 +52,23 @@ export default function Users() {
   }, [token]);
 
   const isUserActive = (user: User) => Boolean(user.cuentaActiva);
+  const isOwnAccount = (targetUser: User) => currentUser?.id === targetUser.id;
+
+  const canManageUser = (targetUser: User) => {
+    if (!role) {
+      return false;
+    }
+
+    if (role === 'ADMIN') {
+      return true;
+    }
+
+    if (role === 'GESTOR') {
+      return isOwnAccount(targetUser) || targetUser.role === 'CLIENTE';
+    }
+
+    return false;
+  };
 
   const summary = useMemo(() => {
     const total = users.length;
@@ -59,6 +76,14 @@ export default function Users() {
     const inactive = total - active;
 
     return { total, active, inactive };
+  }, [users]);
+
+  const roleSummary = useMemo(() => {
+    const admin = users.filter((user) => user.role === 'ADMIN').length;
+    const gestor = users.filter((user) => user.role === 'GESTOR').length;
+    const cliente = users.filter((user) => user.role === 'CLIENTE').length;
+
+    return { admin, gestor, cliente };
   }, [users]);
 
   const filteredUsers = useMemo(() => {
@@ -102,8 +127,10 @@ export default function Users() {
       if (aValue === null || aValue === undefined) return 1;
       if (bValue === null || bValue === undefined) return -1;
 
-      const valA = typeof aValue === 'string' ? aValue.toLowerCase().trim() : aValue;
-      const valB = typeof bValue === 'string' ? bValue.toLowerCase().trim() : bValue;
+      const valA =
+        typeof aValue === 'string' ? aValue.toLowerCase().trim() : aValue;
+      const valB =
+        typeof bValue === 'string' ? bValue.toLowerCase().trim() : bValue;
 
       if (valA > valB) comparison = 1;
       else comparison = -1;
@@ -129,8 +156,33 @@ export default function Users() {
       day: 'numeric',
     });
 
-  const getRoleLabel = (role: User['role']) => role;
-  const getStatusLabel = (user: User) => (isUserActive(user) ? 'ACTIVA' : 'INACTIVA');
+  const getRoleLabel = (userRole: User['role']) => userRole;
+  const getStatusLabel = (user: User) =>
+    isUserActive(user) ? 'ACTIVA' : 'INACTIVA';
+
+  const getManagementLabel = (targetUser: User) => {
+    if (isOwnAccount(targetUser)) {
+      return 'Tu cuenta';
+    }
+
+    if (canManageUser(targetUser)) {
+      return 'Gestionable';
+    }
+
+    return 'Sin permiso';
+  };
+
+  const getManagementClassName = (targetUser: User) => {
+    if (isOwnAccount(targetUser)) {
+      return 'users-management-pill self';
+    }
+
+    if (canManageUser(targetUser)) {
+      return 'users-management-pill allowed';
+    }
+
+    return 'users-management-pill blocked';
+  };
 
   return (
     <main className="main-content-area">
@@ -156,6 +208,25 @@ export default function Users() {
           <p>{summary.inactive}</p>
         </article>
       </div>
+
+      {(role === 'ADMIN' || role === 'GESTOR') && (
+        <div className="users-role-summary-grid">
+          <article className="users-role-summary-card">
+            <h2>Usuarios ADMIN</h2>
+            <p>{roleSummary.admin}</p>
+          </article>
+
+          <article className="users-role-summary-card">
+            <h2>Usuarios GESTOR</h2>
+            <p>{roleSummary.gestor}</p>
+          </article>
+
+          <article className="users-role-summary-card">
+            <h2>Usuarios CLIENTE</h2>
+            <p>{roleSummary.cliente}</p>
+          </article>
+        </div>
+      )}
 
       <p className="users-dashboard-intro">
         Busca usuarios, revisa su rol dentro de la plataforma y consulta el estado actual de su cuenta.
@@ -199,12 +270,16 @@ export default function Users() {
                     <th>Rol</th>
                     <th>Estado</th>
                     <th>Alta</th>
+                    <th>Gestión</th>
                   </tr>
                 </thead>
 
                 <tbody>
                   {currentData.map((user) => (
-                    <tr key={user.id}>
+                    <tr
+                      key={user.id}
+                      className={isOwnAccount(user) ? 'users-table-row-self' : ''}
+                    >
                       <td data-label="Nickname" className="users-table-nickname">
                         @{user.nickname}
                       </td>
@@ -239,6 +314,12 @@ export default function Users() {
                       </td>
 
                       <td data-label="Alta">{formatDate(user.fechaAlta)}</td>
+
+                      <td data-label="Gestión">
+                        <span className={getManagementClassName(user)}>
+                          {getManagementLabel(user)}
+                        </span>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
