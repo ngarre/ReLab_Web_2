@@ -229,20 +229,37 @@ export default function ProductsManagement() {
             </p>
 
             <div className="dashboard-summary-grid">
-                <article className="dashboard-summary-card">
+                <article className="dashboard-summary-card dashboard-summary-card-total">
                     <h2>Total</h2>
                     <p>{summary.total}</p>
                 </article>
 
-                <article className="dashboard-summary-card">
+                <article className="dashboard-summary-card dashboard-summary-card-active ">
                     <h2>Activos</h2>
                     <p>{summary.active}</p>
                 </article>
 
-                <article className="dashboard-summary-card">
+                <article className="dashboard-summary-card dashboard-summary-card-inactive">
                     <h2>Inactivos</h2>
                     <p>{summary.inactive}</p>
                 </article>
+            </div>
+
+            <div className="dashboard-category-summary">
+                <h2 className="dashboard-section-title">Productos por categoría</h2>
+
+                {categorySummary.length === 0 ? (
+                    <p className="empty-message">No hay datos de categorías disponibles.</p>
+                ) : (
+                    <div className="dashboard-category-list">
+                        {categorySummary.map((category) => (
+                            <article key={category.name} className="dashboard-category-card">
+                                <h3>{category.name}</h3>
+                                <p>{category.count} productos</p>
+                            </article>
+                        ))}
+                    </div>
+                )}
             </div>
 
             <div className="dashboard-filters-panel">
@@ -339,23 +356,6 @@ export default function ProductsManagement() {
                         </select>
                     </div>
                 </div>
-            </div>
-
-            <div className="dashboard-category-summary">
-                <h2 className="dashboard-section-title">Productos por categoría</h2>
-
-                {categorySummary.length === 0 ? (
-                    <p className="empty-message">No hay datos de categorías disponibles.</p>
-                ) : (
-                    <div className="dashboard-category-list">
-                        {categorySummary.map((category) => (
-                            <article key={category.name} className="dashboard-category-card">
-                                <h3>{category.name}</h3>
-                                <p>{category.count} productos</p>
-                            </article>
-                        ))}
-                    </div>
-                )}
             </div>
 
             {loading && <Loading />}

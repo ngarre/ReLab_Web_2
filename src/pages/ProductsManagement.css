@@ -163,6 +163,18 @@
   color: #a33a3a;
 }
 
+.dashboard-summary-card-total {
+  background: #eefbfd;
+}
+
+.dashboard-summary-card-active {
+  background: #eef8f0;
+}
+
+.dashboard-summary-card-inactive {
+  background: #fdf1f1;
+}
+
 @media (max-width: 900px) {
   .dashboard-filters-row {
     grid-template-columns: 1fr 1fr;
