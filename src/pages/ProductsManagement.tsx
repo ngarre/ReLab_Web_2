@@ -2,14 +2,20 @@ import { useEffect, useMemo, useState } from 'react';
 import { ProductCard } from '../components/ProductCard';
 import { Loading } from '../components/Loading';
 import { ErrorMessage } from '../components/ErrorMessage';
-import { getProducts } from '../services/productService';
+import { deleteProduct, getProducts, updateProduct } from '../services/productService';
+import { useAuth } from '../hooks/useAuth';
 import type { Product } from '../types/Product';
 import './ProductsManagement.css';
 
 export default function ProductsManagement() {
+
+    const { token } = useAuth();
+
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+    const [deletingProductId, setDeletingProductId] = useState<number | null>(null);
+    const [togglingProductId, setTogglingProductId] = useState<number | null>(null);
 
     const [searchTerm, setSearchTerm] = useState('');
     const [ownerFilter, setOwnerFilter] = useState('');
@@ -149,6 +155,70 @@ export default function ProductsManagement() {
         setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
     };
 
+    const handleDelete = async (productId: number) => {
+        if (!token) {
+            setError('No hay sesión activa para eliminar productos.');
+            return;
+        }
+
+        const confirmed = window.confirm('¿Seguro que quieres eliminar este producto?');
+
+        if (!confirmed) {
+            return;
+        }
+
+        setDeletingProductId(productId);
+        setError('');
+
+        try {
+            await deleteProduct(productId, token);
+            setProducts((currentProducts) =>
+                currentProducts.filter((product) => product.id !== productId)
+            );
+        } catch {
+            setError('No se pudo eliminar el producto.');
+        } finally {
+            setDeletingProductId(null);
+        }
+    };
+
+    const handleToggleActive = async (product: Product) => {
+        if (!token) {
+            setError('No hay sesión activa para actualizar productos.');
+            return;
+        }
+
+        setTogglingProductId(product.id);
+        setError('');
+
+        try {
+            await updateProduct(
+                product.id,
+                {
+                    nombre: product.nombre,
+                    descripcion: product.descripcion,
+                    precio: product.precio,
+                    activo: !product.activo,
+                    categoriaId: product.categoria?.id ?? null,
+                    modo: product.modo,
+                },
+                token
+            );
+
+            setProducts((currentProducts) =>
+                currentProducts.map((currentProduct) =>
+                    currentProduct.id === product.id
+                        ? { ...currentProduct, activo: !currentProduct.activo }
+                        : currentProduct
+                )
+            );
+        } catch {
+            setError('No se pudo actualizar el estado del producto.');
+        } finally {
+            setTogglingProductId(null);
+        }
+    };
+
     return (
         <main className="main-content-area">
             <h1 className="page-title">Gestión de Productos</h1>
@@ -159,20 +229,37 @@ export default function ProductsManagement() {
             </p>
 
             <div className="dashboard-summary-grid">
-                <article className="dashboard-summary-card">
+                <article className="dashboard-summary-card dashboard-summary-card-total">
                     <h2>Total</h2>
                     <p>{summary.total}</p>
                 </article>
 
-                <article className="dashboard-summary-card">
+                <article className="dashboard-summary-card dashboard-summary-card-active ">
                     <h2>Activos</h2>
                     <p>{summary.active}</p>
                 </article>
 
-                <article className="dashboard-summary-card">
+                <article className="dashboard-summary-card dashboard-summary-card-inactive">
                     <h2>Inactivos</h2>
                     <p>{summary.inactive}</p>
                 </article>
+            </div>
+
+            <div className="dashboard-category-summary">
+                <h2 className="dashboard-section-title">Productos por categoría</h2>
+
+                {categorySummary.length === 0 ? (
+                    <p className="empty-message">No hay datos de categorías disponibles.</p>
+                ) : (
+                    <div className="dashboard-category-list">
+                        {categorySummary.map((category) => (
+                            <article key={category.name} className="dashboard-category-card">
+                                <h3>{category.name}</h3>
+                                <p>{category.count} productos</p>
+                            </article>
+                        ))}
+                    </div>
+                )}
             </div>
 
             <div className="dashboard-filters-panel">
@@ -271,23 +358,6 @@ export default function ProductsManagement() {
                 </div>
             </div>
 
-            <div className="dashboard-category-summary">
-                <h2 className="dashboard-section-title">Productos por categoría</h2>
-
-                {categorySummary.length === 0 ? (
-                    <p className="empty-message">No hay datos de categorías disponibles.</p>
-                ) : (
-                    <div className="dashboard-category-list">
-                        {categorySummary.map((category) => (
-                            <article key={category.name} className="dashboard-category-card">
-                                <h3>{category.name}</h3>
-                                <p>{category.count} productos</p>
-                            </article>
-                        ))}
-                    </div>
-                )}
-            </div>
-
             {loading && <Loading />}
             {error && <ErrorMessage message={error} />}
 
@@ -302,7 +372,33 @@ export default function ProductsManagement() {
                             <p className="empty-message">No se encontraron productos.</p>
                         ) : (
                             filteredProducts.map((product) => (
-                                <ProductCard key={product.id} product={product} />
+                                <div key={product.id} className="dashboard-product-card-item">
+                                    <ProductCard product={product} />
+
+                                    <div className="dashboard-product-actions">
+                                        <button
+                                            type="button"
+                                            className="dashboard-toggle-product-btn"
+                                            onClick={() => handleToggleActive(product)}
+                                            disabled={togglingProductId === product.id}
+                                        >
+                                            {togglingProductId === product.id
+                                                ? 'Guardando...'
+                                                : product.activo
+                                                    ? 'Desactivar'
+                                                    : 'Activar'}
+                                        </button>
+
+                                        <button
+                                            type="button"
+                                            className="dashboard-delete-product-btn"
+                                            onClick={() => handleDelete(product.id)}
+                                            disabled={deletingProductId === product.id}
+                                        >
+                                            {deletingProductId === product.id ? 'Eliminando...' : 'Eliminar'}
+                                        </button>
+                                    </div>
+                                </div>
                             ))
                         )}
                     </div>
