@@ -7,8 +7,13 @@ import { usePagination } from '../hooks/usePagination';
 import { Pagination } from '../components/Pagination';
 import { SearchBar } from '../components/SearchBar';
 import type { Category } from '../types/Category';
+import { useAuth } from '../hooks/useAuth';
 
 export default function Categories() {
+
+  const { role } = useAuth();
+  const canManageCategories = role === 'ADMIN' || role === 'GESTOR';
+
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -30,7 +35,7 @@ export default function Categories() {
     { key: 'active', label: 'Solo Activas' },
     { key: 'inactive', label: 'Solo Inactivas' },
   ];
-  
+
 
   useEffect(() => {
     setLoading(true);
@@ -136,7 +141,11 @@ export default function Categories() {
               <p className="empty-message">No se encontraron categorías.</p>
             ) : (
               currentData.map(category => (
-                <CategoryCard key={category.id} category={category} />
+                <CategoryCard
+                  key={category.id}
+                  category={category}
+                  canManage={canManageCategories}
+                />
               ))
             )}
           </div>
