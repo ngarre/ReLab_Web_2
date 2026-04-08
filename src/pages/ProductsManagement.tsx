@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { ProductCard } from '../components/ProductCard';
+import { CategoryUsageSummary } from '../components/CategoryUsageSummary';
 import { Loading } from '../components/Loading';
 import { ErrorMessage } from '../components/ErrorMessage';
 import { deleteProduct, getProducts, updateProduct } from '../services/productService';
@@ -245,22 +246,10 @@ export default function ProductsManagement() {
                 </article>
             </div>
 
-            <div className="dashboard-category-summary">
-                <h2 className="dashboard-section-title">Productos por categoría</h2>
-
-                {categorySummary.length === 0 ? (
-                    <p className="empty-message">No hay datos de categorías disponibles.</p>
-                ) : (
-                    <div className="dashboard-category-list">
-                        {categorySummary.map((category) => (
-                            <article key={category.name} className="dashboard-category-card">
-                                <h3>{category.name}</h3>
-                                <p>{category.count} productos</p>
-                            </article>
-                        ))}
-                    </div>
-                )}
-            </div>
+            <CategoryUsageSummary
+                title="Productos por categoría"
+                items={categorySummary}
+            />
 
             <div className="dashboard-filters-panel">
                 <div className="dashboard-filters-row">

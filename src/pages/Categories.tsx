@@ -1,12 +1,15 @@
 import { useEffect, useState, useMemo } from 'react';
 import { getCategories, deleteCategory } from '../services/categoryService';
+import { getProducts } from '../services/productService';
 import { CategoryCard } from '../components/CategoryCard';
+import { CategoryUsageSummary } from '../components/CategoryUsageSummary';
 import { Loading } from '../components/Loading';
 import { ErrorMessage } from '../components/ErrorMessage';
 import { usePagination } from '../hooks/usePagination';
 import { Pagination } from '../components/Pagination';
 import { SearchBar } from '../components/SearchBar';
 import type { Category } from '../types/Category';
+import type { Product } from '../types/Product';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import './Categories.css';
@@ -16,6 +19,7 @@ export default function Categories() {
   const canManageCategories = role === 'ADMIN' || role === 'GESTOR';
 
   const [categories, setCategories] = useState<Category[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [actionMessage, setActionMessage] = useState('');
@@ -41,11 +45,33 @@ export default function Categories() {
     setLoading(true);
     setError('');
 
-    getCategories()
-      .then(data => setCategories(data))
-      .catch(() => setError('No se pudo cargar el listado de categorías.'))
+    Promise.all([getCategories(), getProducts()])
+      .then(([categoriesData, productsData]) => {
+        setCategories(categoriesData);
+        setProducts(productsData);
+      })
+      .catch(() => setError('No se pudo cargar el dashboard de categorías.'))
       .finally(() => setLoading(false));
   }, []);
+
+  const summary = useMemo(() => {
+    const total = categories.length;
+    const active = categories.filter((category) => category.activa).length;
+    const inactive = total - active;
+
+    return { total, active, inactive };
+  }, [categories]);
+
+  const categoryUsageSummary = useMemo(() => {
+    return categories
+      .map((category) => ({
+        name: category.nombre,
+        count: products.filter(
+          (product) => product.categoria?.id === category.id
+        ).length,
+      }))
+      .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name, 'es'));
+  }, [categories, products]);
 
   const filteredCategories = useMemo(() => {
     let result = [...categories];
@@ -116,7 +142,7 @@ export default function Categories() {
         currentCategories.filter((category) => category.id !== categoryId)
       );
     } catch {
-      setActionMessage('No se pudo eliminar la categoría.  Comprueba que no esté en uso por algún producto.');
+      setActionMessage('No se puede eliminar una categoría que está en uso por algún producto.');
     } finally {
       setDeletingCategoryId(null);
     }
@@ -124,19 +150,46 @@ export default function Categories() {
 
   return (
     <main className="main-content-area">
-      <h1 className="page-title">Categorías Disponibles</h1>
+      <h1 className="page-title">Gestión de Categorías</h1>
       <div className="page-title-separator"></div>
 
       {canManageCategories && (
-        <div className="my-products-hero-actions">
-          <p className="my-products-hero-text">
+        <div className="categories-hero-actions">
+          <p className="categories-hero-text">
             ¿Quieres añadir una nueva categoría a la plataforma?
           </p>
 
-          <Link to="/categories/new" className="create-product-btn">
+          <Link to="/categories/new" className="categories-create-btn">
             Crear categoría
           </Link>
         </div>
+      )}
+
+      {canManageCategories && (
+        <div className="dashboard-summary-grid">
+          <article className="dashboard-summary-card dashboard-summary-card-total">
+            <h2>Total</h2>
+            <p>{summary.total}</p>
+          </article>
+
+          <article className="dashboard-summary-card dashboard-summary-card-active">
+            <h2>Activas</h2>
+            <p>{summary.active}</p>
+          </article>
+
+          <article className="dashboard-summary-card dashboard-summary-card-inactive">
+            <h2>Inactivas</h2>
+            <p>{summary.inactive}</p>
+          </article>
+        </div>
+      )}
+
+      {canManageCategories && (
+        <CategoryUsageSummary
+          title="Productos por categoría"
+          items={categoryUsageSummary}
+          emptyMessage="No hay categorías ni productos disponibles."
+        />
       )}
 
       <p className="my-products-section-intro">
