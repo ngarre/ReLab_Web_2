@@ -3,10 +3,21 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { Loading } from '../components/Loading';
 import { ErrorMessage } from '../components/ErrorMessage';
 import { useAuth } from '../hooks/useAuth';
+import { getCategories } from '../services/categoryService';
 import { getProductById, updateProduct } from '../services/productService';
+import type { Category } from '../types/Category';
 import type { Product } from '../types/Product';
 import type { ProductUpdate } from '../types/ProductUpdate';
 import './EditProduct.css';
+
+interface EditProductFormState {
+  nombre: string;
+  descripcion: string;
+  precio: string;
+  activo: boolean;
+  categoriaId: string;
+  imagen?: string | null;
+}
 
 export default function EditProduct() {
   const { id } = useParams<{ id: string }>();
@@ -14,12 +25,14 @@ export default function EditProduct() {
   const { user, token, role } = useAuth();
 
   const [product, setProduct] = useState<Product | null>(null);
-  const [formData, setFormData] = useState<ProductUpdate>({
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [formData, setFormData] = useState<EditProductFormState>({
     nombre: '',
     descripcion: '',
-    precio: 0,
+    precio: '',
     activo: true,
-    categoriaId: null,
+    categoriaId: '',
+    imagen: null,
   });
 
   const [loading, setLoading] = useState(true);
@@ -37,16 +50,17 @@ export default function EditProduct() {
     setLoading(true);
     setError('');
 
-    getProductById(Number(id))
-      .then((data) => {
-        setProduct(data);
+    Promise.all([getProductById(Number(id)), getCategories()])
+      .then(([productData, categoriesData]) => {
+        setProduct(productData);
+        setCategories(categoriesData.filter((category) => category.activa));
         setFormData({
-          nombre: data.nombre || '',
-          descripcion: data.descripcion || '',
-          precio: data.precio || 0,
-          activo: data.activo,
-          categoriaId: data.categoria?.id ?? null,
-          modo: data.modo,
+          nombre: productData.nombre || '',
+          descripcion: productData.descripcion || '',
+          precio: String(productData.precio ?? ''),
+          activo: productData.activo,
+          categoriaId: String(productData.categoria?.id ?? ''),
+          imagen: null,
         });
       })
       .catch(() => {
@@ -71,7 +85,7 @@ export default function EditProduct() {
 
     setFormData((current) => ({
       ...current,
-      [name]: name === 'precio' ? Number(value) : value,
+      [name]: value,
     }));
   };
 
@@ -81,6 +95,15 @@ export default function EditProduct() {
     setFormData((current) => ({
       ...current,
       [name]: checked,
+    }));
+  };
+
+  const handleCategoryChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const { value } = event.currentTarget;
+
+    setFormData((current) => ({
+      ...current,
+      categoriaId: value,
     }));
   };
 
@@ -113,19 +136,34 @@ export default function EditProduct() {
       return;
     }
 
+    if (!formData.categoriaId) {
+      setError('Debes seleccionar una categoría.');
+      return;
+    }
+
+    if (formData.precio.trim() === '') {
+      setError('Debes indicar un precio.');
+      return;
+    }
+
     setSaving(true);
     setError('');
 
-    try {
-      await updateProduct(
-        Number(id),
-        {
-          ...formData,
-          modo: product.modo,
-        },
-        token
-      );
+    const payload: ProductUpdate = {
+      nombre: formData.nombre,
+      descripcion: formData.descripcion,
+      precio: Number(formData.precio),
+      activo: formData.activo,
+      categoriaId: Number(formData.categoriaId),
+      modo: product.modo,
+    };
 
+    if (formData.imagen) {
+      payload.imagen = formData.imagen;
+    }
+
+    try {
+      await updateProduct(Number(id), payload, token);
       navigate('/my-products');
     } catch {
       setError('No se pudo actualizar el producto.');
@@ -194,6 +232,24 @@ export default function EditProduct() {
               onChange={handleTextChange}
               required
             />
+          </div>
+
+          <div className="edit-product-field">
+            <label htmlFor="categoriaId">Categoría</label>
+            <select
+              id="categoriaId"
+              name="categoriaId"
+              value={formData.categoriaId}
+              onChange={handleCategoryChange}
+              required
+            >
+              <option value="">Selecciona una categoría</option>
+              {categories.map((category) => (
+                <option key={category.id} value={String(category.id)}>
+                  {category.nombre}
+                </option>
+              ))}
+            </select>
           </div>
 
           <div className="edit-product-checkbox">

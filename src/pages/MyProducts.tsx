@@ -135,10 +135,19 @@ export default function MyProducts() {
       <h1 className="page-title">Mis Productos</h1>
       <div className="page-title-separator"></div>
 
-      <p className="page-subtitle">
-        Aquí podrás ver y gestionar los productos asociados a tu cuenta.
-      </p>
+      <div className="my-products-hero-actions">
+        <p className="my-products-hero-text">
+          ¿Quieres publicar un nuevo producto?
+        </p>
 
+        <Link to="/my-products/new" className="create-product-btn">
+          Crear producto
+        </Link>
+      </div>
+
+      <p className="my-products-section-intro">
+        O gestiona tus productos ya existentes:
+      </p>
       <div className="search-filter-area">
         <SearchBar
           placeholder="Buscar por nombre o descripción..."
