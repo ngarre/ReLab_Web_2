@@ -2,14 +2,19 @@ import { useEffect, useMemo, useState } from 'react';
 import { ProductCard } from '../components/ProductCard';
 import { Loading } from '../components/Loading';
 import { ErrorMessage } from '../components/ErrorMessage';
-import { getProducts } from '../services/productService';
+import { deleteProduct, getProducts } from '../services/productService';
+import { useAuth } from '../hooks/useAuth';
 import type { Product } from '../types/Product';
 import './ProductsManagement.css';
 
 export default function ProductsManagement() {
+
+    const { token } = useAuth();
+
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+    const [deletingProductId, setDeletingProductId] = useState<number | null>(null);
 
     const [searchTerm, setSearchTerm] = useState('');
     const [ownerFilter, setOwnerFilter] = useState('');
@@ -147,6 +152,33 @@ export default function ProductsManagement() {
 
     const toggleSortDirection = () => {
         setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+    };
+
+    const handleDelete = async (productId: number) => {
+        if (!token) {
+            setError('No hay sesión activa para eliminar productos.');
+            return;
+        }
+
+        const confirmed = window.confirm('¿Seguro que quieres eliminar este producto?');
+
+        if (!confirmed) {
+            return;
+        }
+
+        setDeletingProductId(productId);
+        setError('');
+
+        try {
+            await deleteProduct(productId, token);
+            setProducts((currentProducts) =>
+                currentProducts.filter((product) => product.id !== productId)
+            );
+        } catch {
+            setError('No se pudo eliminar el producto.');
+        } finally {
+            setDeletingProductId(null);
+        }
     };
 
     return (
@@ -302,7 +334,20 @@ export default function ProductsManagement() {
                             <p className="empty-message">No se encontraron productos.</p>
                         ) : (
                             filteredProducts.map((product) => (
-                                <ProductCard key={product.id} product={product} />
+                                <div key={product.id} className="dashboard-product-card-item">
+                                    <ProductCard product={product} />
+
+                                    <div className="dashboard-product-actions">
+                                        <button
+                                            type="button"
+                                            className="dashboard-delete-product-btn"
+                                            onClick={() => handleDelete(product.id)}
+                                            disabled={deletingProductId === product.id}
+                                        >
+                                            {deletingProductId === product.id ? 'Eliminando...' : 'Eliminar'}
+                                        </button>
+                                    </div>
+                                </div>
                             ))
                         )}
                     </div>
