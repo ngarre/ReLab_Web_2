@@ -1,26 +1,35 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Loading } from '../components/Loading';
 import { ErrorMessage } from '../components/ErrorMessage';
-import { SearchBar } from '../components/SearchBar';
 import { usePagination } from '../hooks/usePagination';
 import { Pagination } from '../components/Pagination';
 import { useAuth } from '../hooks/useAuth';
-import { getUsers } from '../services/userService';
+import {
+  deleteUserAccount,
+  getUsers,
+  updateUser,
+} from '../services/userService';
 import type { User } from '../types/User';
 import { normalizeText } from '../utils/text';
 import './Users.css';
 
 export default function Users() {
-  const { token, role, user: currentUser } = useAuth();
+  const { token, role, user: currentUser, logout } = useAuth();
+  const navigate = useNavigate();
 
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [actionMessage, setActionMessage] = useState('');
+  const [deletingUserId, setDeletingUserId] = useState<number | null>(null);
+  const [togglingUserId, setTogglingUserId] = useState<number | null>(null);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [sortKey, setSortKey] = useState('nickname');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
-  const [filterKey, setFilterKey] = useState('all');
+  const [statusFilterKey, setStatusFilterKey] = useState('all');
+  const [roleFilterKey, setRoleFilterKey] = useState('all');
 
   const sortOptions = [
     { key: 'nickname', label: 'Nickname (A-Z)' },
@@ -28,13 +37,17 @@ export default function Users() {
     { key: 'fechaAlta', label: 'Fecha de alta' },
   ];
 
-  const filterOptions = [
+  const statusFilterOptions = [
     { key: 'all', label: 'Todos los usuarios' },
     { key: 'active', label: 'Solo activos' },
     { key: 'inactive', label: 'Solo inactivos' },
-    { key: 'admin', label: 'Solo ADMIN' },
-    { key: 'gestor', label: 'Solo GESTOR' },
-    { key: 'cliente', label: 'Solo CLIENTE' },
+  ];
+
+  const roleFilterOptions = [
+    { key: 'all', label: 'Todos los roles' },
+    { key: 'ADMIN', label: 'ADMIN' },
+    { key: 'GESTOR', label: 'GESTOR' },
+    { key: 'CLIENTE', label: 'CLIENTE' },
   ];
 
   useEffect(() => {
@@ -51,10 +64,22 @@ export default function Users() {
       .finally(() => setLoading(false));
   }, [token]);
 
+  useEffect(() => {
+    if (!actionMessage) {
+      return;
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      setActionMessage('');
+    }, 4000);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [actionMessage]);
+
   const isUserActive = (user: User) => Boolean(user.cuentaActiva);
   const isOwnAccount = (targetUser: User) => currentUser?.id === targetUser.id;
 
-  const canManageUser = (targetUser: User) => {
+  const canExecuteActions = (targetUser: User) => {
     if (!role) {
       return false;
     }
@@ -63,11 +88,123 @@ export default function Users() {
       return true;
     }
 
-    if (role === 'GESTOR') {
-      return isOwnAccount(targetUser) || targetUser.role === 'CLIENTE';
+    return isOwnAccount(targetUser);
+  };
+
+  const isPendingBackendCase = (targetUser: User) =>
+    role === 'GESTOR' && !isOwnAccount(targetUser) && targetUser.role === 'CLIENTE';
+
+  const getActionErrorMessage = (rawError: unknown, fallbackMessage: string) => {
+    if (rawError instanceof Error && rawError.message.includes('403')) {
+      return 'No tienes permisos suficientes para completar esta acción.';
     }
 
-    return false;
+    return fallbackMessage;
+  };
+
+  const handleToggleAccount = async (targetUser: User) => {
+    if (!token) {
+      setError('No hay sesión activa para actualizar cuentas.');
+      return;
+    }
+
+    if (!canExecuteActions(targetUser)) {
+      setError('Esta acción todavía no está disponible para tu rol.');
+      return;
+    }
+
+    const nextActiveState = !isUserActive(targetUser);
+
+    setTogglingUserId(targetUser.id);
+    setError('');
+    setActionMessage('');
+
+    try {
+      await updateUser(
+        targetUser.id,
+        {
+          cuentaActiva: nextActiveState,
+        },
+        token
+      );
+
+      setUsers((currentUsers) =>
+        currentUsers.map((user) =>
+          user.id === targetUser.id
+            ? { ...user, cuentaActiva: nextActiveState }
+            : user
+        )
+      );
+
+      if (isOwnAccount(targetUser) && !nextActiveState) {
+        logout();
+        navigate('/login', { replace: true });
+        return;
+      }
+
+      setActionMessage(
+        nextActiveState
+          ? 'La cuenta se ha activado correctamente.'
+          : 'La cuenta se ha desactivado correctamente.'
+      );
+    } catch (rawError) {
+      setError(
+        getActionErrorMessage(
+          rawError,
+          nextActiveState
+            ? 'No se pudo activar la cuenta.'
+            : 'No se pudo desactivar la cuenta.'
+        )
+      );
+    } finally {
+      setTogglingUserId(null);
+    }
+  };
+
+  const handleDeleteAccount = async (targetUser: User) => {
+    if (!token) {
+      setError('No hay sesión activa para eliminar cuentas.');
+      return;
+    }
+
+    if (!canExecuteActions(targetUser)) {
+      setError('Esta acción todavía no está disponible para tu rol.');
+      return;
+    }
+
+    const confirmed = window.confirm(
+      isOwnAccount(targetUser)
+        ? '¿Seguro que quieres eliminar tu cuenta? También se borrarán tus datos relacionados.'
+        : '¿Seguro que quieres eliminar esta cuenta? También se borrarán sus datos relacionados.'
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    setDeletingUserId(targetUser.id);
+    setError('');
+    setActionMessage('');
+
+    try {
+      await deleteUserAccount(targetUser.id, token);
+
+      if (isOwnAccount(targetUser)) {
+        logout();
+        navigate('/login', { replace: true });
+        return;
+      }
+
+      setUsers((currentUsers) =>
+        currentUsers.filter((user) => user.id !== targetUser.id)
+      );
+
+      setActionMessage('La cuenta se ha eliminado correctamente.');
+    } catch (rawError) {
+      setError(getActionErrorMessage(rawError, 'No se pudo eliminar la cuenta.'));
+    } finally {
+      setDeletingUserId(null);
+    }
   };
 
   const summary = useMemo(() => {
@@ -105,16 +242,14 @@ export default function Users() {
       });
     }
 
-    if (filterKey === 'active') {
+    if (statusFilterKey === 'active') {
       result = result.filter((user) => isUserActive(user));
-    } else if (filterKey === 'inactive') {
+    } else if (statusFilterKey === 'inactive') {
       result = result.filter((user) => !isUserActive(user));
-    } else if (filterKey === 'admin') {
-      result = result.filter((user) => user.role === 'ADMIN');
-    } else if (filterKey === 'gestor') {
-      result = result.filter((user) => user.role === 'GESTOR');
-    } else if (filterKey === 'cliente') {
-      result = result.filter((user) => user.role === 'CLIENTE');
+    }
+
+    if (roleFilterKey !== 'all') {
+      result = result.filter((user) => user.role === roleFilterKey);
     }
 
     result.sort((a, b) => {
@@ -139,15 +274,10 @@ export default function Users() {
     });
 
     return result;
-  }, [users, searchTerm, sortKey, sortDirection, filterKey]);
+  }, [users, searchTerm, sortKey, sortDirection, statusFilterKey, roleFilterKey]);
 
-  const {
-    currentPage,
-    totalPages,
-    currentData,
-    nextPage,
-    prevPage,
-  } = usePagination(filteredUsers, 8);
+  const { currentPage, totalPages, currentData, nextPage, prevPage } =
+    usePagination(filteredUsers, 8);
 
   const formatDate = (date: string) =>
     new Date(date).toLocaleDateString('es-ES', {
@@ -156,32 +286,56 @@ export default function Users() {
       day: 'numeric',
     });
 
-  const getRoleLabel = (userRole: User['role']) => userRole;
-  const getStatusLabel = (user: User) =>
-    isUserActive(user) ? 'ACTIVA' : 'INACTIVA';
+  const renderActionCell = (targetUser: User) => {
+    const isToggling = togglingUserId === targetUser.id;
+    const isDeleting = deletingUserId === targetUser.id;
+    const isBusy = isToggling || isDeleting;
 
-  const getManagementLabel = (targetUser: User) => {
-    if (isOwnAccount(targetUser)) {
-      return 'Tu cuenta';
+    if (canExecuteActions(targetUser)) {
+      return (
+        <div className="users-row-actions">
+          <button
+            type="button"
+            className="users-toggle-btn"
+            onClick={() => handleToggleAccount(targetUser)}
+            disabled={isBusy}
+          >
+            {isToggling
+              ? 'Guardando...'
+              : isUserActive(targetUser)
+                ? 'Desactivar'
+                : 'Activar'}
+          </button>
+
+          <button
+            type="button"
+            className="users-delete-btn"
+            onClick={() => handleDeleteAccount(targetUser)}
+            disabled={isBusy}
+          >
+            {isDeleting ? 'Eliminando...' : 'Eliminar'}
+          </button>
+        </div>
+      );
     }
 
-    if (canManageUser(targetUser)) {
-      return 'Gestionable';
+    if (isPendingBackendCase(targetUser)) {
+      return (
+        <div className="users-row-actions users-row-actions-pending">
+          <button type="button" className="users-toggle-btn" disabled>
+            {isUserActive(targetUser) ? 'Desactivar' : 'Activar'}
+          </button>
+
+          <button type="button" className="users-delete-btn" disabled>
+            Eliminar
+          </button>
+
+          <span className="users-actions-helper">Pendiente backend</span>
+        </div>
+      );
     }
 
-    return 'Sin permiso';
-  };
-
-  const getManagementClassName = (targetUser: User) => {
-    if (isOwnAccount(targetUser)) {
-      return 'users-management-pill self';
-    }
-
-    if (canManageUser(targetUser)) {
-      return 'users-management-pill allowed';
-    }
-
-    return 'users-management-pill blocked';
+    return <span className="users-management-pill blocked">Sin permiso</span>;
   };
 
   return (
@@ -232,20 +386,90 @@ export default function Users() {
         Busca usuarios, revisa su rol dentro de la plataforma y consulta el estado actual de su cuenta.
       </p>
 
-      <div className="search-filter-area">
-        <SearchBar
-          placeholder="Nickname, nombre, apellido o email..."
-          searchTerm={searchTerm}
-          setSearchTerm={setSearchTerm}
-          sortKey={sortKey}
-          setSortKey={setSortKey}
-          sortDirection={sortDirection}
-          setSortDirection={setSortDirection}
-          filterKey={filterKey}
-          setFilterKey={setFilterKey}
-          sortOptions={sortOptions}
-          filterOptions={filterOptions}
-        />
+      <div className="users-toolbar">
+        <div className="users-toolbar-row users-toolbar-row-top">
+          <div className="control-group search-input-group">
+            <label htmlFor="users-search-term" className="control-label">
+              Buscar
+            </label>
+            <input
+              id="users-search-term"
+              type="text"
+              placeholder="Nickname, nombre, apellido o email..."
+              value={searchTerm}
+              onChange={(event) => setSearchTerm(event.target.value)}
+              className="search-input"
+            />
+          </div>
+
+          <div className="control-group sort-select-group">
+            <label htmlFor="users-sort-select" className="control-label">
+              Ordenar por:
+            </label>
+            <select
+              id="users-sort-select"
+              value={sortKey}
+              onChange={(event) => setSortKey(event.target.value)}
+              className="select-control"
+            >
+              {sortOptions.map((option) => (
+                <option key={option.key} value={option.key}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <button
+            type="button"
+            onClick={() =>
+              setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')
+            }
+            className="sort-toggle-button"
+            title={`Cambiar a orden ${sortDirection === 'asc' ? 'Descendente' : 'Ascendente'
+              }`}
+          >
+            {sortDirection === 'asc' ? '▲ Ascendente' : '▼ Descendente'}
+          </button>
+        </div>
+
+        <div className="users-toolbar-row users-toolbar-row-bottom">
+          <div className="control-group filter-select-group">
+            <label htmlFor="users-status-filter-select" className="control-label">
+              Estado:
+            </label>
+            <select
+              id="users-status-filter-select"
+              value={statusFilterKey}
+              onChange={(event) => setStatusFilterKey(event.target.value)}
+              className="select-control"
+            >
+              {statusFilterOptions.map((option) => (
+                <option key={option.key} value={option.key}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="control-group filter-select-group">
+            <label htmlFor="role-filter-select" className="control-label">
+              Rol:
+            </label>
+            <select
+              id="role-filter-select"
+              value={roleFilterKey}
+              onChange={(event) => setRoleFilterKey(event.target.value)}
+              className="select-control"
+            >
+              {roleFilterOptions.map((option) => (
+                <option key={option.key} value={option.key}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
       </div>
 
       {loading && <Loading />}
@@ -253,6 +477,10 @@ export default function Users() {
 
       {!loading && !error && (
         <>
+          {actionMessage && (
+            <p className="users-feedback-message">{actionMessage}</p>
+          )}
+
           <p className="results-count">
             Mostrando {filteredUsers.length} de {users.length} usuarios.
           </p>
@@ -270,7 +498,7 @@ export default function Users() {
                     <th>Rol</th>
                     <th>Estado</th>
                     <th>Alta</th>
-                    <th>Gestión</th>
+                    <th>Acciones</th>
                   </tr>
                 </thead>
 
@@ -280,8 +508,13 @@ export default function Users() {
                       key={user.id}
                       className={isOwnAccount(user) ? 'users-table-row-self' : ''}
                     >
-                      <td data-label="Nickname" className="users-table-nickname">
-                        @{user.nickname}
+                      <td data-label="Nickname">
+                        <div className="users-table-nickname-block">
+                          <span className="users-table-nickname">@{user.nickname}</span>
+                          {isOwnAccount(user) && (
+                            <span className="users-self-badge">Tu cuenta</span>
+                          )}
+                        </div>
                       </td>
 
                       <td data-label="Usuario">
@@ -300,7 +533,7 @@ export default function Users() {
                         <span
                           className={`users-role-badge users-role-badge-${user.role.toLowerCase()}`}
                         >
-                          {getRoleLabel(user.role)}
+                          {user.role}
                         </span>
                       </td>
 
@@ -309,17 +542,13 @@ export default function Users() {
                           className={`users-status-pill ${isUserActive(user) ? 'active' : 'inactive'
                             }`}
                         >
-                          {getStatusLabel(user)}
+                          {isUserActive(user) ? 'ACTIVA' : 'INACTIVA'}
                         </span>
                       </td>
 
                       <td data-label="Alta">{formatDate(user.fechaAlta)}</td>
 
-                      <td data-label="Gestión">
-                        <span className={getManagementClassName(user)}>
-                          {getManagementLabel(user)}
-                        </span>
-                      </td>
+                      <td data-label="Acciones">{renderActionCell(user)}</td>
                     </tr>
                   ))}
                 </tbody>
