@@ -1,12 +1,15 @@
 import { useEffect, useState, useMemo } from 'react';
 import { getCategories, deleteCategory } from '../services/categoryService';
+import { getProducts } from '../services/productService';
 import { CategoryCard } from '../components/CategoryCard';
+import { CategoryUsageSummary } from '../components/CategoryUsageSummary';
 import { Loading } from '../components/Loading';
 import { ErrorMessage } from '../components/ErrorMessage';
 import { usePagination } from '../hooks/usePagination';
 import { Pagination } from '../components/Pagination';
 import { SearchBar } from '../components/SearchBar';
 import type { Category } from '../types/Category';
+import type { Product } from '../types/Product';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import './Categories.css';
@@ -16,6 +19,7 @@ export default function Categories() {
   const canManageCategories = role === 'ADMIN' || role === 'GESTOR';
 
   const [categories, setCategories] = useState<Category[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [actionMessage, setActionMessage] = useState('');
@@ -41,9 +45,12 @@ export default function Categories() {
     setLoading(true);
     setError('');
 
-    getCategories()
-      .then(data => setCategories(data))
-      .catch(() => setError('No se pudo cargar el listado de categorías.'))
+    Promise.all([getCategories(), getProducts()])
+      .then(([categoriesData, productsData]) => {
+        setCategories(categoriesData);
+        setProducts(productsData);
+      })
+      .catch(() => setError('No se pudo cargar el dashboard de categorías.'))
       .finally(() => setLoading(false));
   }, []);
 
@@ -54,6 +61,17 @@ export default function Categories() {
 
     return { total, active, inactive };
   }, [categories]);
+
+  const categoryUsageSummary = useMemo(() => {
+    return categories
+      .map((category) => ({
+        name: category.nombre,
+        count: products.filter(
+          (product) => product.categoria?.id === category.id
+        ).length,
+      }))
+      .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name, 'es'));
+  }, [categories, products]);
 
   const filteredCategories = useMemo(() => {
     let result = [...categories];
@@ -163,6 +181,12 @@ export default function Categories() {
           <p>{summary.inactive}</p>
         </article>
       </div>
+
+      <CategoryUsageSummary
+        title="Productos por categoría"
+        items={categoryUsageSummary}
+        emptyMessage="No hay categorías ni productos disponibles."
+      />
 
       <p className="my-products-section-intro">
         Explora las distintas categorías de productos, sus características y la tasa de comisión asociada a cada una:
