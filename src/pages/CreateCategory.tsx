@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ErrorMessage } from '../components/ErrorMessage';
+import { Loading } from '../components/Loading';
 import { useAuth } from '../hooks/useAuth';
-import { createCategory } from '../services/categoryService';
-import type { CategoryCreate } from '../types/CategoryCreate';
+import { createCategory, getCategories } from '../services/categoryService';
+import type { Category } from '../types/Category';
 import './EditProduct.css';
 
 interface CreateCategoryFormState {
@@ -17,6 +18,9 @@ export default function CreateCategory() {
     const navigate = useNavigate();
     const { token } = useAuth();
 
+    const [existingCategories, setExistingCategories] = useState<Category[]>([]);
+    const [loadingCategories, setLoadingCategories] = useState(true);
+
     const [formData, setFormData] = useState<CreateCategoryFormState>({
         nombre: '',
         descripcion: '',
@@ -26,11 +30,30 @@ export default function CreateCategory() {
 
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState('');
+    const [nameError, setNameError] = useState('');
+
+    useEffect(() => {
+        setLoadingCategories(true);
+        setError('');
+
+        getCategories()
+            .then((data) => setExistingCategories(data))
+            .catch(() => {
+                setError('No se pudieron cargar las categorías existentes.');
+            })
+            .finally(() => setLoadingCategories(false));
+    }, []);
 
     const handleTextChange = (
         event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
     ) => {
         const { name, value } = event.currentTarget;
+
+        if (name === 'nombre') {
+            setNameError('');
+        }
+
+        setError('');
 
         setFormData((current) => ({
             ...current,
@@ -55,8 +78,38 @@ export default function CreateCategory() {
             return;
         }
 
-        if (formData.tasaComision.trim() === '') {
+        const trimmedName = formData.nombre.trim();
+        const trimmedDescription = formData.descripcion.trim();
+        const trimmedCommission = formData.tasaComision.trim();
+
+        if (!trimmedName) {
+            setError('Debes indicar un nombre para la categoría.');
+            return;
+        }
+
+        const duplicatedName = existingCategories.some(
+            (category) => category.nombre.trim().toLowerCase() === trimmedName.toLowerCase()
+        );
+
+        if (duplicatedName) {
+            setNameError('Ya existe una categoría con ese nombre.');
+            return;
+        }
+
+        if (!trimmedCommission) {
             setError('Debes indicar una tasa de comisión.');
+            return;
+        }
+
+        const parsedCommission = Number(trimmedCommission);
+
+        if (Number.isNaN(parsedCommission)) {
+            setError('La tasa de comisión debe ser un número válido.');
+            return;
+        }
+
+        if (parsedCommission < 0 || parsedCommission > 1) {
+            setError('La tasa de comisión debe estar entre 0 y 1.');
             return;
         }
 
@@ -66,10 +119,10 @@ export default function CreateCategory() {
         try {
             await createCategory(
                 {
-                    nombre: formData.nombre,
-                    descripcion: formData.descripcion,
+                    nombre: trimmedName,
+                    descripcion: trimmedDescription,
                     activa: formData.activa,
-                    tasaComision: Number(formData.tasaComision),
+                    tasaComision: parsedCommission,
                 },
                 token
             );
@@ -81,6 +134,10 @@ export default function CreateCategory() {
             setSaving(false);
         }
     };
+
+    if (loadingCategories) {
+        return <Loading />;
+    }
 
     return (
         <main className="main-content-area">
@@ -105,6 +162,7 @@ export default function CreateCategory() {
                             onChange={handleTextChange}
                             required
                         />
+                        {nameError && <p className="form-field-error">{nameError}</p>}
                     </div>
 
                     <div className="edit-product-field">
@@ -119,12 +177,13 @@ export default function CreateCategory() {
                     </div>
 
                     <div className="edit-product-field">
-                        <label htmlFor="tasaComision">Tasa de comisión (%)</label>
+                        <label htmlFor="tasaComision">Tasa de comisión (entre 0 y 1)</label>
                         <input
                             id="tasaComision"
                             name="tasaComision"
                             type="number"
                             min="0"
+                            max="1"
                             step="0.01"
                             value={formData.tasaComision}
                             onChange={handleTextChange}
