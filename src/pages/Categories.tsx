@@ -47,6 +47,14 @@ export default function Categories() {
       .finally(() => setLoading(false));
   }, []);
 
+  const summary = useMemo(() => {
+    const total = categories.length;
+    const active = categories.filter((category) => category.activa).length;
+    const inactive = total - active;
+
+    return { total, active, inactive };
+  }, [categories]);
+
   const filteredCategories = useMemo(() => {
     let result = [...categories];
 
@@ -116,7 +124,7 @@ export default function Categories() {
         currentCategories.filter((category) => category.id !== categoryId)
       );
     } catch {
-      setActionMessage('No se pudo eliminar la categoría.  Comprueba que no esté en uso por algún producto.');
+      setActionMessage('No se puede eliminar una categoría que está en uso por algún producto.');
     } finally {
       setDeletingCategoryId(null);
     }
@@ -124,7 +132,7 @@ export default function Categories() {
 
   return (
     <main className="main-content-area">
-      <h1 className="page-title">Categorías Disponibles</h1>
+      <h1 className="page-title">Gestión de Categorías</h1>
       <div className="page-title-separator"></div>
 
       {canManageCategories && (
@@ -138,6 +146,23 @@ export default function Categories() {
           </Link>
         </div>
       )}
+
+      <div className="dashboard-summary-grid">
+        <article className="dashboard-summary-card dashboard-summary-card-total">
+          <h2>Total</h2>
+          <p>{summary.total}</p>
+        </article>
+
+        <article className="dashboard-summary-card dashboard-summary-card-active">
+          <h2>Activas</h2>
+          <p>{summary.active}</p>
+        </article>
+
+        <article className="dashboard-summary-card dashboard-summary-card-inactive">
+          <h2>Inactivas</h2>
+          <p>{summary.inactive}</p>
+        </article>
+      </div>
 
       <p className="my-products-section-intro">
         Explora las distintas categorías de productos, sus características y la tasa de comisión asociada a cada una:
