@@ -1,0 +1,22 @@
+.category-action-alert {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  padding: 0.85rem 1rem;
+  border-radius: 10px;
+  background-color: #fff4e5;
+  color: #8a5a00;
+  border: 1px solid #f3d19c;
+}
+
+.category-action-alert-close {
+  border: none;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 1.2rem;
+  line-height: 1;
+  cursor: pointer;
+}
