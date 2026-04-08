@@ -1,6 +1,7 @@
 import { fetchAPI } from '../utils/api';
 import type { Product } from '../types/Product';
 import type { ProductUpdate } from '../types/ProductUpdate';
+import type { ProductCreate } from '../types/ProductCreate';
 
 export async function getProducts(): Promise<Product[]> {
   return fetchAPI<Product[]>('productos');
@@ -8,6 +9,17 @@ export async function getProducts(): Promise<Product[]> {
 
 export async function getProductById(productId: number): Promise<Product> {
   return fetchAPI<Product>(`productos/${productId}`);
+}
+
+export async function createProduct(
+  data: ProductCreate,
+  token: string
+): Promise<Product> {
+  return fetchAPI<Product>('productos', {
+    method: 'POST',
+    body: data,
+    token,
+  });
 }
 
 export async function updateProduct(

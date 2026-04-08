@@ -14,6 +14,7 @@ import MyProducts from "./pages/MyProducts";
 import Register from "./pages/Register";
 import EditProduct from "./pages/EditProduct";
 import ProductsManagement from "./pages/ProductsManagement";
+import CreateProduct from "./pages/CreateProduct";
 import { RoleRoute } from "./components/RoleRoute";
 
 function App() {
@@ -81,6 +82,14 @@ function App() {
                   <RoleRoute allowedRoles={['ADMIN', 'GESTOR']}>
                     <ProductsManagement />
                   </RoleRoute>
+                }
+              />
+              <Route
+                path="/my-products/new"
+                element={
+                  <ProtectedRoute>
+                    <CreateProduct />
+                  </ProtectedRoute>
                 }
               />
             </Routes>
