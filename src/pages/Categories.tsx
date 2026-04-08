@@ -154,39 +154,43 @@ export default function Categories() {
       <div className="page-title-separator"></div>
 
       {canManageCategories && (
-        <div className="my-products-hero-actions">
-          <p className="my-products-hero-text">
+        <div className="categories-hero-actions">
+          <p className="categories-hero-text">
             ¿Quieres añadir una nueva categoría a la plataforma?
           </p>
 
-          <Link to="/categories/new" className="create-product-btn">
+          <Link to="/categories/new" className="categories-create-btn">
             Crear categoría
           </Link>
         </div>
       )}
 
-      <div className="dashboard-summary-grid">
-        <article className="dashboard-summary-card dashboard-summary-card-total">
-          <h2>Total</h2>
-          <p>{summary.total}</p>
-        </article>
+      {canManageCategories && (
+        <div className="dashboard-summary-grid">
+          <article className="dashboard-summary-card dashboard-summary-card-total">
+            <h2>Total</h2>
+            <p>{summary.total}</p>
+          </article>
 
-        <article className="dashboard-summary-card dashboard-summary-card-active">
-          <h2>Activas</h2>
-          <p>{summary.active}</p>
-        </article>
+          <article className="dashboard-summary-card dashboard-summary-card-active">
+            <h2>Activas</h2>
+            <p>{summary.active}</p>
+          </article>
 
-        <article className="dashboard-summary-card dashboard-summary-card-inactive">
-          <h2>Inactivas</h2>
-          <p>{summary.inactive}</p>
-        </article>
-      </div>
+          <article className="dashboard-summary-card dashboard-summary-card-inactive">
+            <h2>Inactivas</h2>
+            <p>{summary.inactive}</p>
+          </article>
+        </div>
+      )}
 
-      <CategoryUsageSummary
-        title="Productos por categoría"
-        items={categoryUsageSummary}
-        emptyMessage="No hay categorías ni productos disponibles."
-      />
+      {canManageCategories && (
+        <CategoryUsageSummary
+          title="Productos por categoría"
+          items={categoryUsageSummary}
+          emptyMessage="No hay categorías ni productos disponibles."
+        />
+      )}
 
       <p className="my-products-section-intro">
         Explora las distintas categorías de productos, sus características y la tasa de comisión asociada a cada una:
