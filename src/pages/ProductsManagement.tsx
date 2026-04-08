@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { ProductCard } from '../components/ProductCard';
 import { Loading } from '../components/Loading';
 import { ErrorMessage } from '../components/ErrorMessage';
-import { deleteProduct, getProducts } from '../services/productService';
+import { deleteProduct, getProducts, updateProduct } from '../services/productService';
 import { useAuth } from '../hooks/useAuth';
 import type { Product } from '../types/Product';
 import './ProductsManagement.css';
@@ -15,6 +15,7 @@ export default function ProductsManagement() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [deletingProductId, setDeletingProductId] = useState<number | null>(null);
+    const [togglingProductId, setTogglingProductId] = useState<number | null>(null);
 
     const [searchTerm, setSearchTerm] = useState('');
     const [ownerFilter, setOwnerFilter] = useState('');
@@ -181,6 +182,43 @@ export default function ProductsManagement() {
         }
     };
 
+    const handleToggleActive = async (product: Product) => {
+        if (!token) {
+            setError('No hay sesión activa para actualizar productos.');
+            return;
+        }
+
+        setTogglingProductId(product.id);
+        setError('');
+
+        try {
+            await updateProduct(
+                product.id,
+                {
+                    nombre: product.nombre,
+                    descripcion: product.descripcion,
+                    precio: product.precio,
+                    activo: !product.activo,
+                    categoriaId: product.categoria?.id ?? null,
+                    modo: product.modo,
+                },
+                token
+            );
+
+            setProducts((currentProducts) =>
+                currentProducts.map((currentProduct) =>
+                    currentProduct.id === product.id
+                        ? { ...currentProduct, activo: !currentProduct.activo }
+                        : currentProduct
+                )
+            );
+        } catch {
+            setError('No se pudo actualizar el estado del producto.');
+        } finally {
+            setTogglingProductId(null);
+        }
+    };
+
     return (
         <main className="main-content-area">
             <h1 className="page-title">Gestión de Productos</h1>
@@ -338,6 +376,19 @@ export default function ProductsManagement() {
                                     <ProductCard product={product} />
 
                                     <div className="dashboard-product-actions">
+                                        <button
+                                            type="button"
+                                            className="dashboard-toggle-product-btn"
+                                            onClick={() => handleToggleActive(product)}
+                                            disabled={togglingProductId === product.id}
+                                        >
+                                            {togglingProductId === product.id
+                                                ? 'Guardando...'
+                                                : product.activo
+                                                    ? 'Desactivar'
+                                                    : 'Activar'}
+                                        </button>
+
                                         <button
                                             type="button"
                                             className="dashboard-delete-product-btn"

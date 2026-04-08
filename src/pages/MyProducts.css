@@ -11,20 +11,23 @@
   margin-bottom: 1.5rem;
 }
 
+.edit-product-btn,
 .delete-product-btn {
-  border: none;
   border-radius: 10px;
   padding: 0.65rem 1rem;
-  cursor: pointer;
   font: inherit;
 }
 
 .edit-product-btn {
   text-decoration: none;
   color: inherit;
-  border-radius: 10px;
-  padding: 0.65rem 1rem;
-  font: inherit;
+}
+
+.delete-product-btn {
+  border: none;
+  cursor: pointer;
+  background-color: #fdecec;
+  color: #a33a3a;
 }
 
 .delete-product-btn:disabled {
