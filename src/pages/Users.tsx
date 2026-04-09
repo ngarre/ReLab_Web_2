@@ -88,11 +88,12 @@ export default function Users() {
       return true;
     }
 
+    if (role === 'GESTOR') {
+      return isOwnAccount(targetUser) || targetUser.role === 'CLIENTE';
+    }
+
     return isOwnAccount(targetUser);
   };
-
-  const isPendingBackendCase = (targetUser: User) =>
-    role === 'GESTOR' && !isOwnAccount(targetUser) && targetUser.role === 'CLIENTE';
 
   const getActionErrorMessage = (rawError: unknown, fallbackMessage: string) => {
     if (rawError instanceof Error && rawError.message.includes('403')) {
@@ -315,22 +316,10 @@ export default function Users() {
           >
             {isDeleting ? 'Eliminando...' : 'Eliminar'}
           </button>
-        </div>
-      );
-    }
 
-    if (isPendingBackendCase(targetUser)) {
-      return (
-        <div className="users-row-actions users-row-actions-pending">
-          <button type="button" className="users-toggle-btn" disabled>
-            {isUserActive(targetUser) ? 'Desactivar' : 'Activar'}
-          </button>
-
-          <button type="button" className="users-delete-btn" disabled>
-            Eliminar
-          </button>
-
-          <span className="users-actions-helper">Pendiente backend</span>
+          {!isOwnAccount(targetUser) && role === 'GESTOR' && targetUser.role === 'CLIENTE' && (
+            <span className="users-actions-helper">Cuenta cliente</span>
+          )}
         </div>
       );
     }
@@ -461,7 +450,7 @@ export default function Users() {
               value={roleFilterKey}
               onChange={(event) => setRoleFilterKey(event.target.value)}
               className="select-control"
-            >
+            >F
               {roleFilterOptions.map((option) => (
                 <option key={option.key} value={option.key}>
                   {option.label}
