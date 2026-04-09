@@ -19,6 +19,8 @@ interface EditProductFormState {
   imagen?: string | null;
 }
 
+const MAX_PRODUCT_DESCRIPTION_LENGTH = 200;
+
 export default function EditProduct() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -83,10 +85,18 @@ export default function EditProduct() {
   ) => {
     const { name, value } = event.currentTarget;
 
+    if (name === 'descripcion' && value.length > MAX_PRODUCT_DESCRIPTION_LENGTH) {
+      return;
+    }
+
     setFormData((current) => ({
       ...current,
       [name]: value,
     }));
+
+    if (error) {
+      setError('');
+    }
   };
 
   const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -143,6 +153,11 @@ export default function EditProduct() {
 
     if (formData.precio.trim() === '') {
       setError('Debes indicar un precio.');
+      return;
+    }
+
+    if (formData.descripcion.length > MAX_PRODUCT_DESCRIPTION_LENGTH) {
+      setError(`La descripción no puede superar los ${MAX_PRODUCT_DESCRIPTION_LENGTH} caracteres.`);
       return;
     }
 
@@ -217,7 +232,21 @@ export default function EditProduct() {
               value={formData.descripcion}
               onChange={handleTextChange}
               rows={5}
+              maxLength={MAX_PRODUCT_DESCRIPTION_LENGTH}
             />
+            <div className="edit-product-field-meta">
+              <span className="edit-product-field-help">
+                Máximo {MAX_PRODUCT_DESCRIPTION_LENGTH} caracteres
+              </span>
+              <span
+                className={`edit-product-char-count ${formData.descripcion.length >= MAX_PRODUCT_DESCRIPTION_LENGTH
+                    ? 'limit'
+                    : ''
+                  }`}
+              >
+                {formData.descripcion.length} / {MAX_PRODUCT_DESCRIPTION_LENGTH}
+              </span>
+            </div>
           </div>
 
           <div className="edit-product-field">

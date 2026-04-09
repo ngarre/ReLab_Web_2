@@ -65,3 +65,34 @@
   font-size: 0.9rem;
   color: #c0392b;
 }
+
+.edit-product-field-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 0.45rem;
+  font-size: 0.85rem;
+}
+
+.edit-product-field-help {
+  color: #6b7280;
+}
+
+.edit-product-char-count {
+  color: #6b7280;
+  font-weight: 600;
+}
+
+.edit-product-char-count.limit {
+  color: #b45309;
+}
+
+.dark .edit-product-field-help,
+.dark .edit-product-char-count {
+  color: #cbd5e1;
+}
+
+.dark .edit-product-char-count.limit {
+  color: #fbbf24;
+}
