@@ -15,6 +15,8 @@ interface EditCategoryFormState {
     tasaComision: string;
 }
 
+const MAX_CATEGORY_DESCRIPTION_LENGTH = 200;
+
 export default function EditCategory() {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
@@ -68,6 +70,10 @@ export default function EditCategory() {
     ) => {
         const { name, value } = event.currentTarget;
 
+        if (name === 'descripcion' && value.length > MAX_CATEGORY_DESCRIPTION_LENGTH) {
+            return;
+        }
+
         if (name === 'nombre') {
             setNameError('');
         }
@@ -114,6 +120,11 @@ export default function EditCategory() {
 
         if (duplicatedName) {
             setNameError('Ya existe una categoría con ese nombre.');
+            return;
+        }
+
+        if (trimmedDescription.length > MAX_CATEGORY_DESCRIPTION_LENGTH) {
+            setError(`La descripción no puede superar los ${MAX_CATEGORY_DESCRIPTION_LENGTH} caracteres.`);
             return;
         }
 
@@ -200,7 +211,21 @@ export default function EditCategory() {
                             value={formData.descripcion}
                             onChange={handleTextChange}
                             rows={5}
+                            maxLength={MAX_CATEGORY_DESCRIPTION_LENGTH}
                         />
+                        <div className="edit-product-field-meta">
+                            <span className="edit-product-field-help">
+                                Máximo {MAX_CATEGORY_DESCRIPTION_LENGTH} caracteres
+                            </span>
+                            <span
+                                className={`edit-product-char-count ${formData.descripcion.length >= MAX_CATEGORY_DESCRIPTION_LENGTH
+                                        ? 'limit'
+                                        : ''
+                                    }`}
+                            >
+                                {formData.descripcion.length} / {MAX_CATEGORY_DESCRIPTION_LENGTH}
+                            </span>
+                        </div>
                     </div>
 
                     <div className="edit-product-field">
