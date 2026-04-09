@@ -30,6 +30,7 @@ export default function Users() {
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
   const [statusFilterKey, setStatusFilterKey] = useState('all');
   const [roleFilterKey, setRoleFilterKey] = useState('all');
+  const [accountTypeFilterKey, setAccountTypeFilterKey] = useState('all');
 
   const sortOptions = [
     { key: 'nickname', label: 'Nickname (A-Z)' },
@@ -48,6 +49,13 @@ export default function Users() {
     { key: 'ADMIN', label: 'ADMIN' },
     { key: 'GESTOR', label: 'GESTOR' },
     { key: 'CLIENTE', label: 'CLIENTE' },
+  ];
+
+  const accountTypeFilterOptions = [
+    { key: 'all', label: 'Todos los tipos' },
+    { key: 'empresa', label: 'EMPRESA' },
+    { key: 'particular', label: 'PARTICULAR' },
+    { key: 'centro_publico', label: 'CENTRO PÚBLICO' },
   ];
 
   useEffect(() => {
@@ -77,6 +85,43 @@ export default function Users() {
   }, [actionMessage]);
 
   const isUserActive = (user: User) => Boolean(user.cuentaActiva);
+
+  const normalizeAccountType = (tipoUsuario?: string | null) =>
+    (tipoUsuario ?? '').trim().toLowerCase();
+
+  const isCentroPublico = (tipoUsuario?: string | null) => {
+    const normalizedType = normalizeAccountType(tipoUsuario);
+    return normalizedType === 'centro_publico' || normalizedType === 'centro público';
+  };
+
+  const getAccountTypeLabel = (tipoUsuario?: string | null) => {
+    const normalizedType = normalizeAccountType(tipoUsuario);
+
+    if (normalizedType === 'empresa') {
+      return 'EMPRESA';
+    }
+
+    if (isCentroPublico(tipoUsuario)) {
+      return 'CENTRO PÚBLICO';
+    }
+
+    return 'PARTICULAR';
+  };
+
+  const getAccountTypeBadgeClassName = (tipoUsuario?: string | null) => {
+    const normalizedType = normalizeAccountType(tipoUsuario);
+
+    if (normalizedType === 'empresa') {
+      return 'users-account-type-badge users-account-type-badge-empresa';
+    }
+
+    if (isCentroPublico(tipoUsuario)) {
+      return 'users-account-type-badge users-account-type-badge-centro-publico';
+    }
+
+    return 'users-account-type-badge users-account-type-badge-particular';
+  };
+
   const isOwnAccount = (targetUser: User) => currentUser?.id === targetUser.id;
 
   const canExecuteActions = (targetUser: User) => {
@@ -95,7 +140,10 @@ export default function Users() {
     return isOwnAccount(targetUser);
   };
 
-  const getActionErrorMessage = (rawError: unknown, fallbackMessage: string) => {
+  const getActionErrorMessage = (
+    rawError: unknown,
+    fallbackMessage: string
+  ) => {
     if (rawError instanceof Error && rawError.message.includes('403')) {
       return 'No tienes permisos suficientes para completar esta acción.';
     }
@@ -110,7 +158,7 @@ export default function Users() {
     }
 
     if (!canExecuteActions(targetUser)) {
-      setError('Esta acción todavía no está disponible para tu rol.');
+      setError('No tienes permisos para realizar esta acción.');
       return;
     }
 
@@ -169,7 +217,7 @@ export default function Users() {
     }
 
     if (!canExecuteActions(targetUser)) {
-      setError('Esta acción todavía no está disponible para tu rol.');
+      setError('No tienes permisos para realizar esta acción.');
       return;
     }
 
@@ -202,7 +250,9 @@ export default function Users() {
 
       setActionMessage('La cuenta se ha eliminado correctamente.');
     } catch (rawError) {
-      setError(getActionErrorMessage(rawError, 'No se pudo eliminar la cuenta.'));
+      setError(
+        getActionErrorMessage(rawError, 'No se pudo eliminar la cuenta.')
+      );
     } finally {
       setDeletingUserId(null);
     }
@@ -222,6 +272,23 @@ export default function Users() {
     const cliente = users.filter((user) => user.role === 'CLIENTE').length;
 
     return { admin, gestor, cliente };
+  }, [users]);
+
+  const accountTypeSummary = useMemo(() => {
+    const empresa = users.filter(
+      (user) => normalizeAccountType(user.tipoUsuario) === 'empresa'
+    ).length;
+
+    const centroPublico = users.filter((user) =>
+      isCentroPublico(user.tipoUsuario)
+    ).length;
+
+    const particular = users.filter((user) => {
+      const accountType = normalizeAccountType(user.tipoUsuario);
+      return accountType !== 'empresa' && !isCentroPublico(user.tipoUsuario);
+    }).length;
+
+    return { empresa, centroPublico, particular };
   }, [users]);
 
   const filteredUsers = useMemo(() => {
@@ -253,6 +320,21 @@ export default function Users() {
       result = result.filter((user) => user.role === roleFilterKey);
     }
 
+    if (accountTypeFilterKey !== 'all') {
+      if (accountTypeFilterKey === 'empresa') {
+        result = result.filter(
+          (user) => normalizeAccountType(user.tipoUsuario) === 'empresa'
+        );
+      } else if (accountTypeFilterKey === 'centro_publico') {
+        result = result.filter((user) => isCentroPublico(user.tipoUsuario));
+      } else if (accountTypeFilterKey === 'particular') {
+        result = result.filter((user) => {
+          const accountType = normalizeAccountType(user.tipoUsuario);
+          return accountType !== 'empresa' && !isCentroPublico(user.tipoUsuario);
+        });
+      }
+    }
+
     result.sort((a, b) => {
       let comparison = 0;
 
@@ -275,7 +357,15 @@ export default function Users() {
     });
 
     return result;
-  }, [users, searchTerm, sortKey, sortDirection, statusFilterKey, roleFilterKey]);
+  }, [
+    users,
+    searchTerm,
+    sortKey,
+    sortDirection,
+    statusFilterKey,
+    roleFilterKey,
+    accountTypeFilterKey,
+  ]);
 
   const { currentPage, totalPages, currentData, nextPage, prevPage } =
     usePagination(filteredUsers, 8);
@@ -317,9 +407,11 @@ export default function Users() {
             {isDeleting ? 'Eliminando...' : 'Eliminar'}
           </button>
 
-          {!isOwnAccount(targetUser) && role === 'GESTOR' && targetUser.role === 'CLIENTE' && (
-            <span className="users-actions-helper">Cuenta cliente</span>
-          )}
+          {!isOwnAccount(targetUser) &&
+            role === 'GESTOR' &&
+            targetUser.role === 'CLIENTE' && (
+              <span className="users-actions-helper">Cuenta cliente</span>
+            )}
         </div>
       );
     }
@@ -327,10 +419,19 @@ export default function Users() {
     return <span className="users-management-pill blocked">Sin permiso</span>;
   };
 
+  if (loading) {
+    return <Loading />;
+  }
+
+  if (error && !users.length) {
+    return <ErrorMessage message={error} />;
+  }
+
   return (
     <main className="main-content-area">
       <h1 className="page-title">Gestión de Usuarios</h1>
       <div className="page-title-separator"></div>
+
       <p className="page-subtitle">
         Supervisa las cuentas registradas en ReLab y consulta su estado de forma rápida.
       </p>
@@ -354,22 +455,39 @@ export default function Users() {
 
       {(role === 'ADMIN' || role === 'GESTOR') && (
         <div className="users-role-summary-grid">
-          <article className="users-role-summary-card">
+          <article className="users-role-summary-card users-role-summary-card-admin">
             <h2>Usuarios ADMIN</h2>
             <p>{roleSummary.admin}</p>
           </article>
 
-          <article className="users-role-summary-card">
+          <article className="users-role-summary-card users-role-summary-card-gestor">
             <h2>Usuarios GESTOR</h2>
             <p>{roleSummary.gestor}</p>
           </article>
 
-          <article className="users-role-summary-card">
+          <article className="users-role-summary-card users-role-summary-card-cliente">
             <h2>Usuarios CLIENTE</h2>
             <p>{roleSummary.cliente}</p>
           </article>
         </div>
       )}
+
+      <div className="users-account-type-summary-grid">
+        <article className="users-account-type-summary-card users-account-type-summary-card-empresa">
+          <h2>Cuentas EMPRESA</h2>
+          <p>{accountTypeSummary.empresa}</p>
+        </article>
+
+        <article className="users-account-type-summary-card users-account-type-summary-card-particular">
+          <h2>Cuentas PARTICULAR</h2>
+          <p>{accountTypeSummary.particular}</p>
+        </article>
+
+        <article className="users-account-type-summary-card users-account-type-summary-card-centro-publico">
+          <h2>Cuentas CENTRO PÚBLICO</h2>
+          <p>{accountTypeSummary.centroPublico}</p>
+        </article>
+      </div>
 
       <p className="users-dashboard-intro">
         Busca usuarios, revisa su rol dentro de la plataforma y consulta el estado actual de su cuenta.
@@ -450,8 +568,26 @@ export default function Users() {
               value={roleFilterKey}
               onChange={(event) => setRoleFilterKey(event.target.value)}
               className="select-control"
-            >F
+            >
               {roleFilterOptions.map((option) => (
+                <option key={option.key} value={option.key}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="control-group filter-select-group">
+            <label htmlFor="account-type-filter-select" className="control-label">
+              Tipo de cuenta:
+            </label>
+            <select
+              id="account-type-filter-select"
+              value={accountTypeFilterKey}
+              onChange={(event) => setAccountTypeFilterKey(event.target.value)}
+              className="select-control"
+            >
+              {accountTypeFilterOptions.map((option) => (
                 <option key={option.key} value={option.key}>
                   {option.label}
                 </option>
@@ -461,89 +597,97 @@ export default function Users() {
         </div>
       </div>
 
-      {loading && <Loading />}
       {error && <ErrorMessage message={error} />}
 
-      {!loading && !error && (
+      {actionMessage && (
+        <p className="users-feedback-message">{actionMessage}</p>
+      )}
+
+      <p className="results-count">
+        Mostrando {filteredUsers.length} de {users.length} usuarios.
+      </p>
+
+      {filteredUsers.length === 0 ? (
+        <p className="empty-message">No se encontraron usuarios.</p>
+      ) : (
         <>
-          {actionMessage && (
-            <p className="users-feedback-message">{actionMessage}</p>
-          )}
+          <div className="users-table-wrapper">
+            <table className="users-table">
+              <thead>
+                <tr>
+                  <th>Nickname</th>
+                  <th>Usuario</th>
+                  <th>Email</th>
+                  <th>Rol</th>
+                  <th>Tipo de cuenta</th>
+                  <th>Estado</th>
+                  <th>Alta</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
 
-          <p className="results-count">
-            Mostrando {filteredUsers.length} de {users.length} usuarios.
-          </p>
+              <tbody>
+                {currentData.map((user) => (
+                  <tr
+                    key={user.id}
+                    className={isOwnAccount(user) ? 'users-table-row-self' : ''}
+                  >
+                    <td data-label="Nickname">
+                      <div className="users-table-nickname-block">
+                        <span className="users-table-nickname">
+                          @{user.nickname}
+                        </span>
+                        {isOwnAccount(user) && (
+                          <span className="users-self-badge">Tu cuenta</span>
+                        )}
+                      </div>
+                    </td>
 
-          {filteredUsers.length === 0 ? (
-            <p className="empty-message">No se encontraron usuarios.</p>
-          ) : (
-            <div className="users-table-wrapper">
-              <table className="users-table">
-                <thead>
-                  <tr>
-                    <th>Nickname</th>
-                    <th>Usuario</th>
-                    <th>Email</th>
-                    <th>Rol</th>
-                    <th>Estado</th>
-                    <th>Alta</th>
-                    <th>Acciones</th>
+                    <td data-label="Usuario">
+                      <div className="users-table-user-block">
+                        <span className="users-table-fullname">
+                          {user.nombre} {user.apellido}
+                        </span>
+                      </div>
+                    </td>
+
+                    <td data-label="Email" className="users-table-email">
+                      {user.email}
+                    </td>
+
+                    <td data-label="Rol">
+                      <span
+                        className={`users-role-badge users-role-badge-${user.role.toLowerCase()}`}
+                      >
+                        {user.role}
+                      </span>
+                    </td>
+
+                    <td data-label="Tipo de cuenta">
+                      <span
+                        className={getAccountTypeBadgeClassName(user.tipoUsuario)}
+                      >
+                        {getAccountTypeLabel(user.tipoUsuario)}
+                      </span>
+                    </td>
+
+                    <td data-label="Estado">
+                      <span
+                        className={`users-status-pill ${isUserActive(user) ? 'active' : 'inactive'
+                          }`}
+                      >
+                        {isUserActive(user) ? 'ACTIVA' : 'INACTIVA'}
+                      </span>
+                    </td>
+
+                    <td data-label="Alta">{formatDate(user.fechaAlta)}</td>
+
+                    <td data-label="Acciones">{renderActionCell(user)}</td>
                   </tr>
-                </thead>
-
-                <tbody>
-                  {currentData.map((user) => (
-                    <tr
-                      key={user.id}
-                      className={isOwnAccount(user) ? 'users-table-row-self' : ''}
-                    >
-                      <td data-label="Nickname">
-                        <div className="users-table-nickname-block">
-                          <span className="users-table-nickname">@{user.nickname}</span>
-                          {isOwnAccount(user) && (
-                            <span className="users-self-badge">Tu cuenta</span>
-                          )}
-                        </div>
-                      </td>
-
-                      <td data-label="Usuario">
-                        <div className="users-table-user-block">
-                          <span className="users-table-fullname">
-                            {user.nombre} {user.apellido}
-                          </span>
-                        </div>
-                      </td>
-
-                      <td data-label="Email" className="users-table-email">
-                        {user.email}
-                      </td>
-
-                      <td data-label="Rol">
-                        <span
-                          className={`users-role-badge users-role-badge-${user.role.toLowerCase()}`}
-                        >
-                          {user.role}
-                        </span>
-                      </td>
-
-                      <td data-label="Estado">
-                        <span
-                          className={`users-status-pill ${isUserActive(user) ? 'active' : 'inactive'
-                            }`}
-                        >
-                          {isUserActive(user) ? 'ACTIVA' : 'INACTIVA'}
-                        </span>
-                      </td>
-
-                      <td data-label="Alta">{formatDate(user.fechaAlta)}</td>
-
-                      <td data-label="Acciones">{renderActionCell(user)}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
+                ))}
+              </tbody>
+            </table>
+          </div>
 
           <Pagination
             currentPage={currentPage}
