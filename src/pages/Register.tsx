@@ -28,7 +28,7 @@ const INITIAL_FORM: RegisterFormState = {
 
 export default function Register() {
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, login } = useAuth();
 
   const [form, setForm] = useState<RegisterFormState>(INITIAL_FORM);
   const [errorMessage, setErrorMessage] = useState('');
@@ -37,7 +37,7 @@ export default function Register() {
 
   useEffect(() => {
     if (isAuthenticated) {
-      navigate('/');
+      navigate('/', { replace: true });
     }
   }, [isAuthenticated, navigate]);
 
@@ -128,13 +128,19 @@ export default function Register() {
 
     setIsSubmitting(true);
 
+    const trimmedNickname = form.nickname.trim();
+    const trimmedNombre = form.nombre.trim();
+    const trimmedApellido = form.apellido.trim();
+    const trimmedEmail = form.email.trim();
+    const rawPassword = form.password;
+
     try {
       await register({
-        nickname: form.nickname.trim(),
-        password: form.password,
-        nombre: form.nombre.trim(),
-        apellido: form.apellido.trim(),
-        email: form.email.trim(),
+        nickname: trimmedNickname,
+        password: rawPassword,
+        nombre: trimmedNombre,
+        apellido: trimmedApellido,
+        email: trimmedEmail,
         fechaNacimiento: form.fechaNacimiento || undefined,
         cuentaActiva: true,
         tipoUsuario: form.tipoUsuario,
@@ -144,10 +150,23 @@ export default function Register() {
         direccion: null,
       });
 
-      setSuccessMessage(
-        'Cuenta creada correctamente. Ya puedes iniciar sesión con tus credenciales.'
-      );
-      setForm(INITIAL_FORM);
+      try {
+        await login({
+          nickname: trimmedNickname,
+          password: rawPassword,
+        });
+
+        navigate('/', { replace: true });
+        return;
+      } catch (autoLoginError) {
+        console.error('Auto-login after register error:', autoLoginError);
+
+        setSuccessMessage(
+          'Cuenta creada correctamente. Ya puedes iniciar sesión con tus credenciales.'
+        );
+        setForm(INITIAL_FORM);
+        return;
+      }
     } catch (error) {
       console.error('Register error:', error);
 
