@@ -30,6 +30,7 @@ export default function Users() {
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
   const [statusFilterKey, setStatusFilterKey] = useState('all');
   const [roleFilterKey, setRoleFilterKey] = useState('all');
+  const [accountTypeFilterKey, setAccountTypeFilterKey] = useState('all');
 
   const sortOptions = [
     { key: 'nickname', label: 'Nickname (A-Z)' },
@@ -48,6 +49,13 @@ export default function Users() {
     { key: 'ADMIN', label: 'ADMIN' },
     { key: 'GESTOR', label: 'GESTOR' },
     { key: 'CLIENTE', label: 'CLIENTE' },
+  ];
+
+  const accountTypeFilterOptions = [
+    { key: 'all', label: 'Todos los tipos' },
+    { key: 'empresa', label: 'EMPRESA' },
+    { key: 'particular', label: 'PARTICULAR' },
+    { key: 'centro_publico', label: 'CENTRO PÚBLICO' },
   ];
 
   useEffect(() => {
@@ -81,6 +89,11 @@ export default function Users() {
   const normalizeAccountType = (tipoUsuario?: string | null) =>
     (tipoUsuario ?? '').trim().toLowerCase();
 
+  const isCentroPublico = (tipoUsuario?: string | null) => {
+    const normalizedType = normalizeAccountType(tipoUsuario);
+    return normalizedType === 'centro_publico' || normalizedType === 'centro público';
+  };
+
   const getAccountTypeLabel = (tipoUsuario?: string | null) => {
     const normalizedType = normalizeAccountType(tipoUsuario);
 
@@ -88,10 +101,7 @@ export default function Users() {
       return 'EMPRESA';
     }
 
-    if (
-      normalizedType === 'centro_publico' ||
-      normalizedType === 'centro público'
-    ) {
+    if (isCentroPublico(tipoUsuario)) {
       return 'CENTRO PÚBLICO';
     }
 
@@ -105,10 +115,7 @@ export default function Users() {
       return 'users-account-type-badge users-account-type-badge-empresa';
     }
 
-    if (
-      normalizedType === 'centro_publico' ||
-      normalizedType === 'centro público'
-    ) {
+    if (isCentroPublico(tipoUsuario)) {
       return 'users-account-type-badge users-account-type-badge-centro-publico';
     }
 
@@ -272,20 +279,13 @@ export default function Users() {
       (user) => normalizeAccountType(user.tipoUsuario) === 'empresa'
     ).length;
 
-    const centroPublico = users.filter((user) => {
-      const accountType = normalizeAccountType(user.tipoUsuario);
-      return (
-        accountType === 'centro_publico' || accountType === 'centro público'
-      );
-    }).length;
+    const centroPublico = users.filter((user) =>
+      isCentroPublico(user.tipoUsuario)
+    ).length;
 
     const particular = users.filter((user) => {
       const accountType = normalizeAccountType(user.tipoUsuario);
-      return (
-        accountType !== 'empresa' &&
-        accountType !== 'centro_publico' &&
-        accountType !== 'centro público'
-      );
+      return accountType !== 'empresa' && !isCentroPublico(user.tipoUsuario);
     }).length;
 
     return { empresa, centroPublico, particular };
@@ -320,6 +320,21 @@ export default function Users() {
       result = result.filter((user) => user.role === roleFilterKey);
     }
 
+    if (accountTypeFilterKey !== 'all') {
+      if (accountTypeFilterKey === 'empresa') {
+        result = result.filter(
+          (user) => normalizeAccountType(user.tipoUsuario) === 'empresa'
+        );
+      } else if (accountTypeFilterKey === 'centro_publico') {
+        result = result.filter((user) => isCentroPublico(user.tipoUsuario));
+      } else if (accountTypeFilterKey === 'particular') {
+        result = result.filter((user) => {
+          const accountType = normalizeAccountType(user.tipoUsuario);
+          return accountType !== 'empresa' && !isCentroPublico(user.tipoUsuario);
+        });
+      }
+    }
+
     result.sort((a, b) => {
       let comparison = 0;
 
@@ -342,7 +357,15 @@ export default function Users() {
     });
 
     return result;
-  }, [users, searchTerm, sortKey, sortDirection, statusFilterKey, roleFilterKey]);
+  }, [
+    users,
+    searchTerm,
+    sortKey,
+    sortDirection,
+    statusFilterKey,
+    roleFilterKey,
+    accountTypeFilterKey,
+  ]);
 
   const { currentPage, totalPages, currentData, nextPage, prevPage } =
     usePagination(filteredUsers, 8);
@@ -432,17 +455,17 @@ export default function Users() {
 
       {(role === 'ADMIN' || role === 'GESTOR') && (
         <div className="users-role-summary-grid">
-          <article className="users-role-summary-card">
+          <article className="users-role-summary-card users-role-summary-card-admin">
             <h2>Usuarios ADMIN</h2>
             <p>{roleSummary.admin}</p>
           </article>
 
-          <article className="users-role-summary-card">
+          <article className="users-role-summary-card users-role-summary-card-gestor">
             <h2>Usuarios GESTOR</h2>
             <p>{roleSummary.gestor}</p>
           </article>
 
-          <article className="users-role-summary-card">
+          <article className="users-role-summary-card users-role-summary-card-cliente">
             <h2>Usuarios CLIENTE</h2>
             <p>{roleSummary.cliente}</p>
           </article>
@@ -450,17 +473,17 @@ export default function Users() {
       )}
 
       <div className="users-account-type-summary-grid">
-        <article className="users-account-type-summary-card">
+        <article className="users-account-type-summary-card users-account-type-summary-card-empresa">
           <h2>Cuentas EMPRESA</h2>
           <p>{accountTypeSummary.empresa}</p>
         </article>
 
-        <article className="users-account-type-summary-card">
+        <article className="users-account-type-summary-card users-account-type-summary-card-particular">
           <h2>Cuentas PARTICULAR</h2>
           <p>{accountTypeSummary.particular}</p>
         </article>
 
-        <article className="users-account-type-summary-card">
+        <article className="users-account-type-summary-card users-account-type-summary-card-centro-publico">
           <h2>Cuentas CENTRO PÚBLICO</h2>
           <p>{accountTypeSummary.centroPublico}</p>
         </article>
@@ -547,6 +570,24 @@ export default function Users() {
               className="select-control"
             >
               {roleFilterOptions.map((option) => (
+                <option key={option.key} value={option.key}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="control-group filter-select-group">
+            <label htmlFor="account-type-filter-select" className="control-label">
+              Tipo de cuenta:
+            </label>
+            <select
+              id="account-type-filter-select"
+              value={accountTypeFilterKey}
+              onChange={(event) => setAccountTypeFilterKey(event.target.value)}
+              className="select-control"
+            >
+              {accountTypeFilterOptions.map((option) => (
                 <option key={option.key} value={option.key}>
                   {option.label}
                 </option>

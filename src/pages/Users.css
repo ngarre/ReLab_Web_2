@@ -366,6 +366,50 @@
   color: #6d28d9;
 }
 
+.users-role-summary-card-admin {
+  background-color: #f3e8ff;
+}
+
+.users-role-summary-card-gestor {
+  background-color: #e0f2fe;
+}
+
+.users-role-summary-card-cliente {
+  background-color: #f3f4f6;
+}
+
+.users-account-type-summary-card-empresa {
+  background-color: #f5e8dc;
+}
+
+.users-account-type-summary-card-particular {
+  background-color: #fce7f3;
+}
+
+.users-account-type-summary-card-centro-publico {
+  background-color: #ffedd5;
+}
+
+.users-self-badge {
+  background-color: #dbeafe;
+  color: #1d4ed8;
+}
+
+.users-account-type-badge-empresa {
+  background-color: #f5e8dc;
+  color: #7c4a21;
+}
+
+.users-account-type-badge-particular {
+  background-color: #fce7f3;
+  color: #9d174d;
+}
+
+.users-account-type-badge-centro-publico {
+  background-color: #ffedd5;
+  color: #c2410c;
+}
+
 @media (max-width: 768px) {
   .users-toolbar {
     max-width: 100%;
