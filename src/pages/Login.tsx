@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useMemo, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import './Login.css';
 
@@ -18,13 +18,39 @@ export default function Login() {
         }
     }, [isAuthenticated, navigate]);
 
+    const normalizedErrorMessage = useMemo(() => {
+        if (!errorMessage) {
+            return '';
+        }
+
+        const normalized = errorMessage.toLowerCase();
+
+        if (normalized.includes('cuenta desactivada')) {
+            return 'Tu cuenta está desactivada. Ponte en contacto con el administrador para reactivarla.';
+        }
+
+        if (normalized.includes('credenciales incorrectas')) {
+            return 'Nickname o contraseña incorrectos.';
+        }
+
+        return errorMessage;
+    }, [errorMessage]);
+
+    const isDisabledAccountError = normalizedErrorMessage
+        .toLowerCase()
+        .includes('cuenta está desactivada');
+
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         setErrorMessage('');
         setIsSubmitting(true);
 
         try {
-            await login({ nickname, password });
+            await login({
+                nickname: nickname.trim(),
+                password,
+            });
+
             navigate('/profile');
         } catch (error) {
             console.error('Login error:', error);
@@ -35,48 +61,94 @@ export default function Login() {
                 setErrorMessage('No se ha podido iniciar sesión.');
             }
         } finally {
-        setIsSubmitting(false);
-    }
-};
+            setIsSubmitting(false);
+        }
+    };
 
-return (
-    <main className="main-content-area">
-        <h1 className="page-title">Iniciar sesión</h1>
-        <div className="page-title-separator"></div>
+    return (
+        <main className="main-content-area">
+            <section className="auth-shell">
+                <div className="auth-card auth-card-login">
+                    <div className="auth-page-header">
+                        <h1 className="page-title">INICIAR SESIÓN</h1>
+                        <div className="page-title-separator"></div>
+                        <p className="auth-page-subtitle">
+                            Accede a tu cuenta para gestionar productos, categorías y tu área personal dentro de la plataforma.
+                        </p>
+                    </div>
 
-        <div className="login-container">
-            <form className="login-form" onSubmit={handleSubmit}>
-                <div className="login-field">
-                    <label htmlFor="nickname">Nickname</label>
-                    <input
-                        id="nickname"
-                        type="text"
-                        value={nickname}
-                        onChange={(event) => setNickname(event.target.value)}
-                        placeholder="Introduce tu nickname"
-                        required
-                    />
+                    <div className="auth-card-brand">
+                        <p className="auth-card-subtitle">
+                            Introduce tus credenciales para continuar.
+                        </p>
+                    </div>
+
+                    <form className="login-form" onSubmit={handleSubmit}>
+                        <div className="login-field">
+                            <label htmlFor="nickname">Nickname</label>
+                            <input
+                                id="nickname"
+                                type="text"
+                                value={nickname}
+                                onChange={(event) => {
+                                    setNickname(event.target.value);
+                                    if (errorMessage) setErrorMessage('');
+                                }}
+                                placeholder="Introduce tu nickname"
+                                autoComplete="username"
+                                required
+                            />
+                        </div>
+
+                        <div className="login-field">
+                            <label htmlFor="password">Contraseña</label>
+                            <input
+                                id="password"
+                                type="password"
+                                value={password}
+                                onChange={(event) => {
+                                    setPassword(event.target.value);
+                                    if (errorMessage) setErrorMessage('');
+                                }}
+                                placeholder="Introduce tu contraseña"
+                                autoComplete="current-password"
+                                required
+                            />
+                        </div>
+
+                        {normalizedErrorMessage && (
+                            <div
+                                className={`login-feedback ${isDisabledAccountError ? 'login-feedback-disabled' : 'login-feedback-error'
+                                    }`}
+                                role="alert"
+                            >
+                                <p>{normalizedErrorMessage}</p>
+
+                                {isDisabledAccountError && (
+                                    <span className="login-feedback-help">
+                                        Si crees que es un error, solicita la reactivación de tu cuenta.
+                                    </span>
+                                )}
+                            </div>
+                        )}
+
+                        <button
+                            type="submit"
+                            className="login-submit-btn"
+                            disabled={isSubmitting}
+                        >
+                            {isSubmitting ? 'Entrando...' : 'Entrar'}
+                        </button>
+                    </form>
+
+                    <div className="auth-card-footer">
+                        <p>
+                            ¿Aún no tienes cuenta?{' '}
+                            <Link to="/register">Regístrate aquí</Link>
+                        </p>
+                    </div>
                 </div>
-
-                <div className="login-field">
-                    <label htmlFor="password">Contraseña</label>
-                    <input
-                        id="password"
-                        type="password"
-                        value={password}
-                        onChange={(event) => setPassword(event.target.value)}
-                        placeholder="Introduce tu contraseña"
-                        required
-                    />
-                </div>
-
-                {errorMessage && <p className="login-error">{errorMessage}</p>}
-
-                <button type="submit" className="login-submit-btn" disabled={isSubmitting}>
-                    {isSubmitting ? 'Entrando...' : 'Entrar'}
-                </button>
-            </form>
-        </div>
-    </main>
-);
+            </section>
+        </main>
+    );
 }
