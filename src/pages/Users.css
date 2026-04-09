@@ -310,6 +310,62 @@
   color: #cbd5e1;
 }
 
+.users-account-type-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.users-account-type-summary-card {
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  padding: 0.7rem 0.9rem;
+  background: var(--surface-light);
+}
+
+.dark .users-account-type-summary-card {
+  border-color: var(--border-dark);
+  background: #2d3748;
+}
+
+.users-account-type-summary-card h2 {
+  margin: 0 0 0.25rem 0;
+  font-size: 0.9rem;
+}
+
+.users-account-type-summary-card p {
+  margin: 0;
+  font-size: 1.35rem;
+  font-weight: 700;
+}
+
+.users-account-type-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 120px;
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.users-account-type-badge-empresa {
+  background-color: #dcfce7;
+  color: #166534;
+}
+
+.users-account-type-badge-particular {
+  background-color: #f3f4f6;
+  color: #374151;
+}
+
+.users-account-type-badge-centro-publico {
+  background-color: #ede9fe;
+  color: #6d28d9;
+}
+
 @media (max-width: 768px) {
   .users-toolbar {
     max-width: 100%;
