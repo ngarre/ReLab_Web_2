@@ -8,18 +8,22 @@
 .detail-layout {
     display: grid;
     /* Define 2 columnas: una para imagen (45%) y otra para el resto */
-    grid-template-columns: minmax(300px, 45%) 1fr; /* Columna de la imagen nunca será más pequeña de 300px ni ocupará más del 45% del ancho total */
+    grid-template-columns: minmax(300px, 45%) 1fr;
+    /* Columna de la imagen nunca será más pequeña de 300px ni ocupará más del 45% del ancho total */
     gap: 40px;
-    align-items: center; /* Centra verticalmente la imagen con el texto */
+    align-items: center;
+    /* Centra verticalmente la imagen con el texto */
 }
 
 /* RESPONSIVE modifica justo el estilo de encima */
 @media (max-width: 900px) {
     .detail-layout {
-        grid-template-columns: 1fr; /* Una sola columna en móviles */
+        grid-template-columns: 1fr;
+        /* Una sola columna en móviles */
         gap: 30px;
     }
 }
+
 /* fin responsive */
 
 /* 3. COLUMNA IMAGEN */
@@ -103,12 +107,29 @@
     font-size: 1.1rem;
 }
 
+.detail-separator {
+    width: 100%;
+    margin: 2rem 0 1.5rem;
+    border: none;
+    border-top: 1px solid var(--border-light);
+}
+
+.dark .detail-separator {
+    border-top-color: var(--border-dark);
+}
+
+.detail-secondary-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
 /* 5. BOTONES Y ACCIONES */
 .detail-actions-group {
     margin-top: 2.5rem;
     display: flex;
     gap: 1rem;
-    flex-wrap: wrap; 
+    flex-wrap: wrap;
 }
 
 .detail-action-button {
@@ -120,7 +141,7 @@
     cursor: pointer;
     transition: all 0.2s ease;
     flex-grow: 1;
-    min-width: 200px; 
+    min-width: 200px;
 }
 
 .primary-action {

@@ -37,14 +37,14 @@ export default function Home() {
   ];
 
   //  Para el nuevo filtrado por categoría
-   const filterOptions = [
+  const filterOptions = [
     { key: 'all', label: 'Todas las categorías' },
     ...categories.map((category) => ({
       key: String(category.id),
       label: category.nombre,
     })),
   ];
- 
+
   useEffect(() => {
     setLoading(true);
     setError('');
@@ -190,7 +190,7 @@ export default function Home() {
             )}
           </>
         )}
-        <hr /> {/* Linea de separación decorativa */}
+        <hr className="home-section-separator" />
         <ContactForm />
       </section>
     </main>
