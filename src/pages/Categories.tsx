@@ -73,8 +73,16 @@ export default function Categories() {
       .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name, 'es'));
   }, [categories, products]);
 
+  const visibleCategories = useMemo(() => {
+    if (canManageCategories) {
+      return categories;
+    }
+
+    return categories.filter((category) => category.activa);
+  }, [categories, canManageCategories]);
+
   const filteredCategories = useMemo(() => {
-    let result = [...categories];
+    let result = [...visibleCategories];
 
     if (searchTerm) {
       const termLower = searchTerm.toLowerCase();
@@ -84,10 +92,12 @@ export default function Categories() {
       );
     }
 
-    if (filterKey === 'active') {
-      result = result.filter(c => c.activa === true);
-    } else if (filterKey === 'inactive') {
-      result = result.filter(c => c.activa === false);
+    if (canManageCategories) {
+      if (filterKey === 'active') {
+        result = result.filter(c => c.activa === true);
+      } else if (filterKey === 'inactive') {
+        result = result.filter(c => c.activa === false);
+      }
     }
 
     result.sort((a, b) => {
@@ -110,7 +120,7 @@ export default function Categories() {
     });
 
     return result;
-  }, [categories, searchTerm, sortKey, sortDirection, filterKey]);
+  }, [visibleCategories, searchTerm, sortKey, sortDirection, filterKey, canManageCategories]);
 
   const {
     currentPage,
@@ -209,6 +219,7 @@ export default function Categories() {
           setFilterKey={setFilterKey}
           sortOptions={sortOptions}
           filterOptions={filterOptions}
+          showFilter={canManageCategories}
         />
       </div>
 
@@ -232,7 +243,7 @@ export default function Categories() {
       {!loading && (
         <>
           <p className="results-count">
-            Mostrando {filteredCategories.length} de {categories.length} categorías.
+            Mostrando {filteredCategories.length} de {visibleCategories.length} categorías.
           </p>
 
           <div className="cards-grid">
@@ -241,7 +252,10 @@ export default function Categories() {
             ) : (
               currentData.map(category => (
                 <div key={category.id} className="category-card-item">
-                  <CategoryCard category={category} />
+                  <CategoryCard
+                    category={category}
+                    showStatus={canManageCategories}
+                  />
 
                   {canManageCategories && (
                     <div className="category-card-actions">
