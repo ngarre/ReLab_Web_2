@@ -41,36 +41,36 @@ export function Header() {
 
         <div className="header-right user-actions">
           {isAuthenticated ? (
-            <>
+            <div className="header-session-actions hide-on-mobile">
               <Link
                 to="/profile"
-                className="header-action-link hide-on-mobile"
+                className="header-action-link"
               >
                 Perfil
               </Link>
 
               <button
                 type="button"
-                className="logout-btn hide-on-mobile"
+                className="logout-btn"
                 onClick={handleLogout}
               >
                 Cerrar sesión
               </button>
 
-              <div className="action-divider hide-on-mobile"></div>
-            </>
+              <div className="action-divider"></div>
+            </div>
           ) : (
-            <>
-              <Link to="/login" className="header-auth-link hide-on-mobile">
+            <div className="header-session-actions hide-on-mobile">
+              <Link to="/login" className="header-auth-link">
                 Iniciar sesión
               </Link>
 
-              <Link to="/register" className="header-auth-link hide-on-mobile">
+              <Link to="/register" className="header-auth-link">
                 Registrarse
               </Link>
 
-              <div className="action-divider hide-on-mobile"></div>
-            </>
+              <div className="action-divider"></div>
+            </div>
           )}
 
           <DarkModeToggle />

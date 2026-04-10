@@ -10,8 +10,8 @@
 
   transition: background-color 0.2s ease, color 0.2s ease;
   /* Aseguramos que esté por encima de otros elementos */
-  position: relative; 
-  z-index: 100; 
+  position: relative;
+  z-index: 100;
 }
 
 .dark .app-header {
@@ -23,21 +23,21 @@
 /* --- CONTENEDOR INTERNO --- */
 .app-header-inner {
   width: 100%;
-  max-width: 1350px; 
-  display: flex;
-  justify-content: space-between;
+  max-width: 1280px;
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr) 280px;
   align-items: center;
+  column-gap: 1rem;
 }
 
 /* --- LOGO --- */
 .app-logo {
-  height: 40px;
+  height: 46px;
   width: auto;
   cursor: pointer;
-
-  transform: scale(3); 
-  transform-origin: left center; 
-  margin-right: 2rem; 
+  display: block;
+  transform: scale(2.2);
+  transform-origin: left center;
 }
 
 /* --- SECCIONES DE LAYOUT --- */
@@ -46,20 +46,39 @@
 .header-right {
   display: flex;
   align-items: center;
+  min-width: 0;
 }
 
-/* NAVBAR CENTRADO */
+.header-left {
+  justify-content: flex-start;
+}
+
 .header-center {
-  flex: 1;
-  display: flex;
   justify-content: center;
 }
 
-/* --- DERECHA (CONTENEDOR DE ACCIONES) --- */
-.header-right {
+.header-left a {
+  display: inline-flex;
+  align-items: center;
+}
+
+.header-session-actions {
   display: flex;
   align-items: center;
-  gap: 0.8rem; /* Espacio general entre elementos */
+  gap: 1rem;
+}
+
+.header-session-actions .header-action-link,
+.header-session-actions .header-auth-link,
+.header-session-actions .logout-btn {
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+}
+
+.header-right {
+  justify-content: flex-end;
+  gap: 0.35rem;
 }
 
 .logout-btn {
@@ -112,7 +131,8 @@
   width: 1px;
   height: 20px;
   background-color: var(--border-light);
-  margin: 0 0.5rem;
+  margin-left: 0.1rem;
+  flex-shrink: 0;
 }
 
 .dark .action-divider {
@@ -126,15 +146,15 @@
   background: none;
   border: none;
   cursor: pointer;
-  padding: 6px; 
+  padding: 6px;
   color: var(--text-dark);
-  
+
   display: flex;
   align-items: center;
   justify-content: center;
-  
+
   transition: color 0.2s ease, background-color 0.2s ease;
-  border-radius: 50%; 
+  border-radius: 50%;
 }
 
 .dark-mode-toggle:hover {
@@ -154,18 +174,19 @@
 
 /* Tamaño estándar para todos los SVGs dentro de botones/links del header */
 .header-right svg {
-  display: block; 
+  display: block;
 }
 
 /* Estilo base del botón hamburguesa (oculto en escritorio) */
 .mobile-menu-btn {
-  display: none; 
+  display: none;
   background: none;
   border: none;
   cursor: pointer;
   color: var(--text-dark);
   padding: 5px;
 }
+
 .dark .mobile-menu-btn {
   color: var(--text-light);
 }
@@ -175,16 +196,21 @@
    ========================================= */
 
 @media (max-width: 768px) {
-  
+
   .app-header {
-    padding: 0.5rem 1rem; 
+    padding: 0.5rem 1rem;
+  }
+
+  .app-header-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
 
   /* 1. Ajustar el LOGO en móvil */
   .app-logo {
-    transform: scale(1.5); 
-    margin-right: 0.5rem;
-    height: 30px; 
+    height: 38px;
+    transform: none;
   }
 
   /* 2. Mostrar el botón hamburguesa */
@@ -195,26 +221,26 @@
 
   /* 3. Ocultar iconos secundarios (Favoritos/Perfil) y el separador en móvil */
   .hide-on-mobile {
-    display: none; 
+    display: none;
   }
 
   /* 4. Transformar el NAVBAR en un menú desplegable */
   .header-center {
     position: absolute;
-    top: 100%; 
+    top: 100%;
     left: 0;
     width: 100%;
     background-color: var(--surface-light);
     border-bottom: 1px solid var(--border-light);
-    
+
     flex-direction: column;
     padding: 0;
-    
+
     /* Animación de apertura */
     max-height: 0;
     overflow: hidden;
     transition: max-height 0.3s ease-in-out;
-    
+
     /* Sombra para que flote sobre el contenido */
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
   }
@@ -226,7 +252,7 @@
 
   /* Cuando el estado es 'open', desplegamos el menú */
   .header-center.open {
-    max-height: 300px; 
+    max-height: 300px;
     padding: 1rem 0;
   }
 
@@ -234,13 +260,14 @@
   .header-center .nav-links {
     flex-direction: column;
     width: 100%;
-    gap: 0; 
+    gap: 0;
   }
-  
+
   .header-center a {
     width: 100%;
     text-align: center;
-    padding: 0.75rem 0; /* Más padding para que sean áreas de clic grandes */
+    padding: 0.75rem 0;
+    /* Más padding para que sean áreas de clic grandes */
     display: block;
   }
 }
