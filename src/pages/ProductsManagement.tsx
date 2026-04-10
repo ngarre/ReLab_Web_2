@@ -3,13 +3,14 @@ import { ProductCard } from '../components/ProductCard';
 import { CategoryUsageSummary } from '../components/CategoryUsageSummary';
 import { Loading } from '../components/Loading';
 import { ErrorMessage } from '../components/ErrorMessage';
+import { Pagination } from '../components/Pagination';
+import { usePagination } from '../hooks/usePagination';
 import { deleteProduct, getProducts, updateProduct } from '../services/productService';
 import { useAuth } from '../hooks/useAuth';
 import type { Product } from '../types/Product';
 import './ProductsManagement.css';
 
 export default function ProductsManagement() {
-
     const { token } = useAuth();
 
     const [products, setProducts] = useState<Product[]>([]);
@@ -105,9 +106,10 @@ export default function ProductsManagement() {
 
         if (searchTerm) {
             const termLower = searchTerm.toLowerCase();
-            result = result.filter((product) =>
-                product.nombre.toLowerCase().includes(termLower) ||
-                product.descripcion.toLowerCase().includes(termLower)
+            result = result.filter(
+                (product) =>
+                    product.nombre.toLowerCase().includes(termLower) ||
+                    product.descripcion.toLowerCase().includes(termLower)
             );
         }
 
@@ -151,6 +153,14 @@ export default function ProductsManagement() {
 
         return result;
     }, [products, searchTerm, ownerFilter, categoryFilter, sortKey, sortDirection, filterKey]);
+
+    const {
+        currentPage,
+        totalPages,
+        currentData,
+        nextPage,
+        prevPage,
+    } = usePagination(filteredProducts, 8);
 
     const toggleSortDirection = () => {
         setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
@@ -235,7 +245,7 @@ export default function ProductsManagement() {
                     <p>{summary.total}</p>
                 </article>
 
-                <article className="dashboard-summary-card dashboard-summary-card-active ">
+                <article className="dashboard-summary-card dashboard-summary-card-active">
                     <h2>Activos</h2>
                     <p>{summary.active}</p>
                 </article>
@@ -360,7 +370,7 @@ export default function ProductsManagement() {
                         {filteredProducts.length === 0 ? (
                             <p className="empty-message">No se encontraron productos.</p>
                         ) : (
-                            filteredProducts.map((product) => (
+                            currentData.map((product) => (
                                 <div key={product.id} className="dashboard-product-card-item">
                                     <ProductCard product={product} />
 
@@ -391,6 +401,15 @@ export default function ProductsManagement() {
                             ))
                         )}
                     </div>
+
+                    {filteredProducts.length > 0 && (
+                        <Pagination
+                            currentPage={currentPage}
+                            totalPages={totalPages}
+                            onNext={nextPage}
+                            onPrev={prevPage}
+                        />
+                    )}
                 </>
             )}
         </main>
