@@ -17,6 +17,7 @@ interface AuthContextType {
     isLoading: boolean;
     login: (credentials: LoginRequest) => Promise<void>;
     logout: () => void;
+    refreshUser: () => Promise<void>;
 }
 
 export const AuthContext = createContext<AuthContextType>({
@@ -27,6 +28,7 @@ export const AuthContext = createContext<AuthContextType>({
     isLoading: true,
     login: async () => { },
     logout: () => { },
+    refreshUser: async () => { },
 });
 
 interface AuthProviderProps {
@@ -39,6 +41,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
     const [role, setRole] = useState<UserRole | null>(null);
     const [isLoading, setIsLoading] = useState(true);
 
+    const loadProfile = async (sessionToken: string, sessionRole: UserRole | null) => {
+        const profile = await getMyProfile(sessionToken);
+
+        setToken(sessionToken);
+        setRole(sessionRole);
+        setUser(profile);
+    };
+
     useEffect(() => {
         const restoreSession = async () => {
             const savedSession = getAuthSession();
@@ -49,11 +59,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
             }
 
             try {
-                const profile = await getMyProfile(savedSession.token);
-
-                setToken(savedSession.token);
-                setRole(savedSession.role);
-                setUser(profile);
+                await loadProfile(savedSession.token, savedSession.role);
             } catch (error) {
                 clearAuthSession();
                 setToken(null);
@@ -71,21 +77,28 @@ export function AuthProvider({ children }: AuthProviderProps) {
     const login = async (credentials: LoginRequest) => {
         try {
             const authResponse = await loginRequest(credentials);
-            console.log('LOGIN RESPONSE', authResponse);
-
-            const profile = await getMyProfile(authResponse.token);
-            console.log('MY PROFILE RESPONSE', profile);
+            await loadProfile(authResponse.token, authResponse.role);
 
             saveAuthSession({
                 token: authResponse.token,
                 role: authResponse.role,
             });
-
-            setToken(authResponse.token);
-            setRole(authResponse.role);
-            setUser(profile);
         } catch (error) {
             console.error('AUTH CONTEXT LOGIN ERROR', error);
+            throw error;
+        }
+    };
+
+    const refreshUser = async () => {
+        if (!token) {
+            return;
+        }
+
+        try {
+            const profile = await getMyProfile(token);
+            setUser(profile);
+        } catch (error) {
+            console.error('Error refreshing user profile:', error);
             throw error;
         }
     };
@@ -106,6 +119,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
             isLoading,
             login,
             logout,
+            refreshUser,
         }),
         [user, token, role, isLoading]
     );

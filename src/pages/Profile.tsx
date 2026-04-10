@@ -4,19 +4,52 @@ import { ImageUploader } from '../components/ImageUploader';
 import { Loading } from '../components/Loading';
 import { ErrorMessage } from '../components/ErrorMessage';
 import { useAuth } from '../hooks/useAuth';
-import { deleteUserAccount } from '../services/userService';
+import { deleteUserAccount, updateUser } from '../services/userService';
 import { getProducts } from '../services/productService';
 import './Profile.css';
 
+interface ProfileFormState {
+  nombre: string;
+  apellido: string;
+  email: string;
+  fechaNacimiento: string;
+  tipoUsuario: string;
+}
+
 export default function Profile() {
   const navigate = useNavigate();
-  const { user, role, token, isLoading, logout } = useAuth();
+  const { user, role, token, isLoading, logout, refreshUser } = useAuth();
 
   const [error, setError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
   const [publishedProductsCount, setPublishedProductsCount] = useState(0);
   const [profileStatsLoading, setProfileStatsLoading] = useState(true);
   const [productsError, setProductsError] = useState('');
+
+  const [formData, setFormData] = useState<ProfileFormState>({
+    nombre: '',
+    apellido: '',
+    email: '',
+    fechaNacimiento: '',
+    tipoUsuario: 'particular',
+  });
+
+  useEffect(() => {
+    if (!user) {
+      return;
+    }
+
+    setFormData({
+      nombre: user.nombre ?? '',
+      apellido: user.apellido ?? '',
+      email: user.email ?? '',
+      fechaNacimiento: user.fechaNacimiento ?? '',
+      tipoUsuario: user.tipoUsuario ?? 'particular',
+    });
+  }, [user]);
 
   useEffect(() => {
     if (!user) {
@@ -42,14 +75,24 @@ export default function Profile() {
       .finally(() => setProfileStatsLoading(false));
   }, [user]);
 
+  useEffect(() => {
+    if (!successMessage) {
+      return;
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      setSuccessMessage('');
+    }, 4000);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [successMessage]);
+
   if (isLoading || profileStatsLoading) {
     return (
       <main className="main-content-area">
         <h1 className="page-title">Mi Perfil</h1>
         <div className="page-title-separator"></div>
-        <p className="page-subtitle">
-          Cargando datos de la cuenta...
-        </p>
+        <p className="page-subtitle">Cargando datos de la cuenta...</p>
         <Loading />
       </main>
     );
@@ -59,11 +102,9 @@ export default function Profile() {
     return null;
   }
 
-  const getRoleLabel = () => role;
   const isClient = role === 'CLIENTE';
 
-  const profileHighlightTitle = isClient ? 'Productos publicados' : 'Área de acceso';
-  const profileHighlightValue = isClient ? String(publishedProductsCount) : 'Gestión interna';
+  const getRoleLabel = () => role;
 
   const getRoleBadgeClassName = () =>
     `profile-role-badge profile-role-badge-${role?.toLowerCase() ?? 'cliente'}`;
@@ -91,7 +132,6 @@ export default function Profile() {
     }
 
     const normalizedDate = rawDate.trim();
-
     const isoDate = normalizedDate.includes('T')
       ? normalizedDate.split('T')[0]
       : normalizedDate;
@@ -120,6 +160,99 @@ export default function Profile() {
     return normalizedDate;
   };
 
+  const normalizeDateForInput = (rawDate?: string | null) => {
+    if (!rawDate || !rawDate.trim()) {
+      return '';
+    }
+
+    return rawDate.includes('T') ? rawDate.split('T')[0] : rawDate;
+  };
+
+  const profileHighlightTitle = isClient ? 'Productos publicados' : 'Área de acceso';
+  const profileHighlightValue = isClient ? String(publishedProductsCount) : 'Gestión interna';
+
+  const handleInputChange = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = event.currentTarget;
+
+    setFormData((current) => ({
+      ...current,
+      [name]: value,
+    }));
+
+    if (error) {
+      setError('');
+    }
+
+    if (successMessage) {
+      setSuccessMessage('');
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setIsEditing(false);
+    setError('');
+    setSuccessMessage('');
+    setFormData({
+      nombre: user.nombre ?? '',
+      apellido: user.apellido ?? '',
+      email: user.email ?? '',
+      fechaNacimiento: normalizeDateForInput(user.fechaNacimiento),
+      tipoUsuario: user.tipoUsuario ?? 'particular',
+    });
+  };
+
+  const handleSaveProfile = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    if (!token) {
+      setError('No hay sesión activa para actualizar tu cuenta.');
+      return;
+    }
+
+    if (!formData.nombre.trim()) {
+      setError('El nombre es obligatorio.');
+      return;
+    }
+
+    if (!formData.apellido.trim()) {
+      setError('El apellido es obligatorio.');
+      return;
+    }
+
+    if (!formData.email.trim()) {
+      setError('El email es obligatorio.');
+      return;
+    }
+
+    setIsSaving(true);
+    setError('');
+    setSuccessMessage('');
+
+    try {
+      await updateUser(
+        user.id,
+        {
+          nombre: formData.nombre.trim(),
+          apellido: formData.apellido.trim(),
+          email: formData.email.trim(),
+          fechaNacimiento: formData.fechaNacimiento || undefined,
+          tipoUsuario: formData.tipoUsuario,
+        },
+        token
+      );
+
+      await refreshUser();
+      setIsEditing(false);
+      setSuccessMessage('Tus datos se han actualizado correctamente.');
+    } catch {
+      setError('No se pudieron actualizar los datos de tu cuenta.');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   const handleDeleteAccount = async () => {
     if (!token) {
       setError('No hay sesión activa para eliminar la cuenta.');
@@ -136,6 +269,7 @@ export default function Profile() {
 
     setIsDeleting(true);
     setError('');
+    setSuccessMessage('');
 
     try {
       await deleteUserAccount(user.id, token);
@@ -225,6 +359,9 @@ export default function Profile() {
             <div className="profile-panel-header">
               <h3>Datos de la cuenta</h3>
               <p>Resumen rápido de la información disponible en tu perfil.</p>
+              {successMessage && (
+                <p className="profile-inline-success-message">{successMessage}</p>
+              )}
             </div>
 
             <div className="profile-details-list">
@@ -255,6 +392,106 @@ export default function Profile() {
                 <strong>{formatDate(user.fechaNacimiento)}</strong>
               </div>
             </div>
+
+            <div className="profile-panel-actions">
+              <button
+                type="button"
+                className="profile-secondary-btn"
+                onClick={() => {
+                  setIsEditing((current) => !current);
+                  setError('');
+                  setSuccessMessage('');
+                }}
+              >
+                {isEditing ? 'Cerrar edición' : 'Editar datos'}
+              </button>
+            </div>
+
+            {isEditing && (
+              <form className="profile-edit-form" onSubmit={handleSaveProfile}>
+                <div className="profile-form-grid">
+                  <div className="profile-form-field">
+                    <label htmlFor="profile-nombre">Nombre</label>
+                    <input
+                      id="profile-nombre"
+                      name="nombre"
+                      type="text"
+                      value={formData.nombre}
+                      onChange={handleInputChange}
+                      required
+                    />
+                  </div>
+
+                  <div className="profile-form-field">
+                    <label htmlFor="profile-apellido">Apellido</label>
+                    <input
+                      id="profile-apellido"
+                      name="apellido"
+                      type="text"
+                      value={formData.apellido}
+                      onChange={handleInputChange}
+                      required
+                    />
+                  </div>
+
+                  <div className="profile-form-field">
+                    <label htmlFor="profile-email">Email</label>
+                    <input
+                      id="profile-email"
+                      name="email"
+                      type="email"
+                      value={formData.email}
+                      onChange={handleInputChange}
+                      required
+                    />
+                  </div>
+
+                  <div className="profile-form-field">
+                    <label htmlFor="profile-fechaNacimiento">Fecha de nacimiento</label>
+                    <input
+                      id="profile-fechaNacimiento"
+                      name="fechaNacimiento"
+                      type="date"
+                      value={normalizeDateForInput(formData.fechaNacimiento)}
+                      onChange={handleInputChange}
+                    />
+                  </div>
+
+                  <div className="profile-form-field profile-form-field-full">
+                    <label htmlFor="profile-tipoUsuario">Tipo de usuario</label>
+                    <select
+                      id="profile-tipoUsuario"
+                      name="tipoUsuario"
+                      value={formData.tipoUsuario}
+                      onChange={handleInputChange}
+                    >
+                      <option value="particular">Particular</option>
+                      <option value="empresa">Empresa</option>
+                      <option value="centro_publico">Centro público</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="profile-form-actions">
+                  <button
+                    type="button"
+                    className="profile-secondary-btn"
+                    onClick={handleCancelEdit}
+                    disabled={isSaving}
+                  >
+                    Cancelar
+                  </button>
+
+                  <button
+                    type="submit"
+                    className="profile-primary-btn"
+                    disabled={isSaving}
+                  >
+                    {isSaving ? 'Guardando...' : 'Guardar cambios'}
+                  </button>
+                </div>
+              </form>
+            )}
           </section>
         </div>
 
