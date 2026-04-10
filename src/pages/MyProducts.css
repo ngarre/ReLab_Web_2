@@ -20,7 +20,11 @@
 
 .edit-product-btn {
   text-decoration: none;
-  color: inherit;
+  color: #222;
+  background-color: #f0f0f0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .delete-product-btn {
