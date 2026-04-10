@@ -5,11 +5,15 @@ import { TagIcon } from './Icons';
 
 interface CategoryCardProps {
   category: Category;
+  showStatus?: boolean;
 }
 
 const DESCRIPTION_TOGGLE_THRESHOLD = 160;
 
-export const CategoryCard: React.FC<CategoryCardProps> = ({ category }) => {
+export const CategoryCard: React.FC<CategoryCardProps> = ({
+  category,
+  showStatus = true,
+}) => {
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
 
   const formattedDate = new Date(category.fechaCreacion).toLocaleDateString('es-ES', {
@@ -30,9 +34,11 @@ export const CategoryCard: React.FC<CategoryCardProps> = ({ category }) => {
           <h2 className="card-title">{category.nombre}</h2>
         </div>
 
-        <span className={`status-pill ${category.activa ? 'active' : 'inactive'}`}>
-          {category.activa ? 'ACTIVA' : 'INACTIVA'}
-        </span>
+        {showStatus && (
+          <span className={`status-pill ${category.activa ? 'active' : 'inactive'}`}>
+            {category.activa ? 'ACTIVA' : 'INACTIVA'}
+          </span>
+        )}
       </div>
 
       <p
