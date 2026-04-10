@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import type { Category } from '../types/Category';
 import './CategoryCard.css';
 import { TagIcon } from './Icons';
@@ -7,12 +7,20 @@ interface CategoryCardProps {
   category: Category;
 }
 
+const DESCRIPTION_TOGGLE_THRESHOLD = 160;
+
 export const CategoryCard: React.FC<CategoryCardProps> = ({ category }) => {
+  const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
+
   const formattedDate = new Date(category.fechaCreacion).toLocaleDateString('es-ES', {
     year: 'numeric',
     month: 'short',
     day: 'numeric'
   });
+
+  const normalizedDescription = category.descripcion?.trim() || 'Sin descripción disponible.';
+  const canToggleDescription =
+    !!category.descripcion && category.descripcion.trim().length > DESCRIPTION_TOGGLE_THRESHOLD;
 
   return (
     <div className="category-card">
@@ -27,7 +35,22 @@ export const CategoryCard: React.FC<CategoryCardProps> = ({ category }) => {
         </span>
       </div>
 
-      <p className="card-description">{category.descripcion}</p>
+      <p
+        className={`card-description ${isDescriptionExpanded ? 'expanded' : ''
+          }`}
+      >
+        {normalizedDescription}
+      </p>
+
+      {canToggleDescription && (
+        <button
+          type="button"
+          className="category-description-toggle"
+          onClick={() => setIsDescriptionExpanded((current) => !current)}
+        >
+          {isDescriptionExpanded ? 'Ver menos' : 'Ver más'}
+        </button>
+      )}
 
       <div className="card-details">
         <div className="detail-item">
