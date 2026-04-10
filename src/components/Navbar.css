@@ -1,90 +1,77 @@
 .nav-links {
   display: flex;
-  gap: 2.2rem;
-  min-width: 420px;
+  gap: 1.9rem;
+  min-width: 520px;
   justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
 }
 
-.nav-links a {
+.nav-links a,
+.mobile-only-link-button {
   font-weight: 500;
   font-size: 0.95rem;
   color: var(--text-dark);
   padding-bottom: 3px;
-  transition: color 0.2s ease, border-color 0.2s ease;
+  transition: color 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
+  background: none;
+  border: none;
+  font-family: inherit;
+  cursor: pointer;
 }
 
-/* Modo oscuro */
-.dark .nav-links a {
+.dark .nav-links a,
+.dark .mobile-only-link-button {
   color: var(--text-light);
 }
 
-.nav-links a:hover {
+.nav-links a:hover,
+.mobile-only-link-button:hover {
   color: var(--primary);
 }
 
-/* Este estilo solo se aplica al enlace de la página donde estás parado */
 .nav-links a.active {
   border-bottom: 2px solid var(--primary);
   color: var(--primary);
 }
 
-
-/* ====================================================
-   REGLAS PARA MÓVIL (OCULTAR EN ESCRITORIO)
-   ==================================================== */
-
-/* Ocultar los enlaces de Perfil/Favoritos en escritorio */
 .nav-links .mobile-only-link {
-    display: none; 
+  display: none;
 }
 
-/* Estilo para el icono dentro del enlace */
-.nav-links .link-icon {
-    margin-right: 0.5rem;
-    vertical-align: middle;
-    /* Aseguramos que el color del icono sea el mismo que el texto */
-    color: currentColor; /* Iconos podrán heredar automáticamente color de los enlaces */
+.nav-links .mobile-only-link-button {
+  display: none;
 }
-
-/* ==================================================== */
-
-
-
-
- /* MEDIA QUERIES*/
 
 @media (max-width: 768px) {
-    /* 1. Ajustar la navegación principal en modo columna */
-    .nav-links {
-        flex-direction: column;
-        width: 100%;
-        gap: 0; /* Quitamos el gap horizontal que ya no se usa en columna */
-        min-width: unset;
-    }
+  .nav-links {
+    flex-direction: column;
+    width: 100%;
+    gap: 0;
+    min-width: unset;
+  }
 
-    /* 2. Ajustar los enlaces principales en el desplegable */
-    .nav-links a {
-        width: 100%;
-        text-align: center;
-        padding: 0.75rem 0;
-        display: block;
-        
-        /* Eliminamos el borde de abajo para que no se vea raro en el menú */
-        border-bottom: none !important; 
-    }
-    
-    /* 3. Mostrar y estilizar los enlaces de Perfil/Favoritos */
-    .nav-links .mobile-only-link {
-        display: flex; /* Usamos flex para centrar el icono y texto */
-        align-items: center;
-        justify-content: center;
-        padding: 0.75rem 0;
-        /* Separador visual para diferenciar estas acciones del resto de links */
-        border-top: 1px solid var(--border-light); 
-        font-weight: 600; /* Un poco más de énfasis */
-    }
+  .nav-links a,
+  .mobile-only-link-button {
+    width: 100%;
+    text-align: center;
+    padding: 0.75rem 0;
+    display: block;
+    border-bottom: none !important;
+  }
 
-    .dark .nav-links .mobile-only-link {
-        border-top: 1px solid var(--border-dark);
-    }
+  .nav-links .mobile-only-link,
+  .nav-links .mobile-only-link-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 0;
+    border-top: 1px solid var(--border-light);
+    font-weight: 600;
+  }
+
+  .dark .nav-links .mobile-only-link,
+  .dark .nav-links .mobile-only-link-button {
+    border-top: 1px solid var(--border-dark);
+  }
 }

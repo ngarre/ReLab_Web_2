@@ -85,34 +85,26 @@
   opacity: 0.8;
 }
 
+.header-auth-link,
+.logout-btn,
+.header-action-link {
+  font-size: 0.95rem;
+}
+
 /* =========================================
-    ACCIONES DE USUARIO (ICONOS DE ESCRITORIO)
+            ACCIONES DE USUARIO 
    ========================================= */
 
-.icon-action {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--text-dark);
-  padding: 6px; 
-  border-radius: 50%; 
-  transition: all 0.2s ease;
+.header-action-link {
+  text-decoration: none;
+  color: inherit;
+  font: inherit;
+  font-weight: 500;
+  transition: color 0.2s ease, opacity 0.2s ease;
 }
 
-.icon-action:hover {
+.header-action-link:hover {
   color: var(--primary);
-  background-color: rgba(0, 0, 0, 0.05);
-  transform: translateY(-2px); 
-}
-
-/* Iconos en Modo Oscuro */
-.dark .icon-action {
-  color: var(--text-light);
-}
-
-.dark .icon-action:hover {
-  color: var(--primary);
-  background-color: rgba(255, 255, 255, 0.1);
 }
 
 /* Separador Vertical */

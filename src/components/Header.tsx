@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Navbar } from "./Navbar";
 import { DarkModeToggle } from "./DarkModeToggle";
-import { PersonIcon, HeartIcon, MenuIcon, CloseIcon } from "./Icons";
+import { MenuIcon, CloseIcon } from "./Icons";
 import { useAuth } from "../hooks/useAuth";
 import logo from "../assets/images/Logo1.png";
 import "./Header.css";
@@ -36,18 +36,17 @@ export function Header() {
         </div>
 
         <div className={`header-center ${isMenuOpen ? 'open' : ''}`}>
-          <Navbar onLinkClick={closeMenu} />
+          <Navbar onLinkClick={closeMenu} onLogout={handleLogout} />
         </div>
 
         <div className="header-right user-actions">
           {isAuthenticated ? (
             <>
-              <Link to="/my-products" className="icon-action hide-on-mobile" aria-label="Ir a Mis productos">
-                <HeartIcon size={20} />
-              </Link>
-
-              <Link to="/profile" className="icon-action hide-on-mobile" aria-label="Ir al Perfil">
-                <PersonIcon size={22} />
+              <Link
+                to="/profile"
+                className="header-action-link hide-on-mobile"
+              >
+                Perfil
               </Link>
 
               <button
