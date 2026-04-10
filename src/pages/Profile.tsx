@@ -60,6 +60,10 @@ export default function Profile() {
   }
 
   const getRoleLabel = () => role;
+  const isClient = role === 'CLIENTE';
+
+  const profileHighlightTitle = isClient ? 'Productos publicados' : 'Área de acceso';
+  const profileHighlightValue = isClient ? String(publishedProductsCount) : 'Gestión interna';
 
   const getRoleBadgeClassName = () =>
     `profile-role-badge profile-role-badge-${role?.toLowerCase() ?? 'cliente'}`;
@@ -193,8 +197,8 @@ export default function Profile() {
             </article>
 
             <article className="profile-meta-card">
-              <span className="profile-meta-label">Productos publicados</span>
-              <strong>{publishedProductsCount}</strong>
+              <span className="profile-meta-label">{profileHighlightTitle}</span>
+              <strong>{profileHighlightValue}</strong>
             </article>
           </div>
         </section>
