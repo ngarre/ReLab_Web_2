@@ -1,41 +1,78 @@
 import React from 'react';
 import { NavLink } from "react-router-dom";
 import "./Navbar.css";
-import { PersonIcon, HeartIcon } from "./Icons";
 import { useAuth } from '../hooks/useAuth';
 
 interface NavbarProps {
   onLinkClick?: () => void;
+  onLogout?: () => void;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({ onLinkClick }) => {
+export const Navbar: React.FC<NavbarProps> = ({ onLinkClick, onLogout }) => {
   const { isAuthenticated, role } = useAuth();
 
-  const canSeeUsers = role === 'ADMIN' || role === 'GESTOR';
+  const isClient = role === 'CLIENTE';
+  const canSeeManagement = role === 'ADMIN' || role === 'GESTOR';
 
   return (
-    <nav className="nav-links" onClick={onLinkClick}>
-      <NavLink to="/" end>
-        Inicio
-      </NavLink>
+    <nav className="nav-links">
+      {isAuthenticated && isClient && (
+        <>
+          <NavLink to="/" end onClick={onLinkClick}>
+            Inicio
+          </NavLink>
 
-      {isAuthenticated && (
-        <NavLink to="/categories">Categorías</NavLink>
+          <NavLink to="/categories" onClick={onLinkClick}>
+            Categorías
+          </NavLink>
+
+          <NavLink to="/my-products" onClick={onLinkClick}>
+            Mis productos
+          </NavLink>
+        </>
       )}
 
-      {isAuthenticated && canSeeUsers && (
-        <NavLink to="/users">Usuarios</NavLink>
+      {isAuthenticated && canSeeManagement && (
+        <>
+          <NavLink to="/management/products" onClick={onLinkClick}>
+            Productos
+          </NavLink>
+
+          <NavLink to="/categories" onClick={onLinkClick}>
+            Categorías
+          </NavLink>
+
+          <NavLink to="/users" onClick={onLinkClick}>
+            Usuarios
+          </NavLink>
+        </>
+      )}
+
+      {!isAuthenticated && (
+        <>
+          <NavLink to="/login" className="mobile-only-link" onClick={onLinkClick}>
+            Iniciar sesión
+          </NavLink>
+
+          <NavLink to="/register" className="mobile-only-link" onClick={onLinkClick}>
+            Registrarse
+          </NavLink>
+        </>
       )}
 
       {isAuthenticated && (
         <>
-          <NavLink to="/my-products" className="mobile-only-link">
-            <HeartIcon size={18} className="link-icon" /> Mis productos
+          <NavLink to="/profile" className="mobile-only-link" onClick={onLinkClick}>
+            Perfil
           </NavLink>
 
-          <NavLink to="/profile" className="mobile-only-link">
-            <PersonIcon size={20} className="link-icon" /> Perfil de Usuario
-          </NavLink>
+          <button
+            type="button"
+            className="mobile-only-link mobile-only-link-button"
+            onClick={onLogout}
+          >
+            Cerrar sesión
+          </button>
         </>
       )}
     </nav>
