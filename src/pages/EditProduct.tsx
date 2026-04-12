@@ -8,7 +8,7 @@ import { getProductById, updateProduct } from '../services/productService';
 import type { Category } from '../types/Category';
 import type { Product } from '../types/Product';
 import type { ProductUpdate } from '../types/ProductUpdate';
-import './EditProduct.css';
+import './EntityForm.css';
 
 interface EditProductFormState {
   nombre: string;

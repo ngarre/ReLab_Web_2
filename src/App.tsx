@@ -65,17 +65,26 @@ function App() {
               <Route
                 path="/my-products"
                 element={
-                  <ProtectedRoute>
+                  <RoleRoute allowedRoles={['CLIENTE']}>
                     <MyProducts />
-                  </ProtectedRoute>
+                  </RoleRoute>
+                }
+              />
+
+              <Route
+                path="/my-products/new"
+                element={
+                  <RoleRoute allowedRoles={['CLIENTE']}>
+                    <CreateProduct />
+                  </RoleRoute>
                 }
               />
               <Route
                 path="/my-products/:id/edit"
                 element={
-                  <ProtectedRoute>
+                  <RoleRoute allowedRoles={['CLIENTE']}>
                     <EditProduct />
-                  </ProtectedRoute>
+                  </RoleRoute>
                 }
               />
               <Route
@@ -84,14 +93,6 @@ function App() {
                   <RoleRoute allowedRoles={['ADMIN', 'GESTOR']}>
                     <ProductsManagement />
                   </RoleRoute>
-                }
-              />
-              <Route
-                path="/my-products/new"
-                element={
-                  <ProtectedRoute>
-                    <CreateProduct />
-                  </ProtectedRoute>
                 }
               />
               <Route

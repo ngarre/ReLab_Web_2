@@ -1,5 +1,6 @@
 /*URL base del backend (API de Spring Boot).*/
-const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+export const BASE_URL =
+  import.meta.env.VITE_API_URL || 'http://localhost:8080';
 
 type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
 

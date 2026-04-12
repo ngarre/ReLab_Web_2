@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import type { Category } from '../types/Category';
 import './CategoryCard.css';
 import { TagIcon } from './Icons';
+import { formatSpanishDate } from '../utils/date';
 
 interface CategoryCardProps {
   category: Category;
@@ -16,7 +17,7 @@ export const CategoryCard: React.FC<CategoryCardProps> = ({
 }) => {
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
 
-  const formattedDate = new Date(category.fechaCreacion).toLocaleDateString('es-ES', {
+  const formattedDate = formatSpanishDate(category.fechaCreacion, {
     year: 'numeric',
     month: 'short',
     day: 'numeric'

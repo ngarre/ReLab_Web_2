@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import type { Product } from '../types/Product';
 import { useNavigate } from 'react-router-dom';
 import './ProductCard.css';
-import PlaceholderImage from '../assets/images/placeholder-default.jpg';
+import { getProductImageUrl } from '../utils/productImage';
 
 // Definimos qué necesita este componente: un objeto de tipo Product
 interface ProductCardProps {
@@ -18,25 +18,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   };
 
   // ----------- GESTIÓN DE IMÁGENES ---------------
-  // Base de mi backend para las fotos --> porque del servidor llega la ruta relativa /productos/{id}/imagen
-  const API_URL_BASE = 'http://localhost:8080';
-  // Declaro la variable que guardará la URL final:
-  let initialImageUrl: string;
-  // Si el producto tiene URL y el estado imageFailed es false, intentamos cargarla del server
-  if (product.imagenUrl && !imageFailed) {
-    initialImageUrl = `${API_URL_BASE}${product.imagenUrl}`;
-  } else {
-    // Si no hay URL o falla una vez, ponemos la imagen por defecto (placeholder)
-    initialImageUrl = PlaceholderImage;
-  }
+  const imageUrl = getProductImageUrl(product.imagenUrl, imageFailed);
+
   // Esta función se dispara automáticamente si la etiqueta <img> no puede cargar la foto
-  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+  const handleImageError = () => {
     if (!imageFailed) {
-      // 1. Cambiamos el estado a TRUE. Esto hará que el componente se vuelva a dibujar.
       setImageFailed(true);
-      // 2. Forzamos al navegador a cambiar la fuente de la imagen en ese mismo instante
-      // 'e.currentTarget' es el elemento <img> que ha fallado.
-      e.currentTarget.src = PlaceholderImage;
     }
   };
   // ---------------------------------------------------
@@ -57,7 +44,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     >
       <div className="card-image-container">
         <img
-          src={initialImageUrl}
+          src={imageUrl}
           alt={product.nombre} // Texto alternativo por accesibilidad (SEO y lectores de pantalla)
           className="product-image"
           onError={handleImageError}
@@ -75,8 +62,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             <strong>{formattedPrice}</strong>
           </p>
           <p>
-            
-          {/* Si product.categoria existe, busca .nombre. 
+
+            {/* Si product.categoria existe, busca .nombre. 
           Si algo de eso falla (es null/undefined), usa el texto "General" como respaldo. */}
             <span className="category-tag">{product.categoria?.nombre || "General"}</span>
           </p>

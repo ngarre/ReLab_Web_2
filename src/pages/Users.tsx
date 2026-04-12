@@ -13,6 +13,11 @@ import {
 import type { User } from '../types/User';
 import { normalizeText } from '../utils/text';
 import './Users.css';
+import {
+  getAccountTypeLabel,
+  isCentroPublico,
+  normalizeAccountType,
+} from '../utils/user';
 
 export default function Users() {
   const { token, role, user: currentUser, logout } = useAuth();
@@ -85,28 +90,6 @@ export default function Users() {
   }, [actionMessage]);
 
   const isUserActive = (user: User) => Boolean(user.cuentaActiva);
-
-  const normalizeAccountType = (tipoUsuario?: string | null) =>
-    (tipoUsuario ?? '').trim().toLowerCase();
-
-  const isCentroPublico = (tipoUsuario?: string | null) => {
-    const normalizedType = normalizeAccountType(tipoUsuario);
-    return normalizedType === 'centro_publico' || normalizedType === 'centro público';
-  };
-
-  const getAccountTypeLabel = (tipoUsuario?: string | null) => {
-    const normalizedType = normalizeAccountType(tipoUsuario);
-
-    if (normalizedType === 'empresa') {
-      return 'EMPRESA';
-    }
-
-    if (isCentroPublico(tipoUsuario)) {
-      return 'CENTRO PÚBLICO';
-    }
-
-    return 'PARTICULAR';
-  };
 
   const getAccountTypeBadgeClassName = (tipoUsuario?: string | null) => {
     const normalizedType = normalizeAccountType(tipoUsuario);

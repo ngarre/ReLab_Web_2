@@ -4,8 +4,9 @@ import type { Product } from '../types/Product';
 import { Loading } from '../components/Loading';
 import { ErrorMessage } from '../components/ErrorMessage';
 import { useAuth } from '../hooks/useAuth';
-import PlaceholderImage from '../assets/images/placeholder-default.jpg';
 import { getProductById } from '../services/productService';
+import { formatSpanishDate } from '../utils/date';
+import { getProductImageUrl } from '../utils/productImage';
 import './ProductDetail.css';
 
 export default function ProductDetail() {
@@ -15,6 +16,7 @@ export default function ProductDetail() {
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [imageError, setImageError] = useState(false);
 
   useEffect(() => {
     setLoading(true);
@@ -30,16 +32,11 @@ export default function ProductDetail() {
       .finally(() => setLoading(false));
   }, [id]);
 
-  const [imageError, setImageError] = useState(false);
-
   const handleImageError = () => {
-    setImageError(true);
+    if (!imageError) {
+      setImageError(true);
+    }
   };
-
-  const imageUrl =
-    product?.imagenUrl && !imageError
-      ? `http://localhost:8080${product.imagenUrl}`
-      : PlaceholderImage;
 
   if (loading) {
     return <Loading />;
@@ -57,12 +54,18 @@ export default function ProductDetail() {
     return <ErrorMessage message="No tienes permisos para ver este producto." />;
   }
 
+  const imageUrl = getProductImageUrl(product?.imagenUrl, imageError);
+
   const formattedPrice = new Intl.NumberFormat('es-ES', {
     style: 'currency',
     currency: 'EUR'
   }).format(product.precio);
 
-  const lastUpdated = new Date(product.fechaActualizacion).toLocaleDateString('es-ES');
+  const lastUpdated = formatSpanishDate(product.fechaActualizacion, {
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+  });
 
   return (
     <main className="main-content-area product-detail-container">

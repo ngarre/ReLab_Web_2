@@ -6,7 +6,7 @@ import { useAuth } from '../hooks/useAuth';
 import { getCategories, getCategoryById, updateCategory } from '../services/categoryService';
 import type { Category } from '../types/Category';
 import type { CategoryUpdate } from '../types/CategoryUpdate';
-import './EditProduct.css';
+import './EntityForm.css';
 
 interface EditCategoryFormState {
     nombre: string;

@@ -6,7 +6,7 @@ import { useAuth } from '../hooks/useAuth';
 import { getCategories } from '../services/categoryService';
 import { createProduct } from '../services/productService';
 import type { Category } from '../types/Category';
-import './EditProduct.css';
+import './EntityForm.css';
 
 interface CreateProductFormState {
     nombre: string;
