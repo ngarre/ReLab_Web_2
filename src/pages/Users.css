@@ -410,6 +410,72 @@
   color: #c2410c;
 }
 
+.dark .dashboard-summary-card {
+  border-color: #334155;
+}
+
+.dark .dashboard-summary-card-total {
+  background: #143847;
+  color: #d8f3f8;
+}
+
+.dark .dashboard-summary-card-active {
+  background: #18392f;
+  color: #dcfce7;
+}
+
+.dark .dashboard-summary-card-inactive {
+  background: #3b2529;
+  color: #fee2e2;
+}
+
+.dark .dashboard-summary-card h2,
+.dark .dashboard-summary-card p {
+  color: inherit;
+}
+
+.dark .users-role-summary-card,
+.dark .users-account-type-summary-card {
+  border-color: #334155;
+}
+
+.dark .users-role-summary-card.users-role-summary-card-admin {
+  background: #31214a;
+  color: #f3e8ff;
+}
+
+.dark .users-role-summary-card.users-role-summary-card-gestor {
+  background: #17384d;
+  color: #dbeafe;
+}
+
+.dark .users-role-summary-card.users-role-summary-card-cliente {
+  background: #2d3748;
+  color: #e5e7eb;
+}
+
+.dark .users-account-type-summary-card.users-account-type-summary-card-empresa {
+  background: #3a2b1f;
+  color: #f5e8dc;
+}
+
+.dark .users-account-type-summary-card.users-account-type-summary-card-particular {
+  background: #3d1f31;
+  color: #fce7f3;
+}
+
+.dark .users-account-type-summary-card.users-account-type-summary-card-centro-publico {
+  background: #4a2c16;
+  color: #ffedd5;
+}
+
+.dark .users-role-summary-card h2,
+.dark .users-role-summary-card p,
+.dark .users-account-type-summary-card h2,
+.dark .users-account-type-summary-card p {
+  color: inherit;
+}
+
 @media (max-width: 768px) {
   .users-toolbar {
     max-width: 100%;

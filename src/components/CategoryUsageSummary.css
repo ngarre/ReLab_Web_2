@@ -33,3 +33,20 @@
   color: #555;
   font-weight: 500;
 }
+
+.dark .dashboard-section-title {
+  color: var(--text-light);
+}
+
+.dark .dashboard-category-card {
+  background: #2b3445;
+  border-color: #334155;
+}
+
+.dark .dashboard-category-card h3 {
+  color: var(--text-light);
+}
+
+.dark .dashboard-category-card p {
+  color: #cbd5e1;
+}

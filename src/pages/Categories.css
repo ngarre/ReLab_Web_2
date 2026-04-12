@@ -84,3 +84,11 @@
   background-color: #c4edf3;
 }
 
+.categories-search-filter-area {
+  border-radius: 12px;
+}
+
+.dark .categories-search-filter-area {
+  background-color: #2b3445;
+}
+

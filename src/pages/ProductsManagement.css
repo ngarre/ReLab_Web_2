@@ -139,6 +139,49 @@
   background: #fdf1f1;
 }
 
+.dark .dashboard-summary-card {
+  border-color: #334155;
+}
+
+.dark .dashboard-summary-card-total {
+  background: #143847;
+  color: #d8f3f8;
+}
+
+.dark .dashboard-summary-card-active {
+  background: #18392f;
+  color: #dcfce7;
+}
+
+.dark .dashboard-summary-card-inactive {
+  background: #3b2529;
+  color: #fee2e2;
+}
+
+.dark .dashboard-summary-card h2,
+.dark .dashboard-summary-card p {
+  color: inherit;
+}
+
+.dark .dashboard-filters-panel {
+  background: #2b3445;
+}
+
+.dark .dashboard-filter-group label,
+.dark .dashboard-filter-label-hidden {
+  color: var(--text-light);
+}
+
+.dark .dashboard-filter-control {
+  background: #1f2937;
+  border-color: var(--border-dark);
+  color: var(--text-light);
+}
+
+.dark .dashboard-filter-control::placeholder {
+  color: #94a3b8;
+}
+
 @media (max-width: 900px) {
   .dashboard-filters-row {
     grid-template-columns: 1fr 1fr;

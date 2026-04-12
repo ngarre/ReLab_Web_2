@@ -12,7 +12,7 @@ export interface IconProps extends React.SVGProps<SVGSVGElement> {
 export const SunIcon = (props: IconProps) => (
   <svg
     width={props.size ?? 24} // Usa size si existe, si no usa 24 (el valor original)
-    height={props.size ?? 24} 
+    height={props.size ?? 24}
     viewBox="0 0 24 24"
     fill="none" // Sin color de fondo
     stroke="currentColor" // El color será el mismo que tenga el texto alrededor
@@ -23,7 +23,7 @@ export const SunIcon = (props: IconProps) => (
     // cualquier atributo estándar de SVG (como className, onClick o style) 
     // sin tener que definirlos uno por uno, facilitando su reutilización.
     // IMPORTANTE debe estar siempre al final para poder sobreescribir desde fuera.
-    {...props} 
+    {...props}
   >
     {/* Aquí van las coordenadas geométricas del dibujo */}
     <circle cx="12" cy="12" r="5"></circle>
@@ -61,7 +61,7 @@ export const AppleIcon = (props: IconProps) => (
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 50 50"
     width={props.size ?? 20} // Usa size si existe, si no usa 20
-    height={props.size ?? 20} 
+    height={props.size ?? 20}
     fill="currentColor"
     {...props}
   >
@@ -163,5 +163,26 @@ export const TagIcon = (props: IconProps) => (
   >
     <path d="M6 4.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m-1 0a.5.5 0 1 0-1 0 .5.5 0 0 0 1 0" />
     <path d="M2 1h4.586a1 1 0 0 1 .707.293l7 7a1 1 0 0 1 0 1.414l-4.586 4.586a1 1 0 0 1-1.414 0l-7-7A1 1 0 0 1 1 6.586V2a1 1 0 0 1 1-1m0 5.586 7 7L13.586 9l-7-7H2z" />
+  </svg>
+);
+
+// --- Icono Caledario ---
+export const CalendarIcon = (props: IconProps) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width={props.size ?? 18}
+    height={props.size ?? 18}
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    viewBox="0 0 24 24"
+    {...props}
+  >
+    <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+    <line x1="16" y1="2" x2="16" y2="6" />
+    <line x1="8" y1="2" x2="8" y2="6" />
+    <line x1="3" y1="10" x2="21" y2="10" />
   </svg>
 );
