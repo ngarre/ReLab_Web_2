@@ -139,7 +139,7 @@ export default function Home() {
       </p>
 
       {/* Bloque del buscador: Aquí "inyecto" el componente SearchBar */}
-      <div className="search-filter-area">
+      <div className="search-filter-area home-search-filter-area">
         <SearchBar
           // Pasamos todos los estados y funciones que definimos arriba como "Props" al hijo que es el SearchBar
           searchTerm={searchTerm}

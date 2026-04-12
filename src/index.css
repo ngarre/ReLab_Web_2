@@ -188,6 +188,14 @@ button {
   color: var(--text-light);
 }
 
+.home-search-filter-area {
+  border-radius: 12px;
+}
+
+.dark .home-search-filter-area {
+  background-color: #2b3445;
+}
+
 .date-input-with-icon::-webkit-calendar-picker-indicator {
   position: absolute;
   right: 0;

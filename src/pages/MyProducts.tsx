@@ -148,7 +148,7 @@ export default function MyProducts() {
       <p className="my-products-section-intro">
         O gestiona tus productos ya existentes:
       </p>
-      <div className="search-filter-area">
+      <div className="search-filter-area my-products-search-filter-area">
         <SearchBar
           placeholder="Buscar por nombre o descripción..."
           searchTerm={searchTerm}
