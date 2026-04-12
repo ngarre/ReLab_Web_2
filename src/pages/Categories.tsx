@@ -206,7 +206,7 @@ export default function Categories() {
         Explora las distintas categorías de productos, sus características y la tasa de comisión asociada a cada una:
       </p>
 
-      <div className="search-filter-area">
+      <div className="search-filter-area categories-search-filter-area">
         <SearchBar
           placeholder="Buscar por nombre o descripción..."
           searchTerm={searchTerm}
