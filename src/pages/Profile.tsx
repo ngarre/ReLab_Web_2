@@ -7,6 +7,7 @@ import { useAuth } from '../hooks/useAuth';
 import { deleteUserAccount, updateUser } from '../services/userService';
 import { getProducts } from '../services/productService';
 import { CalendarIcon } from '../components/Icons';
+import { formatSpanishDate } from '../utils/date';
 import './Profile.css';
 
 interface ProfileFormState {
@@ -125,40 +126,6 @@ export default function Profile() {
     }
 
     return 'PARTICULAR';
-  };
-
-  const formatDate = (rawDate?: string | null) => {
-    if (!rawDate || !rawDate.trim()) {
-      return 'No disponible';
-    }
-
-    const normalizedDate = rawDate.trim();
-    const isoDate = normalizedDate.includes('T')
-      ? normalizedDate.split('T')[0]
-      : normalizedDate;
-
-    if (/^\d{4}-\d{2}-\d{2}$/.test(isoDate)) {
-      const [year, month, day] = isoDate.split('-').map(Number);
-      const parsed = new Date(year, month - 1, day);
-
-      return parsed.toLocaleDateString('es-ES', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-      });
-    }
-
-    const parsed = new Date(normalizedDate);
-
-    if (!Number.isNaN(parsed.getTime())) {
-      return parsed.toLocaleDateString('es-ES', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-      });
-    }
-
-    return normalizedDate;
   };
 
   const normalizeDateForInput = (rawDate?: string | null) => {
@@ -328,7 +295,7 @@ export default function Profile() {
 
             <article className="profile-meta-card">
               <span className="profile-meta-label">Fecha de alta</span>
-              <strong>{formatDate(user.fechaAlta)}</strong>
+              <strong>{formatSpanishDate(user.fechaAlta)}</strong>
             </article>
 
             <article className="profile-meta-card">
@@ -390,7 +357,7 @@ export default function Profile() {
 
               <div className="profile-detail-row">
                 <span>Fecha de nacimiento</span>
-                <strong>{formatDate(user.fechaNacimiento)}</strong>
+                <strong>{formatSpanishDate(user.fechaNacimiento)}</strong>
               </div>
             </div>
 

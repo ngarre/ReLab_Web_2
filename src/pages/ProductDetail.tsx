@@ -7,6 +7,7 @@ import { useAuth } from '../hooks/useAuth';
 import PlaceholderImage from '../assets/images/placeholder-default.jpg';
 import { getProductById } from '../services/productService';
 import { BASE_URL } from '../utils/api';
+import { formatSpanishDate } from '../utils/date';
 import './ProductDetail.css';
 
 export default function ProductDetail() {
@@ -63,8 +64,12 @@ export default function ProductDetail() {
     currency: 'EUR'
   }).format(product.precio);
 
-  const lastUpdated = new Date(product.fechaActualizacion).toLocaleDateString('es-ES');
-
+  const lastUpdated = formatSpanishDate(product.fechaActualizacion, {
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+  });
+  
   return (
     <main className="main-content-area product-detail-container">
       <section className="detail-layout">
