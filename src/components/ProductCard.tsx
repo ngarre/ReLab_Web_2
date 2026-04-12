@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import type { Product } from '../types/Product';
 import { useNavigate } from 'react-router-dom';
+import { BASE_URL } from '../utils/api';
 import './ProductCard.css';
 import PlaceholderImage from '../assets/images/placeholder-default.jpg';
 
@@ -18,13 +19,11 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   };
 
   // ----------- GESTIÓN DE IMÁGENES ---------------
-  // Base de mi backend para las fotos --> porque del servidor llega la ruta relativa /productos/{id}/imagen
-  const API_URL_BASE = 'http://localhost:8080';
   // Declaro la variable que guardará la URL final:
   let initialImageUrl: string;
   // Si el producto tiene URL y el estado imageFailed es false, intentamos cargarla del server
   if (product.imagenUrl && !imageFailed) {
-    initialImageUrl = `${API_URL_BASE}${product.imagenUrl}`;
+    initialImageUrl = `${BASE_URL}${product.imagenUrl}`;
   } else {
     // Si no hay URL o falla una vez, ponemos la imagen por defecto (placeholder)
     initialImageUrl = PlaceholderImage;

@@ -6,6 +6,7 @@ import { ErrorMessage } from '../components/ErrorMessage';
 import { useAuth } from '../hooks/useAuth';
 import PlaceholderImage from '../assets/images/placeholder-default.jpg';
 import { getProductById } from '../services/productService';
+import { BASE_URL } from '../utils/api';
 import './ProductDetail.css';
 
 export default function ProductDetail() {
@@ -38,7 +39,7 @@ export default function ProductDetail() {
 
   const imageUrl =
     product?.imagenUrl && !imageError
-      ? `http://localhost:8080${product.imagenUrl}`
+      ? `${BASE_URL}${product.imagenUrl}`
       : PlaceholderImage;
 
   if (loading) {
