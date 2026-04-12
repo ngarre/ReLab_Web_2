@@ -454,6 +454,13 @@
     font-weight: 600;
 }
 
+.dark .profile-inline-success-message,
+.dark .profile-success-message {
+  background: rgba(20, 83, 45, 0.9);
+  border-color: #166534;
+  color: #dcfce7;
+}
+
 @media (max-width: 640px) {
     .profile-form-grid {
         grid-template-columns: 1fr;
