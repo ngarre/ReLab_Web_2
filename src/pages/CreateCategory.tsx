@@ -5,7 +5,7 @@ import { Loading } from '../components/Loading';
 import { useAuth } from '../hooks/useAuth';
 import { createCategory, getCategories } from '../services/categoryService';
 import type { Category } from '../types/Category';
-import './EditProduct.css';
+import './EntityForm.css';
 
 interface CreateCategoryFormState {
     nombre: string;
