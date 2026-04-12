@@ -2,6 +2,7 @@ import { Navigate } from 'react-router-dom';
 import type { ReactNode } from 'react';
 import type { UserRole } from '../types/User';
 import { useAuth } from '../hooks/useAuth';
+import { AuthRouteLoading } from './AuthRouteLoading';
 
 interface RoleRouteProps {
   children: ReactNode;
@@ -12,13 +13,7 @@ export function RoleRoute({ children, allowedRoles }: RoleRouteProps) {
   const { isAuthenticated, isLoading, role } = useAuth();
 
   if (isLoading) {
-    return (
-      <main className="main-content-area">
-        <h1 className="page-title">Cargando...</h1>
-        <div className="page-title-separator"></div>
-        <p>Comprobando permisos...</p>
-      </main>
-    );
+    return <AuthRouteLoading message="Comprobando permisos..." />;
   }
 
   if (!isAuthenticated) {
