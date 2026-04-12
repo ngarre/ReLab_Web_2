@@ -165,6 +165,16 @@ button {
   border-top-color: var(--border-dark);
 }
 
+.dark input[type="date"] {
+  color-scheme: dark;
+}
+
+.dark input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1) brightness(2);
+  opacity: 1;
+  cursor: pointer;
+}
+
 /* RESPONSIVE DINÁMICO:
      1. auto-fill: Rellena la fila con tantas columnas como quepan.
      2. minmax(280px, 1fr): Cada columna mide al menos 280px. Si sobra espacio, 
