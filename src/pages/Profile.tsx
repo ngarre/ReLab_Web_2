@@ -6,6 +6,7 @@ import { ErrorMessage } from '../components/ErrorMessage';
 import { useAuth } from '../hooks/useAuth';
 import { deleteUserAccount, updateUser } from '../services/userService';
 import { getProducts } from '../services/productService';
+import { CalendarIcon } from '../components/Icons';
 import './Profile.css';
 
 interface ProfileFormState {
@@ -448,13 +449,18 @@ export default function Profile() {
 
                   <div className="profile-form-field">
                     <label htmlFor="profile-fechaNacimiento">Fecha de nacimiento</label>
-                    <input
-                      id="profile-fechaNacimiento"
-                      name="fechaNacimiento"
-                      type="date"
-                      value={normalizeDateForInput(formData.fechaNacimiento)}
-                      onChange={handleInputChange}
-                    />
+
+                    <div className="date-input-shell">
+                      <input
+                        id="profile-fechaNacimiento"
+                        name="fechaNacimiento"
+                        type="date"
+                        value={normalizeDateForInput(formData.fechaNacimiento)}
+                        onChange={handleInputChange}
+                        className="date-input-with-icon"
+                      />
+                      <CalendarIcon className="date-input-icon" size={18} />
+                    </div>
                   </div>
 
                   <div className="profile-form-field profile-form-field-full">

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { register } from '../services/authService';
+import { CalendarIcon } from '../components/Icons';
 import './Register.css';
 
 interface RegisterFormState {
@@ -294,14 +295,19 @@ export default function Register() {
                     <label htmlFor="register-fechaNacimiento">
                       Fecha de nacimiento
                     </label>
-                    <input
-                      id="register-fechaNacimiento"
-                      type="date"
-                      value={form.fechaNacimiento}
-                      onChange={(event) =>
-                        updateField('fechaNacimiento', event.target.value)
-                      }
-                    />
+
+                    <div className="date-input-shell">
+                      <input
+                        id="register-fechaNacimiento"
+                        type="date"
+                        value={form.fechaNacimiento}
+                        onChange={(event) =>
+                          updateField('fechaNacimiento', event.target.value)
+                        }
+                        className="date-input-with-icon"
+                      />
+                      <CalendarIcon className="date-input-icon" size={18} />
+                    </div>
                   </div>
 
                   <div className="login-field">

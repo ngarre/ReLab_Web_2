@@ -165,14 +165,41 @@ button {
   border-top-color: var(--border-dark);
 }
 
-.dark input[type="date"] {
-  color-scheme: dark;
+.date-input-shell {
+  position: relative;
+  width: 100%;
 }
 
-.dark input[type="date"]::-webkit-calendar-picker-indicator {
-  filter: invert(1) brightness(2);
-  opacity: 1;
+.date-input-with-icon {
+  width: 100%;
+  padding-right: 3rem;
+}
+
+.date-input-icon {
+  position: absolute;
+  top: 50%;
+  right: 0.95rem;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: var(--text-dark);
+}
+
+.dark .date-input-icon {
+  color: var(--text-light);
+}
+
+.date-input-with-icon::-webkit-calendar-picker-indicator {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 3rem;
+  height: 100%;
+  opacity: 0;
   cursor: pointer;
+}
+
+.dark .date-input-with-icon {
+  color-scheme: dark;
 }
 
 /* RESPONSIVE DINÁMICO:
