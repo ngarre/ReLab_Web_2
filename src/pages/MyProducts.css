@@ -97,6 +97,14 @@
   color: var(--text-dark);
 }
 
+.my-products-search-filter-area {
+  border-radius: 12px;
+}
+
+.dark .my-products-search-filter-area {
+  background-color: #2b3445;
+}
+
 .dark .create-product-btn {
   color: var(--text-dark);
 }
