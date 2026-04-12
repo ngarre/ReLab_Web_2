@@ -8,6 +8,7 @@ import { deleteUserAccount, updateUser } from '../services/userService';
 import { getProducts } from '../services/productService';
 import { CalendarIcon } from '../components/Icons';
 import { formatSpanishDate } from '../utils/date';
+import { getAccountTypeLabel } from '../utils/user';
 import './Profile.css';
 
 interface ProfileFormState {
@@ -110,23 +111,6 @@ export default function Profile() {
 
   const getRoleBadgeClassName = () =>
     `profile-role-badge profile-role-badge-${role?.toLowerCase() ?? 'cliente'}`;
-
-  const getAccountTypeLabel = (tipoUsuario?: string | null) => {
-    const normalizedType = (tipoUsuario ?? '').trim().toLowerCase();
-
-    if (normalizedType === 'empresa') {
-      return 'EMPRESA';
-    }
-
-    if (
-      normalizedType === 'centro_publico' ||
-      normalizedType === 'centro público'
-    ) {
-      return 'CENTRO PÚBLICO';
-    }
-
-    return 'PARTICULAR';
-  };
 
   const normalizeDateForInput = (rawDate?: string | null) => {
     if (!rawDate || !rawDate.trim()) {
