@@ -34,7 +34,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   setFilterKey,
   sortOptions,
   filterOptions,
-  showFilter = true,
+  showFilter = true, // Valor para que el filtro se muestre por defecto --> a no ser que venga como prop del padre y se sobreescriba ese valor
   filterLabel = 'Filtrar:',
 }) => {
   const toggleSortDirection = () => {
