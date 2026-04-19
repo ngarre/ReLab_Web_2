@@ -159,8 +159,8 @@ La aplicación utiliza una API adaptada para trabajar con JWT y roles.  En el fr
  
 ## Capturas
 ### Página de inicio sin sesión (modo claro, escritorio)
-![Página de inicio sin sesión en modo claro parte superior](D:\DAM\Segundo\Interfaces\AA2\Web_ReLab_Interfaces_AA2\images\inicio_no_logueado.jpg)
-![Página de inicio sin sesión en modo claro parte inferior](images\formulario_footer_inicio.jpg)
+![Página de inicio sin sesión parte superior](images\inicio_no_logueado.jpg)
+![Página de inicio sin sesión parte inferior](images\formulario_footer_inicio.jpg)
 
 ### Página de Login (modo claro, escritorio)
 ![Página de login](images\login.jpg)
@@ -180,12 +180,218 @@ La aplicación utiliza una API adaptada para trabajar con JWT y roles.  En el fr
 ### Página Categorías (modo claro, escritorio, CLIENTE)
 ![Página de Categorías](images\categorias_cliente.jpg)
 
+### Página Perfil (modo claro, escritorio, ADMIN)
+![Página superior Perfil](images\perfil_admin_1.jpg)
+![Página superior Perfil](images\perfil_admin_2.jpg)
+
+### Página Perfil (modo oscuro, escritorio, ADMIN)
+![Página superior Perfil](images\perfil_oscuro.jpg)
+
+### Dashboard productos (modo claro, escritorio, ADMIN/GESTOR)
+![Dashboard Productos](images\dashboard_productos.jpg)
+
+### Dashboard productos (modo claro, escritorio, ADMIN/GESTOR)
+![Dashboard Categorías](images\dashboard_categorias.jpg)
+
+### Dashboard usuarios (modo claro, escritorio, ADMIN)
+![Dashboard Usuarios](images\dashboard_usuarios.jpg)
+
+### Dashboard usuarios (modo oscuro, escritorio, ADMIN)
+![Dashboard Usuarios](images\dashboard_usuarios_oscuro.jpg)
+
+### Dashboard usuarios acciones restringidas a GESTOR (modo oscuro, escritorio, GESTOR)
+![Dashboard Usuarios](images\dashboard_usuarios_restringido_gestor.jpg)
+
+### Página con Formulario Creación Categoría (modo claro, escritorio, ADMIN/GESTOR)
+![Formulario Creación Categorías](images\formulario_creacion_categoria.jpg)
+
 ## Puesta en marcha del proyecto
+
 ```bash
 npm install
 npm run dev
 ```
+
+## Testing
+
+El proyecto incluye tres niveles de testing:
+
+- tests unitarios
+- tests de integración
+- tests end-to-end
+
+### Stack de testing
+
+#### Unitarios e integración
+- Vitest
+- React Testing Library
+- jsdom
+
+#### E2E
+- Playwright
+
+---
+
+## Tests unitarios e integración
+
+Los tests unitarios y de integración están colocados cerca del código que prueban, siguiendo una organización por proximidad.
+
+### Cobertura actual
+
+#### Utilidades
+
+- `src/utils/date.test.ts`
+  - comprueba el formateo de fechas
+  - verifica el fallback cuando no hay valor
+  - comprueba el comportamiento ante fechas no válidas
+
+- `src/utils/user.test.ts`
+  - comprueba la normalización del tipo de usuario
+  - detecta correctamente `centro_publico`
+  - devuelve la etiqueta adecuada del tipo de cuenta
+
+- `src/utils/productImage.test.ts`
+  - usa placeholder si no hay imagen
+  - usa placeholder si la imagen falla
+  - construye correctamente la URL de imagen
+
+- `src/utils/api.test.ts`
+  - comprueba la petición GET por defecto
+  - verifica el envío de token y body
+  - comprueba el manejo de respuestas `204`
+  - valida la gestión de errores devueltos por el backend
+
+#### Integración
+
+- `src/components/ProtectedRoute.test.tsx`
+  - muestra estado de carga mientras se comprueba la sesión
+  - redirige a login si no hay sesión
+  - renderiza el contenido si la sesión es válida
+
+- `src/components/RoleRoute.test.tsx`
+  - muestra estado de carga mientras se comprueban permisos
+  - redirige a login si no hay sesión
+  - redirige al inicio si el rol no está permitido
+  - renderiza el contenido si el rol es válido
+
+### Cómo ejecutar los tests unitarios e integración
+
+Ejecutar todos los tests una vez:
+
+```bash
+npm run test
+```
+Ejecutar Vitest en modo watch (El modo watch ejecuta Vitest en escucha continua: al guardar cambios en el código, vuelve a lanzar automáticamente los tests relevantes.)
+
+```bash
+npm run test:watch
+```
+Abrir interfaz visual de Vitest:
+
+```bash
+npm run test:ui
+```
+
+### Tests E2E
+Los tests E2E validan recorridos completos de usuario en un entorno lo más cercano posible al uso real de la aplicación. A diferencia de los tests unitarios o de integración, aquí no se prueba una función aislada o un componente concreto, sino un flujo completo que atraviesa la interfaz, la navegación y la comunicación con el backend.
+
+En este proyecto los E2E se han implementado con Playwright.
+
+#### Qué validan los E2E de este proyecto
+Actualmente cubren dos escenarios clave:
+
+- acceso permitido a una ruta protegida para un usuario con el rol adecuado
+- acceso denegado a una ruta restringida para un usuario sin permisos
+
+#### Cobertura actual
+- e2e/auth-client-my-products.spec.ts
+    - inicia sesión como cliente
+    - accede a la ruta protegida Mis productos
+    - comprueba que la vista carga correctamente
+- e2e/auth-client-cannot-access-users.spec.ts
+    - inicia sesión como cliente
+    - intenta acceder a la gestión de usuarios
+    - verifica que el acceso se deniega y se redirige al inicio
+
+#### Variables necesarias para los tests E2E
+Antes de ejecutar Playwright, hay que definir las credenciales del usuario cliente de prueba.
+
+En PowerShell
+```bash
+$env:PLAYWRIGHT_CLIENT_NICKNAME="TU_NICK_CLIENTE"
+$env:PLAYWRIGHT_CLIENT_PASSWORD="TU_PASSWORD_CLIENTE"
+```
+
+En Bash
+```bash
+export PLAYWRIGHT_CLIENT_NICKNAME="TU_NICK_CLIENTE"
+export PLAYWRIGHT_CLIENT_PASSWORD="TU_PASSWORD_CLIENTE"
+```
+
+#### Cómo ejecutar los tests E2E
+Ejecutar los tests E2E:
+```bash
+npm run e2e
+```
+Abrir la interfaz visual de Playwright:
+```bash
+npm run e2e:ui
+```
+Ejecutar Playwright en modo visible (abriendo el navegador para ver lo que hace paso a paso):
+```bash
+npm run e2e:headed
+```
+
+#### Requisitos para los E2E
+Para que los tests E2E funcionen correctamente:
+
+- el backend debe estar levantado
+- la API debe responder en http://localhost:8080
+- las credenciales del cliente de prueba deben existir en la base de datos
+
+## Docker
+El proyecto incluye:
+- Dockerfile
+- docker-compose.yml
+
+### Qué levanta `docker-compose`
+- db → MariaDB
+- backend → imagen del backend adaptado
+- frontend → este proyecto React/Vite
+
+### Levantar contenedores
+```bash
+docker compose up --build
+```
+
+### Levantar en segundo plano
+```bash
+docker compose up --build -d
+```
+
+### Parar contenedores
+```bash
+docker compose down
+```
+
+### Parar y borrar volúmenes
+```bash
+docker compose down -v
+```
+
+### Construcción manual de la imagen del frontend
+Construir la imagen:
+```bash
+docker build -t relab-web-frontend .
+```
+
+Ejecutarla:
+```bash
+docker run -p 5173:5173 relab-web-frontend
+```
+
+
 ## Autora
-Natalia Garré Ramo  
+### Natalia Garré Ramo 
 2º DAM - Diseño de interfaces  
-Curso 2025-2026
+Curso **2025-2026**
