@@ -159,8 +159,8 @@ La aplicación utiliza una API adaptada para trabajar con JWT y roles.  En el fr
  
 ## Capturas
 ### Página de inicio sin sesión (modo claro, escritorio)
-![Página de inicio sin sesión parte superior](images\inicio_no_logueado.jpg)
-![Página de inicio sin sesión parte inferior](images\formulario_footer_inicio.jpg)
+![Página de inicio sin sesión parte superior](images/inicio_no_logueado.jpg)
+![Página de inicio sin sesión parte inferior](images/formulario_footer_inicio.jpg)
 
 ### Página de Login (modo claro, escritorio)
 ![Página de login](images/login.jpg)
@@ -230,7 +230,7 @@ El proyecto incluye tres niveles de testing:
 #### E2E
 - Playwright
 
----
+
 
 ## Tests unitarios e integración
 
