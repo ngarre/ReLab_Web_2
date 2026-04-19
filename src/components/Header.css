@@ -176,7 +176,8 @@
   }
 
   .app-logo {
-    height: 38px;
+    height: 80px;
+    width: auto;
     transform: none;
   }
 
