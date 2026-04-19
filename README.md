@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:1acbfb ,100:0675b4A&height=200&section=header&text=ReLab%20Web%202&fontSize=40&fontColor=ffffff" />
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:1acbfb,100:0675b4&height=200&section=header&text=ReLab%20Web%202&fontSize=40&fontColor=ffffff" alt="Banner ReLab Web 2" />
 </p>
 
 # ReLab Web 2
@@ -163,47 +163,47 @@ La aplicación utiliza una API adaptada para trabajar con JWT y roles.  En el fr
 ![Página de inicio sin sesión parte inferior](images\formulario_footer_inicio.jpg)
 
 ### Página de Login (modo claro, escritorio)
-![Página de login](images\login.jpg)
+![Página de login](images/login.jpg)
 
 ### Página de Registro (modo claro, escritorio)
-![Página de registro](images\registro.jpg)
+![Página de registro](images/registro.jpg)
 
 ### Página de Detalle de Producto (modo claro, escritorio, CLIENTE)
-![Página de detalle](images\detalle.jpg)
+![Página de detalle](images/detalle.jpg)
 
 ### Página de Mis Productos (modo claro, escritorio, CLIENTE)
-![Página de Mis Productos](images\mis_productos.jpg)
+![Página de Mis Productos](images/mis_productos.jpg)
 
 ### Página Formulario Creación Producto (modo claro, escritorio, CLIENTE)
-![Página de Formulario Creación Producto](images\formulario_creacion_producto.jpg)
+![Página de Formulario Creación Producto](images/formulario_creacion_producto.jpg)
 
 ### Página Categorías (modo claro, escritorio, CLIENTE)
-![Página de Categorías](images\categorias_cliente.jpg)
+![Página de Categorías](images/categorias_cliente.jpg)
 
 ### Página Perfil (modo claro, escritorio, ADMIN)
-![Página superior Perfil](images\perfil_admin_1.jpg)
-![Página superior Perfil](images\perfil_admin_2.jpg)
+![Página superior Perfil](images/perfil_admin_1.jpg)
+![Página superior Perfil](images/perfil_admin_2.jpg)
 
 ### Página Perfil (modo oscuro, escritorio, ADMIN)
-![Página superior Perfil](images\perfil_oscuro.jpg)
+![Página superior Perfil](images/perfil_oscuro.jpg)
 
 ### Dashboard productos (modo claro, escritorio, ADMIN/GESTOR)
-![Dashboard Productos](images\dashboard_productos.jpg)
+![Dashboard Productos](images/dashboard_productos.jpg)
 
 ### Dashboard productos (modo claro, escritorio, ADMIN/GESTOR)
-![Dashboard Categorías](images\dashboard_categorias.jpg)
+![Dashboard Categorías](images/dashboard_categorias.jpg)
 
 ### Dashboard usuarios (modo claro, escritorio, ADMIN)
-![Dashboard Usuarios](images\dashboard_usuarios.jpg)
+![Dashboard Usuarios](images/dashboard_usuarios.jpg)
 
 ### Dashboard usuarios (modo oscuro, escritorio, ADMIN)
-![Dashboard Usuarios](images\dashboard_usuarios_oscuro.jpg)
+![Dashboard Usuarios](images/dashboard_usuarios_oscuro.jpg)
 
 ### Dashboard usuarios acciones restringidas a GESTOR (modo oscuro, escritorio, GESTOR)
-![Dashboard Usuarios](images\dashboard_usuarios_restringido_gestor.jpg)
+![Dashboard Usuarios](images/dashboard_usuarios_restringido_gestor.jpg)
 
 ### Página con Formulario Creación Categoría (modo claro, escritorio, ADMIN/GESTOR)
-![Formulario Creación Categorías](images\formulario_creacion_categoria.jpg)
+![Formulario Creación Categorías](images/formulario_creacion_categoria.jpg)
 
 ## Puesta en marcha del proyecto
 
