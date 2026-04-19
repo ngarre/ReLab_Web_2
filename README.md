@@ -159,7 +159,7 @@ La aplicación utiliza una API adaptada para trabajar con JWT y roles.  En el fr
  
 ## Capturas
 ### Página de inicio sin sesión (modo claro, escritorio)
-![Página de inicio sin sesión en modo claro parte superior](images\inicio_no_logueado.jpg)
+![Página de inicio sin sesión en modo claro parte superior](D:\DAM\Segundo\Interfaces\AA2\Web_ReLab_Interfaces_AA2\images\inicio_no_logueado.jpg)
 ![Página de inicio sin sesión en modo claro parte inferior](images\formulario_footer_inicio.jpg)
 
 ### Página de Login (modo claro, escritorio)
