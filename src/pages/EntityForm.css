@@ -96,3 +96,17 @@
 .dark .edit-product-char-count.limit {
     color: #fbbf24;
 }
+
+.dark .edit-product-field input,
+.dark .edit-product-field textarea,
+.dark .edit-product-field select {
+  background-color: #1e293b;
+  color: var(--text-light);
+  border: 1px solid #334155;
+}
+
+.dark .edit-product-field input::placeholder,
+.dark .edit-product-field textarea::placeholder {
+  color: #94a3b8;
+}
+
