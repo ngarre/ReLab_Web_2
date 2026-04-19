@@ -205,8 +205,10 @@ export default function Categories() {
 
   // Empieza el render del componente.
   return (
+    
     <main className="main-content-area">
-      <h1 className="page-title">Gestión de Categorías</h1>
+      {canManageCategories && (<h1 className="page-title">Gestión de Categorías</h1>)}
+      {!canManageCategories && (<h1 className="page-title">Categorías</h1>)}
       <div className="page-title-separator"></div>
 
       {/* Bloque visible solo para ADMIN / GESTOR:
