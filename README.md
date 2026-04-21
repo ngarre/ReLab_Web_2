@@ -93,7 +93,7 @@ La aplicación utiliza una API adaptada para trabajar con JWT y roles.  En el fr
 - `ADMIN`:
     - Acceso completo a dashboards y gestión
 
-## Arquitectura del proyecto
+
 ## Arquitectura del proyecto
 
 ```txt
