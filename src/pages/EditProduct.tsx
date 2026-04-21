@@ -8,16 +8,11 @@ import { getProductById, updateProduct } from '../services/productService';
 import type { Category } from '../types/Category';
 import type { Product } from '../types/Product';
 import type { ProductUpdate } from '../types/ProductUpdate';
+import { convertFileToBase64 } from '../utils/file';
+import { ProductForm } from '../components/ProductForm';
+import type { ProductFormData } from '../types/ProductFormData';
 import './EntityForm.css';
 
-interface EditProductFormState {
-  nombre: string;
-  descripcion: string;
-  precio: string;
-  activo: boolean;
-  categoriaId: string;
-  imagen?: string | null;
-}
 
 const MAX_PRODUCT_DESCRIPTION_LENGTH = 200;
 
@@ -28,7 +23,7 @@ export default function EditProduct() {
 
   const [product, setProduct] = useState<Product | null>(null);
   const [categories, setCategories] = useState<Category[]>([]);
-  const [formData, setFormData] = useState<EditProductFormState>({
+  const [formData, setFormData] = useState<ProductFormData>({
     nombre: '',
     descripcion: '',
     precio: '',
@@ -210,150 +205,25 @@ export default function EditProduct() {
 
       {error && <ErrorMessage message={error} />}
 
-      <div className="edit-product-container">
-        <form className="edit-product-form" onSubmit={handleSubmit}>
-          <div className="edit-product-field">
-            <label htmlFor="nombre">Nombre</label>
-            <input
-              id="nombre"
-              name="nombre"
-              type="text"
-              value={formData.nombre}
-              onChange={handleTextChange}
-              required
-            />
-          </div>
-
-          <div className="edit-product-field">
-            <label htmlFor="descripcion">Descripción</label>
-            <textarea
-              id="descripcion"
-              name="descripcion"
-              value={formData.descripcion}
-              onChange={handleTextChange}
-              rows={5}
-              maxLength={MAX_PRODUCT_DESCRIPTION_LENGTH}
-            />
-            <div className="edit-product-field-meta">
-              <span className="edit-product-field-help">
-                Máximo {MAX_PRODUCT_DESCRIPTION_LENGTH} caracteres
-              </span>
-              <span
-                className={`edit-product-char-count ${formData.descripcion.length >= MAX_PRODUCT_DESCRIPTION_LENGTH
-                    ? 'limit'
-                    : ''
-                  }`}
-              >
-                {formData.descripcion.length} / {MAX_PRODUCT_DESCRIPTION_LENGTH}
-              </span>
-            </div>
-          </div>
-
-          <div className="edit-product-field">
-            <label htmlFor="precio">Precio</label>
-            <input
-              id="precio"
-              name="precio"
-              type="number"
-              min="0"
-              step="0.01"
-              value={formData.precio}
-              onChange={handleTextChange}
-              required
-            />
-          </div>
-
-          <div className="edit-product-field">
-            <label htmlFor="categoriaId">Categoría</label>
-            <select
-              id="categoriaId"
-              name="categoriaId"
-              value={formData.categoriaId}
-              onChange={handleCategoryChange}
-              required
-            >
-              <option value="">Selecciona una categoría</option>
-              {categories.map((category) => (
-                <option key={category.id} value={String(category.id)}>
-                  {category.nombre}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="edit-product-checkbox">
-            <label htmlFor="activo">
-              <input
-                id="activo"
-                name="activo"
-                type="checkbox"
-                checked={formData.activo}
-                onChange={handleCheckboxChange}
-              />
-              Producto activo
-            </label>
-          </div>
-
-          <div className="edit-product-field">
-            <label htmlFor="imagen">Cambiar imagen</label>
-            <input
-              id="imagen"
-              name="imagen"
-              type="file"
-              accept="image/*"
-              onChange={handleImageChange}
-            />
-            {selectedImageName && (
-              <p className="edit-product-file-name">Nueva imagen: {selectedImageName}</p>
-            )}
-          </div>
-
-          <div className="edit-product-actions">
-            <button
-              type="button"
-              className="edit-product-secondary-btn"
-              onClick={() => navigate('/my-products')}
-            >
-              Cancelar
-            </button>
-
-            <button
-              type="submit"
-              className="edit-product-primary-btn"
-              disabled={saving}
-            >
-              {saving ? 'Guardando...' : 'Guardar cambios'}
-            </button>
-          </div>
-        </form>
-      </div>
+      <ProductForm
+        formData={formData}
+        categories={categories}
+        selectedImageName={
+          selectedImageName
+            ? `Nueva imagen: ${selectedImageName}`
+            : ''
+        }
+        saving={saving}
+        submitLabel="Guardar cambios"
+        imageLabel="Cambiar imagen"
+        maxDescriptionLength={MAX_PRODUCT_DESCRIPTION_LENGTH}
+        onTextChange={handleTextChange}
+        onCheckboxChange={handleCheckboxChange}
+        onCategoryChange={handleCategoryChange}
+        onImageChange={handleImageChange}
+        onSubmit={handleSubmit}
+        onCancel={() => navigate('/my-products')}
+      />
     </main>
   );
-}
-
-function convertFileToBase64(file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-
-    reader.onload = () => {
-      const result = reader.result;
-
-      if (typeof result !== 'string') {
-        reject(new Error('No se pudo leer el archivo.'));
-        return;
-      }
-
-      const base64 = result.split(',')[1];
-
-      if (!base64) {
-        reject(new Error('No se pudo convertir la imagen a Base64.'));
-        return;
-      }
-
-      resolve(base64);
-    };
-
-    reader.onerror = () => reject(new Error('Error al leer el archivo.'));
-    reader.readAsDataURL(file);
-  });
 }
