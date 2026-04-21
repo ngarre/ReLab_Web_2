@@ -1,4 +1,5 @@
 import type { CategoryFormData } from '../types/CategoryFormData';
+import './EntityForm.css';
 
 interface CategoryFormProps {
     formData: CategoryFormData;
@@ -28,9 +29,9 @@ export function CategoryForm({
     onCancel,
 }: CategoryFormProps) {
     return (
-        <div className="edit-product-container">
-            <form className="edit-product-form" onSubmit={onSubmit}>
-                <div className="edit-product-field">
+        <div className="entity-form-container">
+            <form className="entity-form" onSubmit={onSubmit}>
+                <div className="entity-form-field">
                     <label htmlFor="nombre">Nombre</label>
                     <input
                         id="nombre"
@@ -43,7 +44,7 @@ export function CategoryForm({
                     {nameError && <p className="form-field-error">{nameError}</p>}
                 </div>
 
-                <div className="edit-product-field">
+                <div className="entity-form-field">
                     <label htmlFor="descripcion">Descripción</label>
                     <textarea
                         id="descripcion"
@@ -53,12 +54,12 @@ export function CategoryForm({
                         rows={5}
                         maxLength={maxDescriptionLength}
                     />
-                    <div className="edit-product-field-meta">
-                        <span className="edit-product-field-help">
+                    <div className="entity-form-field-meta">
+                        <span className="entity-form-field-help">
                             Máximo {maxDescriptionLength} caracteres
                         </span>
                         <span
-                            className={`edit-product-char-count ${formData.descripcion.length >= maxDescriptionLength ? 'limit' : ''
+                            className={`entity-form-char-count ${formData.descripcion.length >= maxDescriptionLength ? 'limit' : ''
                                 }`}
                         >
                             {formData.descripcion.length} / {maxDescriptionLength}
@@ -66,7 +67,7 @@ export function CategoryForm({
                     </div>
                 </div>
 
-                <div className="edit-product-field">
+                <div className="entity-form-field">
                     <label htmlFor="tasaComision">{titleDescription}</label>
                     <input
                         id="tasaComision"
@@ -81,7 +82,7 @@ export function CategoryForm({
                     />
                 </div>
 
-                <div className="edit-product-checkbox">
+                <div className="entity-form-checkbox">
                     <label htmlFor="activa">
                         <input
                             id="activa"
@@ -94,10 +95,10 @@ export function CategoryForm({
                     </label>
                 </div>
 
-                <div className="edit-product-actions">
+                <div className="entity-form-actions">
                     <button
                         type="button"
-                        className="edit-product-secondary-btn"
+                        className="entity-form-secondary-btn"
                         onClick={onCancel}
                     >
                         Cancelar
@@ -105,7 +106,7 @@ export function CategoryForm({
 
                     <button
                         type="submit"
-                        className="edit-product-primary-btn"
+                        className="entity-form-primary-btn"
                         disabled={saving}
                     >
                         {saving ? 'Guardando...' : submitLabel}

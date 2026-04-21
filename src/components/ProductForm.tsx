@@ -1,5 +1,6 @@
 import type { Category } from '../types/Category';
 import type { ProductFormData } from '../types/ProductFormData';
+import './EntityForm.css';
 
 interface ProductFormProps {
   formData: ProductFormData;
@@ -35,9 +36,9 @@ export function ProductForm({
   onCancel,
 }: ProductFormProps) {
   return (
-    <div className="edit-product-container">
-      <form className="edit-product-form" onSubmit={onSubmit}>
-        <div className="edit-product-field">
+    <div className="entity-form-container">
+      <form className="entity-form" onSubmit={onSubmit}>
+        <div className="entity-form-field">
           <label htmlFor="nombre">Nombre</label>
           <input
             id="nombre"
@@ -49,7 +50,7 @@ export function ProductForm({
           />
         </div>
 
-        <div className="edit-product-field">
+        <div className="entity-form-field">
           <label htmlFor="descripcion">Descripción</label>
           <textarea
             id="descripcion"
@@ -59,12 +60,12 @@ export function ProductForm({
             rows={5}
             maxLength={maxDescriptionLength}
           />
-          <div className="edit-product-field-meta">
-            <span className="edit-product-field-help">
+          <div className="entity-form-field-meta">
+            <span className="entity-form-field-help">
               Máximo {maxDescriptionLength} caracteres
             </span>
             <span
-              className={`edit-product-char-count ${formData.descripcion.length >= maxDescriptionLength ? 'limit' : ''
+              className={`entity-form-char-count ${formData.descripcion.length >= maxDescriptionLength ? 'limit' : ''
                 }`}
             >
               {formData.descripcion.length} / {maxDescriptionLength}
@@ -72,7 +73,7 @@ export function ProductForm({
           </div>
         </div>
 
-        <div className="edit-product-field">
+        <div className="entity-form-field">
           <label htmlFor="precio">Precio</label>
           <input
             id="precio"
@@ -86,7 +87,7 @@ export function ProductForm({
           />
         </div>
 
-        <div className="edit-product-field">
+        <div className="entity-form-field">
           <label htmlFor="categoriaId">Categoría</label>
           <select
             id="categoriaId"
@@ -104,7 +105,7 @@ export function ProductForm({
           </select>
         </div>
 
-        <div className="edit-product-checkbox">
+        <div className="entity-form-checkbox">
           <label htmlFor="activo">
             <input
               id="activo"
@@ -117,7 +118,7 @@ export function ProductForm({
           </label>
         </div>
 
-        <div className="edit-product-field">
+        <div className="entity-form-field">
           <label htmlFor="imagen">{imageLabel}</label>
           <input
             id="imagen"
@@ -127,14 +128,14 @@ export function ProductForm({
             onChange={onImageChange}
           />
           {selectedImageName && (
-            <p className="edit-product-file-name">{selectedImageName}</p>
+            <p className="entity-form-file-name">{selectedImageName}</p>
           )}
         </div>
 
-        <div className="edit-product-actions">
+        <div className="entity-form-actions">
           <button
             type="button"
-            className="edit-product-secondary-btn"
+            className="entity-form-secondary-btn"
             onClick={onCancel}
           >
             Cancelar
@@ -142,7 +143,7 @@ export function ProductForm({
 
           <button
             type="submit"
-            className="edit-product-primary-btn"
+            className="entity-form-primary-btn"
             disabled={saving}
           >
             {saving ? 'Guardando...' : submitLabel}

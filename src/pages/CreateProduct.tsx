@@ -9,8 +9,6 @@ import type { Category } from '../types/Category';
 import { convertFileToBase64 } from '../utils/file';
 import { ProductForm } from '../components/ProductForm';
 import type { ProductFormData } from '../types/ProductFormData';
-import './EntityForm.css';
-
 
 
 const MAX_PRODUCT_DESCRIPTION_LENGTH = 200;

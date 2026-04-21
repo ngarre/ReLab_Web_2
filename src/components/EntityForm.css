@@ -1,48 +1,48 @@
-.edit-product-container {
+.entity-form-container {
     max-width: 720px;
     margin: 0 auto;
 }
 
-.edit-product-form {
+.entity-form {
     display: flex;
     flex-direction: column;
     gap: 1.25rem;
 }
 
-.edit-product-field {
+.entity-form-field {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
 }
 
-.edit-product-field input,
-.edit-product-field textarea,
-.edit-product-field select {
+.entity-form-field input,
+.entity-form-field textarea,
+.entity-form-field select {
     padding: 0.85rem 1rem;
     border: 1px solid #d8d8d8;
     border-radius: 10px;
     font: inherit;
 }
 
-.edit-product-checkbox {
+.entity-form-checkbox {
     display: flex;
     align-items: center;
 }
 
-.edit-product-checkbox label {
+.entity-form-checkbox label {
     display: flex;
     align-items: center;
     gap: 0.5rem;
 }
 
-.edit-product-actions {
+.entity-form-actions {
     display: flex;
     justify-content: flex-end;
     gap: 1rem;
 }
 
-.edit-product-primary-btn,
-.edit-product-secondary-btn {
+.entity-form-primary-btn,
+.entity-form-secondary-btn {
     border: none;
     border-radius: 10px;
     padding: 0.8rem 1.2rem;
@@ -50,12 +50,12 @@
     font: inherit;
 }
 
-.edit-product-primary-btn:disabled {
+.entity-form-primary-btn:disabled {
     cursor: not-allowed;
     opacity: 0.7;
 }
 
-.edit-product-file-name {
+.entity-form-file-name {
     margin: 0;
     font-size: 0.95rem;
 }
@@ -66,7 +66,7 @@
     color: #c0392b;
 }
 
-.edit-product-field-meta {
+.entity-form-field-meta {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -75,38 +75,38 @@
     font-size: 0.85rem;
 }
 
-.edit-product-field-help {
+.entity-form-field-help {
     color: #6b7280;
 }
 
-.edit-product-char-count {
+.entity-form-char-count {
     color: #6b7280;
     font-weight: 600;
 }
 
-.edit-product-char-count.limit {
+.entity-form-char-count.limit {
     color: #b45309;
 }
 
-.dark .edit-product-field-help,
-.dark .edit-product-char-count {
+.dark .entity-form-field-help,
+.dark .entity-form-char-count {
     color: #cbd5e1;
 }
 
-.dark .edit-product-char-count.limit {
+.dark .entity-form-char-count.limit {
     color: #fbbf24;
 }
 
-.dark .edit-product-field input,
-.dark .edit-product-field textarea,
-.dark .edit-product-field select {
+.dark .entity-form-field input,
+.dark .entity-form-field textarea,
+.dark .entity-form-field select {
   background-color: #1e293b;
   color: var(--text-light);
   border: 1px solid #334155;
 }
 
-.dark .edit-product-field input::placeholder,
-.dark .edit-product-field textarea::placeholder {
+.dark .entity-form-field input::placeholder,
+.dark .entity-form-field textarea::placeholder {
   color: #94a3b8;
 }
 

@@ -7,7 +7,6 @@ import { createCategory, getCategories } from '../services/categoryService';
 import type { Category } from '../types/Category';
 import { CategoryForm } from '../components/CategoryForm';
 import type { CategoryFormData } from '../types/CategoryFormData';
-import './EntityForm.css';
 
 
 const MAX_CATEGORY_DESCRIPTION_LENGTH = 200;
