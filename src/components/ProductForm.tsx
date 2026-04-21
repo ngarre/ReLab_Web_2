@@ -64,9 +64,8 @@ export function ProductForm({
               Máximo {maxDescriptionLength} caracteres
             </span>
             <span
-              className={`edit-product-char-count ${
-                formData.descripcion.length >= maxDescriptionLength ? 'limit' : ''
-              }`}
+              className={`edit-product-char-count ${formData.descripcion.length >= maxDescriptionLength ? 'limit' : ''
+                }`}
             >
               {formData.descripcion.length} / {maxDescriptionLength}
             </span>
