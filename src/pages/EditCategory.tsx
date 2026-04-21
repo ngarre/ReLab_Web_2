@@ -6,14 +6,10 @@ import { useAuth } from '../hooks/useAuth';
 import { getCategories, getCategoryById, updateCategory } from '../services/categoryService';
 import type { Category } from '../types/Category';
 import type { CategoryUpdate } from '../types/CategoryUpdate';
+import { CategoryForm } from '../components/CategoryForm';
+import type { CategoryFormData } from '../types/CategoryFormData';
 import './EntityForm.css';
 
-interface EditCategoryFormState {
-    nombre: string;
-    descripcion: string;
-    activa: boolean;
-    tasaComision: string;
-}
 
 const MAX_CATEGORY_DESCRIPTION_LENGTH = 200;
 
@@ -24,7 +20,7 @@ export default function EditCategory() {
 
     const [category, setCategory] = useState<Category | null>(null);
     const [existingCategories, setExistingCategories] = useState<Category[]>([]);
-    const [formData, setFormData] = useState<EditCategoryFormState>({
+    const [formData, setFormData] = useState<CategoryFormData>({
         nombre: '',
         descripcion: '',
         activa: true,
@@ -188,93 +184,18 @@ export default function EditCategory() {
 
             {error && <ErrorMessage message={error} />}
 
-            <div className="edit-product-container">
-                <form className="edit-product-form" onSubmit={handleSubmit}>
-                    <div className="edit-product-field">
-                        <label htmlFor="nombre">Nombre</label>
-                        <input
-                            id="nombre"
-                            name="nombre"
-                            type="text"
-                            value={formData.nombre}
-                            onChange={handleTextChange}
-                            required
-                        />
-                        {nameError && <p className="form-field-error">{nameError}</p>}
-                    </div>
-
-                    <div className="edit-product-field">
-                        <label htmlFor="descripcion">Descripción</label>
-                        <textarea
-                            id="descripcion"
-                            name="descripcion"
-                            value={formData.descripcion}
-                            onChange={handleTextChange}
-                            rows={5}
-                            maxLength={MAX_CATEGORY_DESCRIPTION_LENGTH}
-                        />
-                        <div className="edit-product-field-meta">
-                            <span className="edit-product-field-help">
-                                Máximo {MAX_CATEGORY_DESCRIPTION_LENGTH} caracteres
-                            </span>
-                            <span
-                                className={`edit-product-char-count ${formData.descripcion.length >= MAX_CATEGORY_DESCRIPTION_LENGTH
-                                        ? 'limit'
-                                        : ''
-                                    }`}
-                            >
-                                {formData.descripcion.length} / {MAX_CATEGORY_DESCRIPTION_LENGTH}
-                            </span>
-                        </div>
-                    </div>
-
-                    <div className="edit-product-field">
-                        <label htmlFor="tasaComision">Tasa de comisión (entre 0 y 1)</label>
-                        <input
-                            id="tasaComision"
-                            name="tasaComision"
-                            type="number"
-                            min="0"
-                            max="1"
-                            step="0.01"
-                            value={formData.tasaComision}
-                            onChange={handleTextChange}
-                            required
-                        />
-                    </div>
-
-                    <div className="edit-product-checkbox">
-                        <label htmlFor="activa">
-                            <input
-                                id="activa"
-                                name="activa"
-                                type="checkbox"
-                                checked={formData.activa}
-                                onChange={handleCheckboxChange}
-                            />
-                            Categoría activa
-                        </label>
-                    </div>
-
-                    <div className="edit-product-actions">
-                        <button
-                            type="button"
-                            className="edit-product-secondary-btn"
-                            onClick={() => navigate('/categories')}
-                        >
-                            Cancelar
-                        </button>
-
-                        <button
-                            type="submit"
-                            className="edit-product-primary-btn"
-                            disabled={saving}
-                        >
-                            {saving ? 'Guardando...' : 'Guardar cambios'}
-                        </button>
-                    </div>
-                </form>
-            </div>
+            <CategoryForm
+                formData={formData}
+                saving={saving}
+                nameError={nameError}
+                submitLabel="Guardar cambios"
+                titleDescription="Tasa de comisión (entre 0 y 1)"
+                maxDescriptionLength={MAX_CATEGORY_DESCRIPTION_LENGTH}
+                onTextChange={handleTextChange}
+                onCheckboxChange={handleCheckboxChange}
+                onSubmit={handleSubmit}
+                onCancel={() => navigate('/categories')}
+            />
         </main>
     );
 }
