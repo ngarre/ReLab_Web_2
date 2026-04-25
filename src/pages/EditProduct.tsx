@@ -117,7 +117,7 @@ export default function EditProduct() {
       })
       .catch(() => {
         // Si falla alguna de las dos peticiones, muestro error
-        setError('No se pudo cargar el producto para editar.');
+        setError('No se pudieron cargar los datos necesarios para editar el producto.');
       })
       .finally(() => setLoading(false));
   }, [id]);
