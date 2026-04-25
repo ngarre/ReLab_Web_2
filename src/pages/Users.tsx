@@ -5,6 +5,7 @@ import { ErrorMessage } from '../components/ErrorMessage';
 import { usePagination } from '../hooks/usePagination';
 import { Pagination } from '../components/Pagination';
 import { useAuth } from '../hooks/useAuth';
+import { formatSpanishDate } from '../utils/date';
 import {
   deleteUserAccount,
   getUsers,
@@ -354,7 +355,7 @@ export default function Users() {
     usePagination(filteredUsers, 8);
 
   const formatDate = (date: string) =>
-    new Date(date).toLocaleDateString('es-ES', {
+    formatSpanishDate(date, {
       year: 'numeric',
       month: 'short',
       day: 'numeric',
