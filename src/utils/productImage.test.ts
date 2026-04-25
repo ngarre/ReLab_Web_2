@@ -1,50 +1,45 @@
-import { describe, expect, it } from 'vitest';
-import {
-    getAccountTypeLabel,
-    isCentroPublico,
-    normalizeAccountType,
-} from './user';
+// Importo utilidades de Vitest:
+// - describe para agrupar tests
+// - it para definir cada caso
+// - expect para comprobar resultados
+// - vi para crear mocks
+import { describe, expect, it, vi } from 'vitest';
 
-describe('user utils', () => {
-    describe('normalizeAccountType', () => {
-        it('normaliza espacios y mayúsculas', () => {
-            expect(normalizeAccountType('  EMPRESA  ')).toBe('empresa');
-        });
+// Mock del placeholder para no depender del archivo real en el test
+vi.mock('../assets/images/placeholder-default.jpg', () => ({
+  default: 'placeholder-mock.jpg', // Hace falta esta propiedad porque se importa con Import con defecto (por ser una imagen), no con importación nombrada (llaves {})
+}));
 
-        it('devuelve cadena vacía si no recibe valor', () => {
-            expect(normalizeAccountType(undefined)).toBe('');
-            expect(normalizeAccountType(null)).toBe('');
-        });
-    });
+// Mock de BASE_URL para que el resultado sea siempre el mismo
+vi.mock('./api', () => ({
+  BASE_URL: 'http://localhost:8080',
+}));
 
-    describe('isCentroPublico', () => {
-        it('detecta centro_publico', () => {
-            expect(isCentroPublico('centro_publico')).toBe(true);
-        });
+// Importo la función que quiero probar
+import { getProductImageUrl } from './productImage';
 
-        it('detecta centro público con espacio', () => {
-            expect(isCentroPublico('Centro Público')).toBe(true);
-        });
+// Agrupo todos los tests de esta utilidad bajo el nombre getProductImageUrl
+describe('getProductImageUrl', () => {
 
-        it('devuelve false para otros tipos', () => {
-            expect(isCentroPublico('empresa')).toBe(false);
-            expect(isCentroPublico('particular')).toBe(false);
-        });
-    });
+  // Caso 1.
+  // Si no hay imagePath, devuelve el placeholder.
+  it('devuelve el placeholder si no recibe ruta de imagen', () => {
+    expect(getProductImageUrl(undefined)).toBe('placeholder-mock.jpg');
+    expect(getProductImageUrl(null)).toBe('placeholder-mock.jpg');
+    expect(getProductImageUrl('')).toBe('placeholder-mock.jpg');
+  });
 
-    describe('getAccountTypeLabel', () => {
-        it('devuelve EMPRESA si el tipo es empresa', () => {
-            expect(getAccountTypeLabel('empresa')).toBe('EMPRESA');
-        });
+  // Caso 2.
+  // Si la imagen falla, devuelve el placeholder
+  it('devuelve el placeholder si la imagen ha fallado', () => {
+    expect(getProductImageUrl('/uploads/producto.jpg', true)).toBe('placeholder-mock.jpg');
+  });
 
-        it('devuelve CENTRO PÚBLICO si corresponde', () => {
-            expect(getAccountTypeLabel('centro_publico')).toBe('CENTRO PÚBLICO');
-            expect(getAccountTypeLabel('Centro Público')).toBe('CENTRO PÚBLICO');
-        });
-
-        it('devuelve PARTICULAR por defecto', () => {
-            expect(getAccountTypeLabel('particular')).toBe('PARTICULAR');
-            expect(getAccountTypeLabel(undefined)).toBe('PARTICULAR');
-        });
-    });
+  // Caso 3.
+  // Si hay ruta y no falla la imagen --> debe construir la URL final
+  it('construye la URL completa si recibe ruta válida y no hay error', () => {
+    expect(getProductImageUrl('/uploads/producto.jpg')).toBe(
+      'http://localhost:8080/uploads/producto.jpg'
+    );
+  });
 });

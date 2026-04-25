@@ -20,3 +20,5 @@ export function getAccountTypeLabel(tipoUsuario?: string | null): string {
 
   return 'PARTICULAR';
 }
+
+// NOTA: Si la primera función devuelve cadena vacía --> isCentroPublico devolverá "false" y getAccountLabel devolverá PARTICULAR

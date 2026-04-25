@@ -1,15 +1,37 @@
+// Importo utilidades de Vitest:
+// - beforeEach para limpiar antes de cada test
+// - describe para agrupar tests
+// - expect para comprobaciones
+// - it para definir casos concretos
+// - vi para mocks
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+
+// Importo funciones de React Testing Library:
+// - render para montar el componente
+// - screen para consultar lo que aparece en pantalla
 import { render, screen } from '@testing-library/react';
+
+// Importo piezas del router para simular navegación y rutas dentro del test
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
+
+// Importo el componente que quiero probar
 import { RoleRoute } from './RoleRoute';
+
+// Importo el hook useAuth, que luego voy a mockear
 import { useAuth } from '../hooks/useAuth';
 
+
+// Mockeo el módulo del hook useAuth.
+// Así no uso la implementación real del contexto,
+// sino que puedo decidir en cada test qué devuelve
 vi.mock('../hooks/useAuth', () => ({
     useAuth: vi.fn(),
 }));
 
+// Creo una referencia tipada del mock para poder usar mockReturnValue cómodamente (facilita que typescript entienda que useAuth es un mock)
 const mockedUseAuth = vi.mocked(useAuth);
 
+// Función auxiliar para no repetir el mismo render completo en todos los tests
 function renderRoleRoute() {
     return render(
         <MemoryRouter initialEntries={['/admin-zone']}>
@@ -29,11 +51,17 @@ function renderRoleRoute() {
     );
 }
 
+// Empiezo el bloque de tests de RoleRoute
 describe('RoleRoute', () => {
+
+    // Antes de cada test limpio los mocks para que no se mezclen unos con otros.
     beforeEach(() => {
         vi.clearAllMocks();
     });
 
+
+    // Caso 1.
+    // El sistema todavía está cargando el estado de auth/permisos, así que no debe redirigir ni mostrar contenido final todavía.
     it('muestra estado de carga mientras comprueba permisos', () => {
         mockedUseAuth.mockReturnValue({
             user: null,
@@ -52,6 +80,8 @@ describe('RoleRoute', () => {
         expect(screen.getByText('Comprobando permisos...')).toBeInTheDocument();
     });
 
+    // Caso 2.
+    // Ya no está cargando y no hay autenticación, así que debe ir a login.
     it('redirige al login si el usuario no está autenticado', () => {
         mockedUseAuth.mockReturnValue({
             user: null,
@@ -70,6 +100,8 @@ describe('RoleRoute', () => {
         expect(screen.queryByText('Zona admin')).not.toBeInTheDocument();
     });
 
+    // Caso 3.
+    // El usuario sí está autenticado, pero no tiene el rol correcto. --> Se redirige a Inicio
     it('redirige a inicio si el rol no está permitido', () => {
         mockedUseAuth.mockReturnValue({
             user: {
@@ -103,6 +135,8 @@ describe('RoleRoute', () => {
         expect(screen.queryByText('Zona admin')).not.toBeInTheDocument();
     });
 
+    // Caso 4.
+    // El usuario está autenticado y sí tiene el rol correcto. --> Se le permite acceder a Zona de Admin
     it('renderiza el contenido si el rol está permitido', () => {
         mockedUseAuth.mockReturnValue({
             user: {
