@@ -240,10 +240,13 @@ export default function CreateProduct() {
         }
     };
 
+    // Si todavía se están cargando las categorías, muestro el componente de carga en lugar de renderizar el formulario
     if (loadingCategories) {
         return <Loading />;
     }
 
+    // Si ya no estoy cargando categorías,
+    // renderizo la página normal.
     return (
         <main className="main-content-area">
             <h1 className="page-title">Crear Producto</h1>
@@ -253,25 +256,62 @@ export default function CreateProduct() {
                 Publica un nuevo producto en la plataforma.
             </p>
 
+            {/* Si existe un mensaje de error, lo muestro usando
+            el componente reutilizable ErrorMessage */}
             {error && <ErrorMessage message={error} />}
 
+            {/* Renderizo el formulario compartido de productos.
+            Aquí le paso todos los datos y callbacks necesarios
+            para que pueda funcionar como formulario controlado. */}
             <ProductForm
+                // Estado actual del formulario:
+                // nombre, descripción, precio, activo, categoría, imagen...
                 formData={formData}
+
+                // Lista de categorías activas disponibles para el select
                 categories={categories}
+
+                // Texto que se mostrará debajo del input file si se ha elegido una imagen.
+                // Si selectedImageName tiene contenido:
+                //   "Imagen seleccionada: nombrearchivo.jpg"
+                // Si no, mando una cadena vacía.
                 selectedImageName={
                     selectedImageName
                         ? `Imagen seleccionada: ${selectedImageName}`
                         : ''
                 }
+
+                // Flag para indicar si el formulario se está enviando
+                // y así poder desactivar el botón.
                 saving={saving}
+
+                // Texto del botón submit en esta pantalla
                 submitLabel="Crear producto"
+
+                // Texto de la etiqueta del campo de imagen en esta pantalla
                 imageLabel="Imagen"
+
+                // Límite máximo de caracteres permitido para la descripción
                 maxDescriptionLength={MAX_PRODUCT_DESCRIPTION_LENGTH}
+
+                // Callback para inputs de texto y textarea
                 onTextChange={handleTextChange}
+
+                // Callback para el checkbox de activo
                 onCheckboxChange={handleCheckboxChange}
+
+                // Callback para el select de categoría
                 onCategoryChange={handleCategoryChange}
+
+                // Callback para el input file de imagen
                 onImageChange={handleImageChange}
+
+                // Callback para el submit del formulario
                 onSubmit={handleSubmit}
+
+                // Callback para cancelar.
+                // En este caso, si el usuario cancela,
+                // la redirijo a la ruta /my-products
                 onCancel={() => navigate('/my-products')}
             />
         </main>
