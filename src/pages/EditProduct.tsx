@@ -18,7 +18,7 @@ const MAX_PRODUCT_DESCRIPTION_LENGTH = 200;
 export default function EditProduct() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { user, token, role } = useAuth();
+  const { user, token } = useAuth();
 
   const [product, setProduct] = useState<Product | null>(null);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -68,11 +68,8 @@ export default function EditProduct() {
   const canEditProduct =
     !!user &&
     !!product &&
-    (
-      role === 'ADMIN' ||
-      role === 'GESTOR' ||
-      product.usuario?.id === user.id
-    );
+    product.usuario?.id === user.id
+    
 
   const handleTextChange = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
