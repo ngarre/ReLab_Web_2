@@ -152,6 +152,7 @@ export function ProductForm({
             <option value="">Selecciona una categoría</option>
 
             {/* Pinto una opción por cada categoría recibida */}
+            {/* Cada opción del desplegable muestra el nombre, pero guardo como valor el id */}
             {categories.map((category) => (
               <option key={category.id} value={String(category.id)}>
                 {category.nombre}
