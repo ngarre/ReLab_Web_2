@@ -147,6 +147,7 @@ La aplicación utiliza una API adaptada para trabajar con JWT y roles.  En el fr
   - `text.ts` para normalización de texto en búsquedas
   - `storage.ts` para persistencia de sesión
   - `api.ts` para acceso reutilizable al backend
+  - `file.ts` para convertir imagenes a una cadena Base64
 - La protección de rutas se resuelve desde la navegación en `App.tsx` mediante:
   - `ProtectedRoute` para rutas que solo requieren sesión
   - `RoleRoute` para rutas que además requieren un rol concreto
