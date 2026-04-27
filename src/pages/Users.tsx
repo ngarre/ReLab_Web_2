@@ -196,8 +196,7 @@ export default function Users() {
       return isOwnAccount(targetUser) || targetUser.role === 'CLIENTE';
     }
 
-    // En cualquier otro caso, solo puede actuar sobre su propia cuenta
-    return isOwnAccount(targetUser);
+    return false;
   };
 
   // Traduce algunos errores del backend a mensajes más claros
