@@ -1,55 +1,115 @@
+// Importo hooks de React:
+// - useEffect para ejecutar lógica al montar o cuando cambian dependencias
+// - useMemo para memorizar cálculos derivados
+// - useState para guardar estado local
 import { useEffect, useMemo, useState } from 'react';
+
+// Hook de navegación programática
 import { useNavigate } from 'react-router-dom';
+
+// Componentes reutilizables de feedback visual
 import { Loading } from '../components/Loading';
 import { ErrorMessage } from '../components/ErrorMessage';
+
+// Hook y componente de paginación
 import { usePagination } from '../hooks/usePagination';
 import { Pagination } from '../components/Pagination';
+
+// Hook de autenticación para obtener datos de la sesión actual
 import { useAuth } from '../hooks/useAuth';
+
+// Utilidad compartida para formatear fechas en español
 import { formatSpanishDate } from '../utils/date';
+
+// Servicios de usuario:
+// - borrar cuenta
+// - obtener usuarios
+// - actualizar usuario
 import {
   deleteUserAccount,
   getUsers,
   updateUser,
 } from '../services/userService';
+
+// Tipo TypeScript de usuario
 import type { User } from '../types/User';
+
+// Utilidad para normalizar texto en búsquedas
 import { normalizeText } from '../utils/text';
+
+// Estilos específicos de esta pantalla
 import './Users.css';
+
+// Utilidades para trabajar con tipos de cuenta
 import {
   getAccountTypeLabel,
   isCentroPublico,
   normalizeAccountType,
 } from '../utils/user';
 
+// Defino el componente de página
 export default function Users() {
+   // Del contexto de auth obtengo:
+  // - token: necesario para llamadas protegidas al backend
+  // - role: rol del usuario autenticado
+  // - currentUser: usuario autenticado actual
+  // - logout: por si al desactivar/eliminar su propia cuenta hay que cerrar sesión
   const { token, role, user: currentUser, logout } = useAuth();
+
+  // Hook para navegar por código
   const navigate = useNavigate();
 
+   // Estado con la lista completa de usuarios cargados desde backend
   const [users, setUsers] = useState<User[]>([]);
+
+  // Estado de carga inicial
   const [loading, setLoading] = useState(true);
+
+   // Estado para mostrar errores
   const [error, setError] = useState('');
+
+   // Mensaje de acción correcta (activar/desactivar y eliminar)
   const [actionMessage, setActionMessage] = useState('');
+
+  // Guardo el id del usuario que se está eliminando en este momento
   const [deletingUserId, setDeletingUserId] = useState<number | null>(null);
+
+   // Guardo el id del usuario cuya cuenta se está activando/desactivando
   const [togglingUserId, setTogglingUserId] = useState<number | null>(null);
 
+  // Estado del buscador
   const [searchTerm, setSearchTerm] = useState('');
+
+   // Estado de la clave de ordenación
   const [sortKey, setSortKey] = useState('nickname');
+
+  // Estado de la dirección de orden
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
+
+   // Estado del filtro por estado de cuenta
   const [statusFilterKey, setStatusFilterKey] = useState('all');
+
+  // Estado del filtro por rol
   const [roleFilterKey, setRoleFilterKey] = useState('all');
+
+  // Opciones de filtro por tipo de cuenta
   const [accountTypeFilterKey, setAccountTypeFilterKey] = useState('all');
 
+  // Opciones del select de ordenación
   const sortOptions = [
     { key: 'nickname', label: 'Nickname (A-Z)' },
     { key: 'nombre', label: 'Nombre' },
     { key: 'fechaAlta', label: 'Fecha de alta' },
   ];
 
+  // Opciones del filtro por estado de cuenta
   const statusFilterOptions = [
     { key: 'all', label: 'Todos los usuarios' },
     { key: 'active', label: 'Solo activos' },
     { key: 'inactive', label: 'Solo inactivos' },
   ];
 
+  // Opciones del filtro por rol
   const roleFilterOptions = [
     { key: 'all', label: 'Todos los roles' },
     { key: 'ADMIN', label: 'ADMIN' },
@@ -57,6 +117,7 @@ export default function Users() {
     { key: 'CLIENTE', label: 'CLIENTE' },
   ];
 
+  // Opciones del filtro por tipo de cuenta
   const accountTypeFilterOptions = [
     { key: 'all', label: 'Todos los tipos' },
     { key: 'empresa', label: 'EMPRESA' },
@@ -64,6 +125,10 @@ export default function Users() {
     { key: 'centro_publico', label: 'CENTRO PÚBLICO' },
   ];
 
+  // Al montar la página, si hay token:
+  // - activo loading
+  // - limpio errores
+  // - pido todos los usuarios al backend
   useEffect(() => {
     if (!token) {
       return;
@@ -78,6 +143,7 @@ export default function Users() {
       .finally(() => setLoading(false));
   }, [token]);
 
+  // Si hay actionMessage, lo borro automáticamente después de 4 segundos
   useEffect(() => {
     if (!actionMessage) {
       return;
@@ -90,8 +156,10 @@ export default function Users() {
     return () => window.clearTimeout(timeoutId);
   }, [actionMessage]);
 
+  // Función auxiliar para saber si una cuenta está activa
   const isUserActive = (user: User) => Boolean(user.cuentaActiva);
 
+  // Devuelve la clase CSS del badge del tipo de cuenta
   const getAccountTypeBadgeClassName = (tipoUsuario?: string | null) => {
     const normalizedType = normalizeAccountType(tipoUsuario);
 
@@ -106,46 +174,62 @@ export default function Users() {
     return 'users-account-type-badge users-account-type-badge-particular';
   };
 
+  // Comprueba si el usuario de la fila es la propia cuenta del usuario autenticado
   const isOwnAccount = (targetUser: User) => currentUser?.id === targetUser.id;
 
+  // Comprueba si el usuario autenticado puede ejecutar acciones sobre una cuenta concreta
   const canExecuteActions = (targetUser: User) => {
+     // Sin rol no permito acciones
     if (!role) {
       return false;
     }
 
+    // Si es ADMIN, puede actuar sobre cualquier cuenta
     if (role === 'ADMIN') {
       return true;
     }
 
+    // Si es GESTOR:
+    // - puede actuar sobre su propia cuenta
+    // - y sobre cuentas de CLIENTE
     if (role === 'GESTOR') {
       return isOwnAccount(targetUser) || targetUser.role === 'CLIENTE';
     }
 
+    // En cualquier otro caso, solo puede actuar sobre su propia cuenta
     return isOwnAccount(targetUser);
   };
 
+  // Traduce algunos errores del backend a mensajes más claros
   const getActionErrorMessage = (
     rawError: unknown,
     fallbackMessage: string
   ) => {
+    // Si el backend ha respondido con un 403,
+    // doy un mensaje específico de permisos
     if (rawError instanceof Error && rawError.message.includes('403')) {
       return 'No tienes permisos suficientes para completar esta acción.';
     }
 
+    // Si no, uso el mensaje genérico que me hayan pasado
     return fallbackMessage;
   };
 
+  // Activa o desactiva una cuenta
   const handleToggleAccount = async (targetUser: User) => {
+    // Sin token no puedo actualizar cuentas
     if (!token) {
       setError('No hay sesión activa para actualizar cuentas.');
       return;
     }
 
+    // Si el usuario actual no tiene permisos, corto
     if (!canExecuteActions(targetUser)) {
       setError('No tienes permisos para realizar esta acción.');
       return;
     }
 
+    // Calculo el siguiente estado de la cuenta: activo <-> inactivo
     const nextActiveState = !isUserActive(targetUser);
 
     setTogglingUserId(targetUser.id);
