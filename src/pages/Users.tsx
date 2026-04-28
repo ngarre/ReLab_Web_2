@@ -231,11 +231,13 @@ export default function Users() {
     // Calculo el siguiente estado de la cuenta: activo <-> inactivo
     const nextActiveState = !isUserActive(targetUser);
 
+    // Marco que esta cuenta se está actualizando
     setTogglingUserId(targetUser.id);
     setError('');
     setActionMessage('');
-
+  
     try {
+      // Llamo al backend enviando solo el cambio de cuentaActiva
       await updateUser(
         targetUser.id,
         {
@@ -244,6 +246,7 @@ export default function Users() {
         token
       );
 
+      // Si va bien, actualizo el estado local
       setUsers((currentUsers) =>
         currentUsers.map((user) =>
           user.id === targetUser.id
@@ -252,18 +255,22 @@ export default function Users() {
         )
       );
 
+      // Si el usuario ha desactivado su propia cuenta,
+      // cierro sesión y lo mando a login
       if (isOwnAccount(targetUser) && !nextActiveState) {
         logout();
         navigate('/login', { replace: true });
         return;
       }
 
+      // Si todo va bien, muestro mensaje de acción correcta
       setActionMessage(
         nextActiveState
           ? 'La cuenta se ha activado correctamente.'
           : 'La cuenta se ha desactivado correctamente.'
       );
     } catch (rawError) {
+      // Si falla, traduzco el error si hace falta
       setError(
         getActionErrorMessage(
           rawError,
@@ -273,21 +280,26 @@ export default function Users() {
         )
       );
     } finally {
+      // Limpio el estado de “toggle en curso”
       setTogglingUserId(null);
     }
   };
 
+  // Elimina una cuenta
   const handleDeleteAccount = async (targetUser: User) => {
+    // Sin token no puedo eliminar
     if (!token) {
       setError('No hay sesión activa para eliminar cuentas.');
       return;
     }
 
+    // Si no tengo permisos, corto
     if (!canExecuteActions(targetUser)) {
       setError('No tienes permisos para realizar esta acción.');
       return;
     }
 
+   // Confirmación distinta si elimino mi propia cuenta o la de otra persona 
     const confirmed = window.confirm(
       isOwnAccount(targetUser)
         ? '¿Seguro que quieres eliminar tu cuenta? También se borrarán tus datos relacionados.'
@@ -298,19 +310,23 @@ export default function Users() {
       return;
     }
 
+    // Marco esta cuenta como “eliminándose”
     setDeletingUserId(targetUser.id);
     setError('');
     setActionMessage('');
 
     try {
+      // Llamo al backend para borrar la cuenta
       await deleteUserAccount(targetUser.id, token);
 
+      // Si ha borrado su propia cuenta, cierro sesión y redirijo
       if (isOwnAccount(targetUser)) {
         logout();
         navigate('/login', { replace: true });
         return;
       }
 
+      // Si no era la propia cuenta, la elimino del estado local
       setUsers((currentUsers) =>
         currentUsers.filter((user) => user.id !== targetUser.id)
       );
@@ -325,6 +341,7 @@ export default function Users() {
     }
   };
 
+  // Resumen general: total, activas e inactivas
   const summary = useMemo(() => {
     const total = users.length;
     const active = users.filter((user) => isUserActive(user)).length;
@@ -333,6 +350,7 @@ export default function Users() {
     return { total, active, inactive };
   }, [users]);
 
+  // Resumen por rol
   const roleSummary = useMemo(() => {
     const admin = users.filter((user) => user.role === 'ADMIN').length;
     const gestor = users.filter((user) => user.role === 'GESTOR').length;
@@ -341,6 +359,7 @@ export default function Users() {
     return { admin, gestor, cliente };
   }, [users]);
 
+  // Resumen por tipo de cuenta
   const accountTypeSummary = useMemo(() => {
     const empresa = users.filter(
       (user) => normalizeAccountType(user.tipoUsuario) === 'empresa'
@@ -358,9 +377,11 @@ export default function Users() {
     return { empresa, centroPublico, particular };
   }, [users]);
 
+  // Lista filtrada y ordenada de usuarios
   const filteredUsers = useMemo(() => {
     let result = [...users];
 
+    // Búsqueda por nombre completo, nickname o email
     if (searchTerm) {
       const term = normalizeText(searchTerm);
 
@@ -377,16 +398,19 @@ export default function Users() {
       });
     }
 
+    // Filtro por estado de cuenta
     if (statusFilterKey === 'active') {
       result = result.filter((user) => isUserActive(user));
     } else if (statusFilterKey === 'inactive') {
       result = result.filter((user) => !isUserActive(user));
     }
 
+    // Filtro por rol
     if (roleFilterKey !== 'all') {
       result = result.filter((user) => user.role === roleFilterKey);
     }
 
+    // Filtro por tipo de cuenta
     if (accountTypeFilterKey !== 'all') {
       if (accountTypeFilterKey === 'empresa') {
         result = result.filter(
@@ -402,6 +426,7 @@ export default function Users() {
       }
     }
 
+    // Ordenación por la clave seleccionada
     result.sort((a, b) => {
       let comparison = 0;
 
@@ -434,9 +459,11 @@ export default function Users() {
     accountTypeFilterKey,
   ]);
 
+  // Pagino los resultados filtrados
   const { currentPage, totalPages, currentData, nextPage, prevPage } =
     usePagination(filteredUsers, 8);
 
+  // Formateo corto de fecha para mostrar en la tabla
   const formatDate = (date: string) =>
     formatSpanishDate(date, {
       year: 'numeric',
@@ -444,11 +471,13 @@ export default function Users() {
       day: 'numeric',
     });
 
+  // Devuelve el contenido de la celda de acciones para cada usuario
   const renderActionCell = (targetUser: User) => {
     const isToggling = togglingUserId === targetUser.id;
     const isDeleting = deletingUserId === targetUser.id;
     const isBusy = isToggling || isDeleting;
 
+    // Si el usuario actual puede actuar sobre esta cuenta, muestro botones
     if (canExecuteActions(targetUser)) {
       return (
         <div className="users-row-actions">
@@ -474,6 +503,7 @@ export default function Users() {
             {isDeleting ? 'Eliminando...' : 'Eliminar'}
           </button>
 
+          {/* Ayuda visual extra para GESTOR cuando actúa sobre clientes */}
           {!isOwnAccount(targetUser) &&
             role === 'GESTOR' &&
             targetUser.role === 'CLIENTE' && (
@@ -483,17 +513,21 @@ export default function Users() {
       );
     }
 
+    // Si no tiene permiso, muestro una etiqueta de bloqueo
     return <span className="users-management-pill blocked">Sin permiso</span>;
   };
 
+  // Si está cargando, muestro Loading
   if (loading) {
     return <Loading />;
   }
 
+  // Si hubo error y además no tengo usuarios cargados, devuelvo pantalla de error
   if (error && !users.length) {
     return <ErrorMessage message={error} />;
   }
 
+  // Render principal de la página
   return (
     <main className="main-content-area">
       <h1 className="page-title">Gestión de Usuarios</h1>
